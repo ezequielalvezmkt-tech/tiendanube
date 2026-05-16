@@ -374,7 +374,7 @@ async function fetchAllOrders(token, storeId, days) {
 
   while (hasMore) {
     showLoad(`Cargando pedidos... (página ${page}, ${orders.length} pedidos)`);
-    const apiUrl = `https://api.tiendanube.com/2025-03/${storeId}/orders?created_at_min=${sinceStr}&per_page=200&page=${page}&fields=id,number,created_at,total,products,shipping_address,status,gateway_name,shipping`;
+    const apiUrl = `https://api.tiendanube.com/2025-03/${storeId}/orders?created_at_min=${sinceStr}&per_page=200&page=${page}&fields=id,number,created_at,total,products,shipping_address,status,gateway_name`;
     const url = `https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=${encodeURIComponent(apiUrl)}`;
     const res = await fetch(url, {
       headers: { 'Authentication': `bearer ${token}`, 'User-Agent': 'LPE-Analytics/1.0' }
