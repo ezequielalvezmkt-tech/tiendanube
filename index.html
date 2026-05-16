@@ -629,17 +629,51 @@ function renderCombos(orders) {
     if (prods.length < 2) return;
     for (let i=0;i<prods.length;i++) for (let j=i+1;j<prods.length;j++) {
       const k=[prods[i],prods[j]].sort().join(' + ');
-      map[k]=(map[k]||0)+1;
+      if (!map[k]) map[k] = { count: 0, orders: [] };
+      map[k].count++;
+      map[k].orders.push({ number: o.number, date: o.created_at, total: o.total });
     }
   });
-  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const sorted = Object.entries(map).sort((a,b)=>b[1].count-a[1].count).slice(0,8);
   if (!sorted.length) {
     document.getElementById('combo-list').innerHTML = '<p style="font-size:13px;color:#888;padding:1rem 0">No hay pedidos con más de un libro.</p>';
     return;
   }
-  document.getElementById('combo-list').innerHTML = sorted.map(([combo,count],i) =>
-    `<div class="combo-row"><div class="combo-rank">#${i+1}</div><div class="combo-books">${combo}</div><div class="combo-count">${count} pedido${count>1?'s':''}</div></div>`
-  ).join('');
+  document.getElementById('combo-list').innerHTML = sorted.map(([combo, {count, orders: ords}], i) => {
+    const id = 'combo-detail-' + i;
+    const orderRows = ords.map(o => {
+      const d = new Date(o.created_at);
+      const fecha = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+      return `<span style="display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--muted);margin:2px;">
+        <span style="font-weight:600;color:var(--text);">#${o.number}</span>
+        <span>${fecha}</span>
+        <span>$${Math.round(parseFloat(o.total||0)).toLocaleString('es-AR')}</span>
+      </span>`;
+    }).join('');
+    return `<div class="combo-row" style="flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;" onclick="toggleCombo('${id}')">
+      <div style="display:flex;align-items:center;gap:10px;width:100%;">
+        <div class="combo-rank">#${i+1}</div>
+        <div class="combo-books" style="flex:1">${combo}</div>
+        <div class="combo-count">${count} pedido${count>1?'s':''}</div>
+        <div style="font-size:11px;color:var(--muted);padding-left:4px;" id="${id}-icon">▼</div>
+      </div>
+      <div id="${id}" style="display:none;width:100%;padding-left:28px;flex-wrap:wrap;gap:4px;">
+        ${orderRows}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCombo(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  if (el.style.display === 'none') {
+    el.style.display = 'flex';
+    if (icon) icon.textContent = '▲';
+  } else {
+    el.style.display = 'none';
+    if (icon) icon.textContent = '▼';
+  }
 }
 
 function renderTrend(orders) {
