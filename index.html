@@ -386,6 +386,27 @@ async function connectStore() {
     document.getElementById('footer').textContent = `${allOrders.length} pedidos analizados (cancelados excluidos)`;
 
     const filtersEl = document.getElementById('filters');
+
+    // Hoy y Ayer
+    [['Hoy', () => filterToday(allOrders)], ['Ayer', () => filterYesterday(allOrders)]].forEach(([label, fn]) => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.textContent = label;
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderDashboard(fn());
+      };
+      filtersEl.appendChild(btn);
+    });
+
+    // Separador
+    const sep = document.createElement('span');
+    sep.textContent = '|';
+    sep.style.cssText = 'color:rgba(0,0,0,0.2);font-size:12px;padding:0 2px;';
+    filtersEl.appendChild(sep);
+
+    // Períodos
     [[7,'7 días'],[30,'30 días'],[90,'90 días'],[days, 'Todo']].forEach(([d, label]) => {
       if (d > days) return;
       const btn = document.createElement('button');
@@ -411,6 +432,20 @@ function filterDays(orders, days) {
   const since = new Date();
   since.setDate(since.getDate() - days);
   return orders.filter(o => new Date(o.created_at) >= since);
+}
+
+function filterToday(orders) {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const end = new Date(start.getTime() + 86400000);
+  return orders.filter(o => { const d = new Date(o.created_at); return d >= start && d < end; });
+}
+
+function filterYesterday(orders) {
+  const now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const start = new Date(end.getTime() - 86400000);
+  return orders.filter(o => { const d = new Date(o.created_at); return d >= start && d < end; });
 }
 
 function renderDashboard(orders) {
