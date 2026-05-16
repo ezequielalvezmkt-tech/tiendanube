@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LPE Analytics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.15);
+    --text: #1a1a18;
+    --muted: #888780;
+    --accent: #1a1a18;
+    --blue: #378add;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* SETUP */
+  #setup {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .setup-box {
+    background: var(--surface);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .setup-logo {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .setup-title { font-size: 22px; font-weight: 500; margin-bottom: 6px; }
+  .setup-sub { font-size: 14px; color: var(--muted); margin-bottom: 2rem; line-height: 1.5; }
+
+  .field { margin-bottom: 1.25rem; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
+  .field input, .field select {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    font-family: inherit;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:hover:not(:disabled) { opacity: 0.85; }
+
+  .error { color: #e24b4a; font-size: 13px; margin-top: 10px; line-height: 1.4; }
+  .loading-msg { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 1.25rem; line-height: 1.6; border-top: 0.5px solid var(--border); padding-top: 1rem; }
+
+  /* DASHBOARD */
+  #dashboard { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+  }
+  .topbar-title { font-size: 22px; font-weight: 500; }
+  .topbar-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .topbar-right { display: flex; gap: 8px; align-items: center; }
+
+  .badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border-strong);
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  .btn-sm {
+    font-size: 12px;
+    padding: 6px 14px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text);
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .btn-sm:hover { background: rgba(0,0,0,0.05); }
+
+  /* FILTER */
+  .filters { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+  .filters span { font-size: 12px; color: var(--muted); }
+  .filter-btn {
+    font-size: 12px;
+    padding: 5px 14px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* METRICS */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .metric {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+  }
+  .metric-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .metric-value { font-size: 24px; font-weight: 500; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* CHARTS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+
+  canvas-wrap { position: relative; width: 100%; }
+
+  /* PROVINCE LIST */
+  .prov-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .prov-row:last-child { border-bottom: none; }
+  .prov-name { width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prov-bar-wrap { flex: 1; background: var(--bg); border-radius: 3px; height: 5px; overflow: hidden; }
+  .prov-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+  .prov-pct { width: 44px; text-align: right; font-size: 11px; color: var(--muted); }
+
+  /* COMBO LIST */
+  .combo-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .combo-row:last-child { border-bottom: none; }
+  .combo-rank { width: 22px; font-size: 11px; font-weight: 600; color: var(--muted); padding-top: 1px; flex-shrink: 0; }
+  .combo-books { flex: 1; line-height: 1.4; color: var(--text); }
+  .combo-count { font-size: 12px; color: var(--muted); white-space: nowrap; padding-top: 1px; }
+
+  .footer { font-size: 11px; color: var(--muted); text-align: center; padding: 2rem 0 1rem; }
+
+  @media (max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    #dashboard { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup">
+  <div class="setup-box">
+    <div class="setup-logo">Libros Para Emprendedor</div>
+    <div class="setup-title">LPE Analytics</div>
+    <div class="setup-sub">Métricas avanzadas de tu tienda que Tiendanube no muestra por defecto.</div>
+
+    <div class="field">
+      <label>Access Token</label>
+      <input type="password" id="token-input" placeholder="tu_access_token" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Store ID</label>
+      <input type="text" id="storeid-input" placeholder="ej: 5178626" />
+    </div>
+    <div class="field">
+      <label>Período a analizar</label>
+      <select id="period-select">
+        <option value="30">Últimos 30 días</option>
+        <option value="60">Últimos 60 días</option>
+        <option value="90" selected>Últimos 90 días</option>
+        <option value="180">Últimos 6 meses</option>
+        <option value="365">Último año</option>
+      </select>
+    </div>
+
+    <button class="btn" id="connect-btn" onclick="connectStore()">Conectar y analizar →</button>
+    <div class="error" id="err" style="display:none"></div>
+    <div class="loading-msg" id="loading" style="display:none"></div>
+
+    <div class="hint">
+      Tu token solo se usa localmente en este archivo. No se envía a ningún servidor externo.<br><br>
+      <strong>Store ID:</strong> 5178626 &nbsp;|&nbsp; Lo encontrás en la URL de tu admin de Tiendanube.
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">LPE Analytics</div>
+      <div class="topbar-sub" id="period-label"></div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge" id="store-badge"></span>
+      <button class="btn-sm" onclick="resetApp()">Desconectar</button>
+    </div>
+  </div>
+
+  <div class="filters" id="filters">
+    <span>Ver:</span>
+  </div>
+
+  <div class="metrics-grid" id="metrics"></div>
+
+  <div class="card">
+    <div class="card-title">Horarios de mayor volumen</div>
+    <div class="card-sub">Pedidos por hora del día (hora Argentina, GMT-3)</div>
+    <div style="position:relative;width:100%;height:200px;">
+      <canvas id="hours-chart" role="img" aria-label="Pedidos por hora"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Días con más ventas</div>
+      <div class="card-sub">Cantidad de pedidos por día</div>
+      <div style="position:relative;width:100%;height:200px;">
+        <canvas id="days-chart" role="img" aria-label="Pedidos por día"></canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Ticket promedio por día</div>
+      <div class="card-sub">Valor medio del pedido en ARS</div>
+      <div style="position:relative;width:100%;height:200px;">
+        <canvas id="avg-chart" role="img" aria-label="Ticket promedio por día"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:1rem"></div>
+
+  <div class="grid-2">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Provincias con más compras</div>
+      <div class="card-sub">Ranking por cantidad de pedidos</div>
+      <div id="prov-list"></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Libros más combinados</div>
+      <div class="card-sub">Pares que aparecen juntos en el mismo pedido</div>
+      <div id="combo-list"></div>
+    </div>
+  </div>
+
+  <div style="height:1rem"></div>
+
+  <div class="card">
+    <div class="card-title">Tendencia semanal de ingresos</div>
+    <div class="card-sub">Ingresos totales por semana (ARS)</div>
+    <div style="position:relative;width:100%;height:200px;">
+      <canvas id="trend-chart" role="img" aria-label="Tendencia semanal"></canvas>
+    </div>
+  </div>
+
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+let allOrders = [];
+let charts = {};
+
+function showErr(msg) {
+  const el = document.getElementById('err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function showLoad(msg) {
+  const el = document.getElementById('loading');
+  if (msg) { el.textContent = msg; el.style.display = 'block'; }
+  else el.style.display = 'none';
+}
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+async function fetchAllOrders(token, storeId, days) {
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+  const sinceStr = since.toISOString().split('T')[0];
+  let page = 1, orders = [], hasMore = true;
+
+  while (hasMore) {
+    showLoad(`Cargando pedidos... (página ${page}, ${orders.length} pedidos)`);
+    const apiUrl = `https://api.tiendanube.com/2025-03/${storeId}/orders?created_at_min=${sinceStr}&per_page=200&page=${page}&fields=id,number,created_at,total,products,shipping_address,status`;
+    const url = `https://corsproxy.io/?url=${encodeURIComponent(apiUrl)}`;
+    const res = await fetch(url, {
+      headers: { 'Authentication': `bearer ${token}`, 'User-Agent': 'LPE-Analytics/1.0', 'x-cors-api-key': 'temp_' }
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error(`Error ${res.status}: ${t.slice(0,200)}`);
+    }
+    const data = await res.json();
+    orders = orders.concat(data);
+    const link = res.headers.get('Link') || '';
+    hasMore = link.includes('rel="next"') && data.length === 200;
+    page++;
+    if (page > 50 || data.length < 200) hasMore = false;
+  }
+  return orders;
+}
+
+async function connectStore() {
+  const token = document.getElementById('token-input').value.trim();
+  const storeId = document.getElementById('storeid-input').value.trim();
+  const days = parseInt(document.getElementById('period-select').value);
+  document.getElementById('err').style.display = 'none';
+  if (!token || !storeId) { showErr('Completá el token y el Store ID.'); return; }
+  document.getElementById('connect-btn').disabled = true;
+  try {
+    const orders = await fetchAllOrders(token, storeId, days);
+    allOrders = orders.filter(o => o.status !== 'cancelled');
+    showLoad(null);
+    if (allOrders.length === 0) {
+      showErr('No se encontraron pedidos. Probá con un período más largo.');
+      document.getElementById('connect-btn').disabled = false;
+      return;
+    }
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+
+    const periodMap = {30:'Últimos 30 días',60:'Últimos 60 días',90:'Últimos 90 días',180:'Últimos 6 meses',365:'Último año'};
+    document.getElementById('period-label').textContent = periodMap[days] || `Últimos ${days} días`;
+    document.getElementById('store-badge').textContent = `Store ${storeId}`;
+    document.getElementById('footer').textContent = `${allOrders.length} pedidos analizados (cancelados excluidos)`;
+
+    const filtersEl = document.getElementById('filters');
+    [[7,'7 días'],[30,'30 días'],[90,'90 días'],[days, 'Todo']].forEach(([d, label]) => {
+      if (d > days) return;
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (d === days ? ' active' : '');
+      btn.textContent = label;
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderDashboard(filterDays(allOrders, d === days ? days : d));
+      };
+      filtersEl.appendChild(btn);
+    });
+
+    renderDashboard(allOrders);
+  } catch(e) {
+    showLoad(null);
+    document.getElementById('connect-btn').disabled = false;
+    showErr('Error al conectar: ' + e.message);
+  }
+}
+
+function filterDays(orders, days) {
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+  return orders.filter(o => new Date(o.created_at) >= since);
+}
+
+function renderDashboard(orders) {
+  const n = orders.length;
+  const total = orders.reduce((s,o) => s + parseFloat(o.total||0), 0);
+  const avg = n > 0 ? total/n : 0;
+  const units = orders.reduce((s,o) => s + (o.products||[]).reduce((a,p)=>a+(p.quantity||1),0), 0);
+  const multiItem = orders.filter(o => (o.products||[]).length > 1).length;
+  const multiPct = n > 0 ? Math.round((multiItem/n)*100) : 0;
+
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric"><div class="metric-label">Pedidos</div><div class="metric-value">${n.toLocaleString('es-AR')}</div></div>
+    <div class="metric"><div class="metric-label">Ingresos</div><div class="metric-value" style="font-size:20px">$${Math.round(total).toLocaleString('es-AR')}</div></div>
+    <div class="metric"><div class="metric-label">Ticket promedio</div><div class="metric-value" style="font-size:20px">$${Math.round(avg).toLocaleString('es-AR')}</div></div>
+    <div class="metric"><div class="metric-label">Libros vendidos</div><div class="metric-value">${units.toLocaleString('es-AR')}</div></div>
+    <div class="metric"><div class="metric-label">Pedidos con combo</div><div class="metric-value">${multiPct}%</div><div class="metric-sub">${multiItem} pedidos con 2+ libros</div></div>
+  `;
+
+  renderHours(orders);
+  renderDays(orders);
+  renderAvg(orders);
+  renderProvinces(orders);
+  renderCombos(orders);
+  renderTrend(orders);
+}
+
+function renderHours(orders) {
+  const counts = Array(24).fill(0);
+  orders.forEach(o => {
+    const d = new Date(o.created_at);
+    const arg = new Date(d.getTime() - 3*3600*1000);
+    counts[arg.getUTCHours()]++;
+  });
+  const max = Math.max(...counts);
+  const colors = counts.map(v => {
+    const r = max > 0 ? v/max : 0;
+    return r > 0.7 ? '#1a1a18' : r > 0.4 ? '#5f5e5a' : r > 0.15 ? '#b4b2a9' : '#e8e6e0';
+  });
+  destroyChart('hours');
+  charts['hours'] = new Chart(document.getElementById('hours-chart'), {
+    type: 'bar',
+    data: { labels: Array.from({length:24},(_,i)=>`${String(i).padStart(2,'0')}h`), datasets: [{ data: counts, backgroundColor: colors, borderRadius: 3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw} pedidos` } } },
+      scales: {
+        y: { beginAtZero: true, ticks: { font:{size:11} }, grid: { color: 'rgba(0,0,0,0.05)' } },
+        x: { ticks: { font:{size:10}, maxRotation:0, autoSkip:false, callback:(_,i) => i%3===0?`${String(i).padStart(2,'0')}h`:'' }, grid:{display:false} }
+      }
+    }
+  });
+}
+
+function renderDays(orders) {
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const counts = Array(7).fill(0);
+  orders.forEach(o => counts[new Date(o.created_at).getDay()]++);
+  const max = Math.max(...counts);
+  const colors = counts.map(v => { const r=max>0?v/max:0; return r>0.7?'#1a1a18':r>0.4?'#5f5e5a':'#b4b2a9'; });
+  destroyChart('days');
+  charts['days'] = new Chart(document.getElementById('days-chart'), {
+    type: 'bar',
+    data: { labels: dias, datasets: [{ data: counts, backgroundColor: colors, borderRadius: 3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false} },
+      scales: { y:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}}, x:{ticks:{font:{size:12}},grid:{display:false}} }
+    }
+  });
+}
+
+function renderAvg(orders) {
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const totals = Array(7).fill(0), counts = Array(7).fill(0);
+  orders.forEach(o => { const d=new Date(o.created_at).getDay(); totals[d]+=parseFloat(o.total||0); counts[d]++; });
+  const avgs = totals.map((t,i) => counts[i]>0 ? Math.round(t/counts[i]) : 0);
+  destroyChart('avg');
+  charts['avg'] = new Chart(document.getElementById('avg-chart'), {
+    type: 'bar',
+    data: { labels: dias, datasets: [{ data: avgs, backgroundColor: '#378add', borderRadius: 3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>` $${c.raw.toLocaleString('es-AR')}`}} },
+      scales: {
+        y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>`$${Math.round(v/1000)}k`},grid:{color:'rgba(0,0,0,0.05)'}},
+        x:{ticks:{font:{size:12}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function renderProvinces(orders) {
+  const counts = {};
+  orders.forEach(o => { const p=o.shipping_address?.province||'Sin datos'; counts[p]=(counts[p]||0)+1; });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const max = sorted[0]?.[1]||1;
+  document.getElementById('prov-list').innerHTML = sorted.map(([prov,count]) => {
+    const pct = Math.round((count/orders.length)*100);
+    const w = Math.round((count/max)*100);
+    return `<div class="prov-row">
+      <div class="prov-name">${prov}</div>
+      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%"></div></div>
+      <div class="prov-pct">${count} (${pct}%)</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCombos(orders) {
+  const map = {};
+  orders.forEach(o => {
+    const prods = (o.products||[]).map(p=>{ const n=p.name||''; return n.length>35?n.slice(0,33)+'…':n; }).filter(Boolean);
+    if (prods.length < 2) return;
+    for (let i=0;i<prods.length;i++) for (let j=i+1;j<prods.length;j++) {
+      const k=[prods[i],prods[j]].sort().join(' + ');
+      map[k]=(map[k]||0)+1;
+    }
+  });
+  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if (!sorted.length) {
+    document.getElementById('combo-list').innerHTML = '<p style="font-size:13px;color:#888;padding:1rem 0">No hay pedidos con más de un libro.</p>';
+    return;
+  }
+  document.getElementById('combo-list').innerHTML = sorted.map(([combo,count],i) =>
+    `<div class="combo-row"><div class="combo-rank">#${i+1}</div><div class="combo-books">${combo}</div><div class="combo-count">${count} pedido${count>1?'s':''}</div></div>`
+  ).join('');
+}
+
+function renderTrend(orders) {
+  const weeks = {};
+  orders.forEach(o => {
+    const d = new Date(o.created_at);
+    const day = d.getDay();
+    const mon = new Date(d);
+    mon.setDate(d.getDate()-(day===0?6:day-1));
+    const k = mon.toISOString().split('T')[0];
+    if (!weeks[k]) weeks[k]={total:0,count:0};
+    weeks[k].total += parseFloat(o.total||0);
+    weeks[k].count++;
+  });
+  const sorted = Object.entries(weeks).sort((a,b)=>a[0].localeCompare(b[0]));
+  const labels = sorted.map(([k])=>{ const d=new Date(k); return `${d.getDate()}/${d.getMonth()+1}`; });
+  const totals = sorted.map(([,v])=>Math.round(v.total));
+  destroyChart('trend');
+  charts['trend'] = new Chart(document.getElementById('trend-chart'), {
+    type: 'line',
+    data: { labels, datasets: [{ data: totals, borderColor:'#1a1a18', backgroundColor:'rgba(26,26,24,0.05)', fill:true, tension:0.3, pointRadius:3, pointBackgroundColor:'#1a1a18', borderWidth:1.5 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>` $${c.raw.toLocaleString('es-AR')}`}} },
+      scales: {
+        y:{beginAtZero:false,ticks:{font:{size:11},callback:v=>`$${Math.round(v/1000)}k`},grid:{color:'rgba(0,0,0,0.05)'}},
+        x:{ticks:{font:{size:11},maxRotation:45,autoSkip:true,maxTicksLimit:12},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function resetApp() {
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('setup').style.display = 'flex';
+  document.getElementById('connect-btn').disabled = false;
+  document.getElementById('token-input').value = '';
+  document.getElementById('filters').innerHTML = '<span>Ver:</span>';
+  allOrders = [];
+  Object.values(charts).forEach(c => c.destroy());
+  charts = {};
+}
+</script>
+</body>
+</html>
