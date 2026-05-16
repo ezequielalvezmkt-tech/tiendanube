@@ -234,6 +234,10 @@
     </div>
 
     <button class="btn" id="connect-btn" onclick="connectStore()">Conectar y analizar →</button>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--muted);cursor:pointer;">
+      <input type="checkbox" id="remember-chk" style="width:15px;height:15px;cursor:pointer;" />
+      Recordar credenciales en este navegador
+    </label>
     <div class="error" id="err" style="display:none"></div>
     <div class="loading-msg" id="loading" style="display:none"></div>
 
@@ -313,12 +317,40 @@
     </div>
   </div>
 
+  <div class="grid-2" style="margin-top:1rem;">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Ventas por cantidad de cuotas</div>
+      <div class="card-sub">Distribución de pedidos según cuotas elegidas</div>
+      <div id="cuotas-list"></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Ventas por medio de envío</div>
+      <div class="card-sub">Pedidos y facturación por método de envío</div>
+      <div id="envios-list"></div>
+    </div>
+  </div>
+
+  <div style="height:1rem"></div>
+
   <div class="footer" id="footer"></div>
 </div>
 
 <script>
 let allOrders = [];
 let charts = {};
+
+// Cargar credenciales guardadas al iniciar
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('lpe_creds');
+  if (saved) {
+    try {
+      const { token, storeId } = JSON.parse(saved);
+      document.getElementById('token-input').value = token || '';
+      document.getElementById('storeid-input').value = storeId || '';
+      document.getElementById('remember-chk').checked = true;
+    } catch(e) {}
+  }
+});
 
 function showErr(msg) {
   const el = document.getElementById('err');
@@ -342,7 +374,7 @@ async function fetchAllOrders(token, storeId, days) {
 
   while (hasMore) {
     showLoad(`Cargando pedidos... (página ${page}, ${orders.length} pedidos)`);
-    const apiUrl = `https://api.tiendanube.com/2025-03/${storeId}/orders?created_at_min=${sinceStr}&per_page=200&page=${page}&fields=id,number,created_at,total,products,shipping_address,status`;
+    const apiUrl = `https://api.tiendanube.com/2025-03/${storeId}/orders?created_at_min=${sinceStr}&per_page=200&page=${page}&fields=id,number,created_at,total,products,shipping_address,status,gateway_name,shipping`;
     const url = `https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=${encodeURIComponent(apiUrl)}`;
     const res = await fetch(url, {
       headers: { 'Authentication': `bearer ${token}`, 'User-Agent': 'LPE-Analytics/1.0' }
@@ -368,6 +400,12 @@ async function connectStore() {
   document.getElementById('err').style.display = 'none';
   if (!token || !storeId) { showErr('Completá el token y el Store ID.'); return; }
   document.getElementById('connect-btn').disabled = true;
+  // Guardar o borrar credenciales según checkbox
+  if (document.getElementById('remember-chk').checked) {
+    localStorage.setItem('lpe_creds', JSON.stringify({ token, storeId }));
+  } else {
+    localStorage.removeItem('lpe_creds');
+  }
   try {
     const orders = await fetchAllOrders(token, storeId, days);
     allOrders = orders.filter(o => o.status !== 'cancelled');
@@ -470,6 +508,8 @@ function renderDashboard(orders) {
   renderProvinces(orders);
   renderCombos(orders);
   renderTrend(orders);
+  renderCuotas(orders);
+  renderEnvios(orders);
 }
 
 function renderHours(orders) {
@@ -603,11 +643,67 @@ function renderTrend(orders) {
   });
 }
 
+function renderCuotas(orders) {
+  const map = {};
+  orders.forEach(o => {
+    // Tiendanube guarda cuotas en gateway_name o en el campo payment_details
+    const name = o.gateway_name || '';
+    const match = name.match(/(\d+)\s*cuotas?/i) || name.match(/x(\d+)/i);
+    const cuotas = match ? `${match[1]} cuotas` : 'Pago único / 1 cuota';
+    map[cuotas] = (map[cuotas] || { count: 0, total: 0 });
+    map[cuotas].count++;
+    map[cuotas].total += parseFloat(o.total || 0);
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1].count - a[1].count);
+  const maxCount = sorted[0]?.[1]?.count || 1;
+  const el = document.getElementById('cuotas-list');
+  if (!sorted.length) { el.innerHTML = '<p style="font-size:13px;color:#888;padding:1rem 0">Sin datos de cuotas.</p>'; return; }
+  el.innerHTML = sorted.map(([label, { count, total }]) => {
+    const pct = Math.round((count / orders.length) * 100);
+    const w = Math.round((count / maxCount) * 100);
+    return `<div class="prov-row">
+      <div class="prov-name">${label}</div>
+      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%;background:#378add"></div></div>
+      <div class="prov-pct">${count} (${pct}%)</div>
+    </div>`;
+  }).join('');
+}
+
+function renderEnvios(orders) {
+  const map = {};
+  orders.forEach(o => {
+    const method = o.shipping_address?.shipping_method || o.shipping || 'Sin datos';
+    let label = 'Sin datos';
+    if (typeof method === 'string') {
+      label = method.length > 30 ? method.slice(0,28)+'…' : method;
+    }
+    if (!map[label]) map[label] = { count: 0, total: 0 };
+    map[label].count++;
+    map[label].total += parseFloat(o.total || 0);
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1].count - a[1].count).slice(0,8);
+  const maxCount = sorted[0]?.[1]?.count || 1;
+  const el = document.getElementById('envios-list');
+  if (!sorted.length) { el.innerHTML = '<p style="font-size:13px;color:#888;padding:1rem 0">Sin datos de envío.</p>'; return; }
+  el.innerHTML = sorted.map(([label, { count, total }]) => {
+    const pct = Math.round((count / orders.length) * 100);
+    const w = Math.round((count / maxCount) * 100);
+    return `<div class="prov-row">
+      <div class="prov-name">${label}</div>
+      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%"></div></div>
+      <div class="prov-pct">${count} (${pct}%)</div>
+    </div>`;
+  }).join('');
+}
+
 function resetApp() {
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('setup').style.display = 'flex';
   document.getElementById('connect-btn').disabled = false;
   document.getElementById('token-input').value = '';
+  if (!document.getElementById('remember-chk')?.checked) {
+    localStorage.removeItem('lpe_creds');
+  }
   document.getElementById('filters').innerHTML = '<span>Ver:</span>';
   allOrders = [];
   Object.values(charts).forEach(c => c.destroy());
