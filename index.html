@@ -1150,17 +1150,17 @@ function renderProveedorTable() {
       return '<tr style="border-bottom:0.5px solid var(--border);">'+
         '<td style="padding:8px 6px;font-weight:500">'+label+'</td>'+
         '<td style="padding:8px 6px;text-align:right">'+v.count+'</td>'+
-        '<td style="padding:8px 6px;text-align:right;color:var(--muted)">$'+Math.round(v.venta).toLocaleString('es-AR')+'</td>'+
-        '<td style="padding:8px 6px;text-align:right;color:#e24b4a;font-weight:500">$'+Math.round(v.costo).toLocaleString('es-AR')+'</td>'+
-        '<td style="padding:8px 6px;text-align:right;color:#16a34a;font-weight:500">$'+Math.round(v.ganancia).toLocaleString('es-AR')+'</td>'+
+        '<td style="padding:8px 6px;text-align:right;color:var(--muted)">$'+Math.round(v.venta).toLocaleString("es-AR")+'</td>'+
+        '<td style="padding:8px 6px;text-align:right;color:#e24b4a;font-weight:500">$'+Math.round(v.costo).toLocaleString("es-AR")+'</td>'+
+        '<td style="padding:8px 6px;text-align:right;color:#16a34a;font-weight:500">$'+Math.round(v.ganancia).toLocaleString("es-AR")+'</td>'+
         '</tr>';
     }).join('')+
     '<tr style="border-top:2px solid var(--border);font-weight:700;">'+
     '<td style="padding:8px 6px">TOTAL</td>'+
     '<td style="padding:8px 6px;text-align:right">'+filtered.length+'</td>'+
-    '<td style="padding:8px 6px;text-align:right">$'+Math.round(tv).toLocaleString('es-AR')+'</td>'+
-    '<td style="padding:8px 6px;text-align:right;color:#e24b4a">$'+Math.round(tc).toLocaleString('es-AR')+'</td>'+
-    '<td style="padding:8px 6px;text-align:right;color:#16a34a">$'+Math.round(tg).toLocaleString('es-AR')+'</td>'+
+    '<td style="padding:8px 6px;text-align:right">$'+Math.round(tv).toLocaleString("es-AR")+'</td>'+
+    '<td style="padding:8px 6px;text-align:right;color:#e24b4a">$'+Math.round(tc).toLocaleString("es-AR")+'</td>'+
+    '<td style="padding:8px 6px;text-align:right;color:#16a34a">$'+Math.round(tg).toLocaleString("es-AR")+'</td>'+
     '</tr></tbody></table>';
 }
 
@@ -1200,9 +1200,9 @@ function renderRentabilidad() {
 
   document.getElementById('rent-metrics').innerHTML =
     '<div class="metric"><div class="metric-label">Pedidos DS</div><div class="metric-value">'+ds.length+'</div></div>'+
-    '<div class="metric"><div class="metric-label">Facturacion</div><div class="metric-value" style="font-size:18px">$'+Math.round(tv).toLocaleString('es-AR')+'</div></div>'+
-    '<div class="metric"><div class="metric-label">A pagar proveedor</div><div class="metric-value" style="font-size:18px;color:#e24b4a">$'+Math.round(tc).toLocaleString('es-AR')+'</div></div>'+
-    '<div class="metric"><div class="metric-label">Tu ganancia neta</div><div class="metric-value" style="font-size:18px;color:#16a34a">$'+Math.round(tg).toLocaleString('es-AR')+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Facturacion</div><div class="metric-value" style="font-size:18px">$'+Math.round(tv).toLocaleString("es-AR")+'</div></div>'+
+    '<div class="metric"><div class="metric-label">A pagar proveedor</div><div class="metric-value" style="font-size:18px;color:#e24b4a">$'+Math.round(tc).toLocaleString("es-AR")+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Tu ganancia neta</div><div class="metric-value" style="font-size:18px;color:#16a34a">$'+Math.round(tg).toLocaleString("es-AR")+'</div></div>'+
     '<div class="metric"><div class="metric-label">Margen promedio</div><div class="metric-value">'+mp.toFixed(1)+'%</div></div>'+
     (sinMatch>0?'<div class="metric" style="border-color:#d97706;"><div class="metric-label" style="color:#d97706">Sin costo asignado</div><div class="metric-value" style="color:#d97706">'+sinMatch+' libros</div></div>':'');
 
@@ -1216,17 +1216,17 @@ function renderRentabilidad() {
     var detRows=r.librosDetalle.map(function(l){
       return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:11px;">'+
         '<span style="flex:1;color:'+(l.sinMatch?'#d97706':'var(--text)')+'">'+l.nombre+(l.qty>1?' x'+l.qty:'')+(l.sinMatch?' ⚠️ sin costo asignado':'')+'</span>'+
-        '<span style="color:#e24b4a;font-weight:500;min-width:90px;text-align:right">'+(l.sinMatch?'— (no cobrado)':'$'+l.costoTotal.toLocaleString('es-AR'))+'</span>'+
+        '<span style="color:#e24b4a;font-weight:500;min-width:90px;text-align:right">'+(l.sinMatch?'— (no cobrado)':'$'+l.costoTotal.toLocaleString("es-AR"))+'</span>'+
         '</div>';
     }).join('');
     return '<tr style="border-bottom:0.5px solid var(--border);cursor:pointer;background:var(--surface);" onclick="toggleRentDetail(''+r.o.number+'')">'+
       '<td style="padding:7px 6px;font-weight:500">#'+r.o.number+'</td>'+
       '<td style="padding:7px 6px;color:var(--muted)">'+fecha+'</td>'+
-      '<td style="padding:7px 6px;text-align:right">$'+Math.round(r.venta).toLocaleString('es-AR')+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:#e24b4a">'+(r.esDS?'$'+Math.round(r.costoProveedor).toLocaleString('es-AR'):'—')+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comTN).toLocaleString('es-AR')+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comMP).toLocaleString('es-AR')+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;font-weight:500;color:'+mc+'">$'+Math.round(r.ganancia).toLocaleString('es-AR')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right">$'+Math.round(r.venta).toLocaleString("es-AR")+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:#e24b4a">'+(r.esDS?'$'+Math.round(r.costoProveedor).toLocaleString("es-AR"):'—')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comTN).toLocaleString("es-AR")+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comMP).toLocaleString("es-AR")+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;font-weight:500;color:'+mc+'">$'+Math.round(r.ganancia).toLocaleString("es-AR")+'</td>'+
       '<td style="padding:7px 6px;text-align:right;color:'+mc+'">'+(r.esDS?r.margen.toFixed(1)+'%':'—')+'</td>'+
       '<td style="padding:7px 6px;text-align:center;font-size:10px;color:var(--muted)">▼'+(hasSM?' ⚠️':'')+'</td>'+
       '</tr>'+
@@ -1236,7 +1236,7 @@ function renderRentabilidad() {
       detRows+
       '<div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-size:12px;font-weight:700;border-top:1px solid var(--border);margin-top:4px;">'+
       '<span>Total costo proveedor</span>'+
-      '<span style="color:#e24b4a">$'+Math.round(r.costoProveedor).toLocaleString('es-AR')+'</span>'+
+      '<span style="color:#e24b4a">$'+Math.round(r.costoProveedor).toLocaleString("es-AR")+'</span>'+
       '</div>'+
       '</td></tr>';
   }).join('');
