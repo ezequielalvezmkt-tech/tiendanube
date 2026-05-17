@@ -1393,6 +1393,19 @@ function resetApp() {
   charts = {};
 }
 
+function resetMatching() {
+  matchingDone = false;
+  document.getElementById('rent-summary').style.display = 'none';
+  var card = document.getElementById('card-matching');
+  card.innerHTML =
+    '<div class="card-title">Matching de productos</div>'
+    + '<div class="card-sub">Los sin match aparecen primero. Usá el dropdown o poné precio manual.</div>'
+    + '<div id="matching-list" style="margin-top:1rem;max-height:420px;overflow-y:auto;"></div>'
+    + '<button onclick="window.applyMatching()" style="margin-top:1rem;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;">Confirmar y calcular</button>';
+  card.style.display = 'block';
+  showMatching();
+}
+
 // Exponer funciones al scope global para uso en onclick dinámico
 window.resetMatching = resetMatching;
 window.switchTab = switchTab;
