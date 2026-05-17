@@ -238,6 +238,10 @@
       <input type="checkbox" id="remember-chk" style="width:15px;height:15px;cursor:pointer;" />
       Recordar credenciales en este navegador
     </label>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--muted);cursor:pointer;">
+      <input type="checkbox" id="autologin-chk" style="width:15px;height:15px;cursor:pointer;" />
+      Conectar automáticamente al abrir
+    </label>
     <div class="error" id="err" style="display:none"></div>
     <div class="loading-msg" id="loading" style="display:none"></div>
 
@@ -474,10 +478,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('lpe_creds');
   if (saved) {
     try {
-      const { token, storeId } = JSON.parse(saved);
+      const { token, storeId, days, autoLogin } = JSON.parse(saved);
       document.getElementById('token-input').value = token || '';
       document.getElementById('storeid-input').value = storeId || '';
       document.getElementById('remember-chk').checked = true;
+      const autoChk = document.getElementById('autologin-chk');
+      if (autoChk && autoLogin) autoChk.checked = true;
+      if (days) document.getElementById('period-select').value = days;
+      // Auto-conectar si el usuario lo eligió
+      if (autoLogin && token && storeId) {
+        connectStore();
+      }
     } catch(e) {}
   }
 });
@@ -531,8 +542,13 @@ async function connectStore() {
   if (!token || !storeId) { showErr('Completá el token y el Store ID.'); return; }
   document.getElementById('connect-btn').disabled = true;
   // Guardar o borrar credenciales según checkbox
-  if (document.getElementById('remember-chk').checked) {
-    localStorage.setItem('lpe_creds', JSON.stringify({ token, storeId }));
+  const rememberChk = document.getElementById('remember-chk');
+  const autoLoginChk = document.getElementById('autologin-chk');
+  if (rememberChk && rememberChk.checked) {
+    localStorage.setItem('lpe_creds', JSON.stringify({
+      token, storeId, days,
+      autoLogin: autoLoginChk ? autoLoginChk.checked : false
+    }));
   } else {
     localStorage.removeItem('lpe_creds');
   }
