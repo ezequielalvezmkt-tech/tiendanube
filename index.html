@@ -362,9 +362,83 @@
   </div>
 
   <div style="height:1rem"></div>
-
   <div class="footer" id="footer"></div>
-</div>
+  </div><!-- /panel-metricas -->
+
+  <div id="panel-rentabilidad" style="display:none;padding-bottom:2rem;">
+    <div class="card">
+      <div class="card-title">Configuracion de costos</div>
+      <div class="card-sub">Se deducen automaticamente de cada pedido usando los datos de la orden</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;">
+        <div style="flex:1;min-width:140px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">% Comision Tiendanube</label>
+          <input type="number" id="pct-tn" value="3" step="0.1" min="0" max="100" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">% Comision Mercado Pago</label>
+          <input type="number" id="pct-mp" value="4.99" step="0.01" min="0" max="100" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Costo fijo por pedido ($)</label>
+          <input type="number" id="costo-fijo" value="0" step="100" min="0" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Lista de precios del proveedor</div>
+      <div class="card-sub">Subi el Excel mensual o usa la lista de Mayo ya cargada</div>
+      <div style="margin-top:1rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none;" onchange="loadExcel(this)" />
+        <button class="btn-sm" onclick="document.getElementById('excel-input').click()" style="padding:8px 18px;">Subir Excel</button>
+        <button class="btn-sm" onclick="useMayoList()" style="padding:8px 18px;background:var(--accent);color:#fff;border-color:var(--accent);">Usar lista Mayo</button>
+        <span id="excel-status" style="font-size:13px;color:var(--muted);">Sin lista cargada</span>
+      </div>
+    </div>
+
+    <div class="card" id="card-matching" style="display:none;">
+      <div class="card-title">Matching de productos</div>
+      <div class="card-sub">✅ Match automatico &nbsp;⚠️ Revisar &nbsp;❓ No encontrado — corregi con el dropdown</div>
+      <div id="matching-list" style="margin-top:1rem;max-height:420px;overflow-y:auto;"></div>
+      <button class="btn" onclick="applyMatching()" style="margin-top:1rem;width:auto;padding:10px 24px;">Confirmar y calcular</button>
+    </div>
+
+    <div id="rent-summary" style="display:none;">
+      <div class="metrics-grid" id="rent-metrics"></div>
+      <div class="card">
+        <div class="card-title">Resumen semanal para el proveedor</div>
+        <div class="card-sub">Total a pagarle por semana</div>
+        <div id="proveedor-summary"></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+          <div>
+            <div class="card-title">Rentabilidad por pedido</div>
+            <div class="card-sub">Desglose: venta, costo proveedor, comisiones, ganancia neta</div>
+          </div>
+          <button class="btn-sm" onclick="exportCSV()">Exportar CSV</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="border-bottom:1px solid var(--border);text-align:left;">
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">#</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Fecha</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Libros</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Venta</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Costo prov.</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Com.TN</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Com.MP</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Ganancia</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Margen</th>
+            </tr></thead>
+            <tbody id="rent-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-rentabilidad -->
+
+</div><!-- dashboard -->
 
 <script>
 let allOrders = [];
