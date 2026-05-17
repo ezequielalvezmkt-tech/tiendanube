@@ -252,6 +252,15 @@
   </div>
 </div>
 
+<!-- AUTOLOGIN LOADING SCREEN -->
+<div id="autologin-screen" style="display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:1rem;background:var(--bg);">
+  <div style="font-size:22px;font-weight:500;color:var(--text);">LPE Analytics</div>
+  <div style="font-size:13px;color:var(--muted);" id="autologin-msg">Conectando con Tiendanube...</div>
+  <div style="width:200px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px;">
+    <div id="autologin-bar" style="height:100%;width:0%;background:var(--text);border-radius:2px;transition:width 0.3s;"></div>
+  </div>
+</div>
+
 <!-- DASHBOARD -->
 <div id="dashboard">
   <div class="topbar">
@@ -485,8 +494,10 @@ window.addEventListener('DOMContentLoaded', () => {
       const autoChk = document.getElementById('autologin-chk');
       if (autoChk && autoLogin) autoChk.checked = true;
       if (days) document.getElementById('period-select').value = days;
-      // Auto-conectar si el usuario lo eligió
       if (autoLogin && token && storeId) {
+        // Ocultar login y mostrar pantalla de carga directamente
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('autologin-screen').style.display = 'flex';
         connectStore();
       }
     } catch(e) {}
@@ -500,8 +511,25 @@ function showErr(msg) {
 }
 function showLoad(msg) {
   const el = document.getElementById('loading');
-  if (msg) { el.textContent = msg; el.style.display = 'block'; }
-  else el.style.display = 'none';
+  if (el) {
+    if (msg) { el.textContent = msg; el.style.display = 'block'; }
+    else el.style.display = 'none';
+  }
+  // Actualizar pantalla de autologin si está visible
+  const screen = document.getElementById('autologin-screen');
+  if (screen && screen.style.display !== 'none') {
+    const msgEl = document.getElementById('autologin-msg');
+    const bar = document.getElementById('autologin-bar');
+    if (msg && msgEl) msgEl.textContent = msg;
+    // Animar barra según páginas cargadas
+    if (msg && bar) {
+      const match = msg.match(/página (\d+)/);
+      if (match) {
+        const pg = parseInt(match[1]);
+        bar.style.width = Math.min(90, pg * 15) + '%';
+      }
+    }
+  }
 }
 function destroyChart(id) {
   if (charts[id]) { charts[id].destroy(); delete charts[id]; }
@@ -562,6 +590,7 @@ async function connectStore() {
       return;
     }
     document.getElementById('setup').style.display = 'none';
+    document.getElementById('autologin-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
 
     const periodMap = {30:'Últimos 30 días',60:'Últimos 60 días',90:'Últimos 90 días',180:'Últimos 6 meses',365:'Último año'};
@@ -609,6 +638,9 @@ async function connectStore() {
   } catch(e) {
     showLoad(null);
     document.getElementById('connect-btn').disabled = false;
+    // Si falla autologin, volver al login
+    document.getElementById('autologin-screen').style.display = 'none';
+    document.getElementById('setup').style.display = 'flex';
     showErr('Error al conectar: ' + e.message);
   }
 }
