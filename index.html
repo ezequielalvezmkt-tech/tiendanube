@@ -261,6 +261,11 @@
     </div>
   </div>
 
+  <div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem;">
+    <button id="tab-metricas" onclick="switchTab('metricas')" style="padding:10px 20px;font-size:13px;font-weight:500;border:none;background:transparent;cursor:pointer;border-bottom:2px solid #1a1a18;color:#1a1a18;font-family:inherit;">Metricas</button>
+    <button id="tab-rentabilidad" onclick="switchTab('rentabilidad')" style="padding:10px 20px;font-size:13px;font-weight:500;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:#888780;font-family:inherit;">Rentabilidad</button>
+  </div>
+  <div id="panel-metricas">
   <div class="filters" id="filters">
     <span>Ver:</span>
   </div>
@@ -447,6 +452,7 @@ async function connectStore() {
     const periodMap = {30:'Últimos 30 días',60:'Últimos 60 días',90:'Últimos 90 días',180:'Últimos 6 meses',365:'Último año'};
     document.getElementById('period-label').textContent = periodMap[days] || `Últimos ${days} días`;
     document.getElementById('store-badge').textContent = `Store ${storeId}`;
+    initRent();
     document.getElementById('footer').textContent = `${allOrders.length} pedidos analizados (cancelados excluidos)`;
 
     const filtersEl = document.getElementById('filters');
@@ -835,6 +841,237 @@ function renderProvRevenue(orders) {
       <div class="prov-pct" style="width:60px;font-size:10px">$${Math.round(total/1000)}k</div>
     </div>`;
   }).join('');
+}
+
+var MAYO_LIST = [{"nombre": "50 Capsulas de amor propio", "costo": 13000}, {"nombre": "Amor fati", "costo": 8200}, {"nombre": "Ansiosamente Sara Espejo", "costo": 13500}, {"nombre": "Artificial Mariana Sigman", "costo": 9500}, {"nombre": "Basta de amores de mierda 3", "costo": 6000}, {"nombre": "Basta de amores de mierda 4", "costo": 6000}, {"nombre": "Basta de amores de mierda 5", "costo": 6000}, {"nombre": "Basta de amores de mierda 6", "costo": 6000}, {"nombre": "Brida", "costo": 5000}, {"nombre": "Cara a cara Gabriel Rolon", "costo": 9000}, {"nombre": "Centrate Deep work", "costo": 11500}, {"nombre": "Como ganar amigos e influir en las personas", "costo": 9000}, {"nombre": "Como hacer que te pasen cosas buenas", "costo": 13200}, {"nombre": "Como mandar a la mierda de forma educada", "costo": 12000}, {"nombre": "Como ser un estoico Massimo Pigliucci", "costo": 11000}, {"nombre": "Conecta con el dinero Brian Tracy", "costo": 12000}, {"nombre": "De mi para mi", "costo": 12000}, {"nombre": "De mi para mi 2", "costo": 12500}, {"nombre": "Deja de ser tu Joe dispenza", "costo": 13500}, {"nombre": "Desbloquea tu mente millonaria Victoria Mills", "costo": 6600}, {"nombre": "Deshacer la ansiedad", "costo": 12300}, {"nombre": "El abc de la actitud John C Maxwell", "costo": 6500}, {"nombre": "El abc del exito", "costo": 6500}, {"nombre": "El abc del liderazgo John C Maxwell", "costo": 6500}, {"nombre": "El arte de la guerra", "costo": 5500}, {"nombre": "El caballero de la armadura oxidada", "costo": 7000}, {"nombre": "El camino del artista", "costo": 16000}, {"nombre": "El club de las 5 de la manana Robin Sharma", "costo": 12600}, {"nombre": "El cuadrante del flujo del dinero", "costo": 8300}, {"nombre": "El demonio y la senorita prym", "costo": 5500}, {"nombre": "El duelo Gabriel rolon", "costo": 14000}, {"nombre": "El ego es el enemigo Ryan Holiday", "costo": 11500}, {"nombre": "El hombre en busca de sentido", "costo": 7000}, {"nombre": "El hombre mas rico de babilonia George clason", "costo": 7000}, {"nombre": "El kybalion", "costo": 5500}, {"nombre": "El libro de bill", "costo": 11500}, {"nombre": "El metodo Briones Beltran Briones", "costo": 8000}, {"nombre": "El monje que vendio su ferrari Robin Sharma", "costo": 8000}, {"nombre": "El negocio del siglo XXI", "costo": 7000}, {"nombre": "El placebo eres tu", "costo": 13500}, {"nombre": "El plan fenix Brian Tracy", "costo": 11000}, {"nombre": "El poder de la mente subconsciente Joseph Murphy", "costo": 11500}, {"nombre": "El poder de las palabras", "costo": 13000}, {"nombre": "El poder de los habitos", "costo": 12000}, {"nombre": "El poder del ahora", "costo": 10300}, {"nombre": "El poder esta dentro de ti Louise Hay", "costo": 8000}, {"nombre": "El poder frente la fuerza", "costo": 12000}, {"nombre": "El principe Nicolas Maquiavelo", "costo": 6000}, {"nombre": "El principito", "costo": 4500}, {"nombre": "El quinto acuerdo Miguel Ruiz", "costo": 8500}, {"nombre": "El regreso del caballero de la armadura oxidada", "costo": 6000}, {"nombre": "El sutil arte de que casi todo te importe una mierda", "costo": 9500}, {"nombre": "El vendedor mas grande del mundo", "costo": 6000}, {"nombre": "El viento conoce mi nombre Isabel allende", "costo": 12000}, {"nombre": "Empieza con el porque", "costo": 12000}, {"nombre": "Emprende tu propio negocio", "costo": 8000}, {"nombre": "En agosto nos vemos Garcia Marquez", "costo": 9200}, {"nombre": "Encuentra tu persona vitamina", "costo": 12500}, {"nombre": "Encuentros Gabriel rolon bolsillo", "costo": 9500}, {"nombre": "Es facil dejar de fumar Allen Carr", "costo": 9900}, {"nombre": "Escuela de negocios", "costo": 6500}, {"nombre": "Este dolor no es mio", "costo": 12000}, {"nombre": "Fleur Ariana Godoy", "costo": 8500}, {"nombre": "Folleto del millonario", "costo": 6800}, {"nombre": "Fuera del laberinto Spencer Johnson", "costo": 7500}, {"nombre": "Generacion ansiosa", "costo": 13000}, {"nombre": "Go pro Eric Worre", "costo": 6000}, {"nombre": "Habitos atomicos", "costo": 13000}, {"nombre": "Habitos para ser millonario Bryan tracy", "costo": 11000}, {"nombre": "Habla menos actua mas Brian Tracy", "costo": 6500}, {"nombre": "Influencia", "costo": 15000}, {"nombre": "Inquebrantable", "costo": 8500}, {"nombre": "Kaizen Daniel herrero", "costo": 10000}, {"nombre": "La bolsa o la vida", "costo": 13500}, {"nombre": "La disciplina marcara tu destino Ryan Holiday", "costo": 12500}, {"nombre": "La espia", "costo": 5000}, {"nombre": "La felicidad mas alla de la Gabriel rolon", "costo": 13400}, {"nombre": "La inteligencia emocional daniel goleman", "costo": 10500}, {"nombre": "La llamada del coraje", "costo": 12500}, {"nombre": "La naranja mecanica", "costo": 6000}, {"nombre": "La novia de sandro Camila villada", "costo": 6000}, {"nombre": "La psicologia del dinero", "costo": 12500}, {"nombre": "La quinta montana", "costo": 5500}, {"nombre": "La riqueza que el dinero no puede comprar", "costo": 12000}, {"nombre": "La soledad Gabriel Rolon", "costo": 12400}, {"nombre": "La teoria Let Them", "costo": 13000}, {"nombre": "La vaca purpura", "costo": 6500}, {"nombre": "Las 48 leyes del poder abreviado Robert Greene", "costo": 9500}, {"nombre": "Las Malas", "costo": 10000}, {"nombre": "Las siete leyes espirituales del exito Deepak chopra", "costo": 6500}, {"nombre": "Loca Lorena pronsky", "costo": 10200}, {"nombre": "Los 7 habitos de la gente altamente efectiva", "costo": 16500}, {"nombre": "Los cuatro acuerdos", "costo": 8000}, {"nombre": "Los ingenieros del caos Giuliano da Empoli", "costo": 9400}, {"nombre": "Los lideres comen al final Simon Sinek", "costo": 12500}, {"nombre": "Los peligros de fumar en la cama", "costo": 9700}, {"nombre": "Los secretos de la mente millonaria", "costo": 11500}, {"nombre": "Manual de vida Epicteto", "costo": 5500}, {"nombre": "Martin fierro", "costo": 5500}, {"nombre": "Mas vivo que el diablo", "costo": 11500}, {"nombre": "Meditaciones Marco aurelio", "costo": 5500}, {"nombre": "Memento mori recuerda tu muerte", "costo": 11500}, {"nombre": "Metas", "costo": 12500}, {"nombre": "Mi nombre es Emilia del valle", "costo": 14000}, {"nombre": "Mi psicologa me dijo", "costo": 9000}, {"nombre": "Muchas vidas muchos maestros Brian weiss", "costo": 8500}, {"nombre": "Muchos cuerpos una misma alma", "costo": 9000}, {"nombre": "No me puedes lastimar", "costo": 12500}, {"nombre": "No te creas todo lo que piensas", "costo": 9000}, {"nombre": "Ofertas de 100M bolsillo", "costo": 8000}, {"nombre": "Orgullo y prejuicio Jane Austen", "costo": 6500}, {"nombre": "Padre rico padre pobre Robert kiyosaki", "costo": 12900}, {"nombre": "Pasa a la accion", "costo": 11000}, {"nombre": "Piense y hagase rico", "costo": 8500}, {"nombre": "Poder sin limites", "costo": 13000}, {"nombre": "Psicologia oscura", "costo": 9000}, {"nombre": "Quien se ha llevado mi queso", "costo": 6000}, {"nombre": "Random estanislao nachrach", "costo": 6500}, {"nombre": "Recupera tu mente reconquista tu vida Marian Estape", "costo": 13000}, {"nombre": "Relato de un naufrago Gabriel Garcia Marquez", "costo": 5500}, {"nombre": "Rompe la barrera del no", "costo": 12900}, {"nombre": "Romper el circulo", "costo": 12000}, {"nombre": "Rota se camina igual", "costo": 11000}, {"nombre": "Si lo crees lo creas", "costo": 9000}, {"nombre": "Sobre la brevedad de la vida Seneca", "costo": 5500}, {"nombre": "Sobrenatural", "costo": 13500}, {"nombre": "Terapia para llevar", "costo": 12000}, {"nombre": "Tesis sobre una domesticacion Camila villada", "costo": 10000}, {"nombre": "Tiende tu cama", "costo": 9000}, {"nombre": "Titanes Tim Ferris", "costo": 22000}, {"nombre": "Trading en la zona", "costo": 12000}, {"nombre": "Traguese ese sapo Brian Tracy", "costo": 7500}, {"nombre": "Tus zonas erroneas", "costo": 9000}, {"nombre": "Un lugar soleado para gente sombria", "costo": 9900}, {"nombre": "Una nueva tierra", "costo": 10000}, {"nombre": "Usted puede sanar su vida", "costo": 8000}, {"nombre": "Vendele a la mente no a la gente", "costo": 10000}, {"nombre": "Vendes o vendes", "costo": 8900}, {"nombre": "Zensorialmente", "costo": 12400}];
+
+// ========== TABS ==========
+function switchTab(tab) {
+  var pm = document.getElementById('panel-metricas');
+  var pr = document.getElementById('panel-rentabilidad');
+  var tm = document.getElementById('tab-metricas');
+  var tr = document.getElementById('tab-rentabilidad');
+  pm.style.display = tab === 'metricas' ? 'block' : 'none';
+  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
+  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
+  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
+  tr.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
+  tr.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
+  if (tab === 'rentabilidad' && allOrders.length > 0 && providerList.length > 0 && !matchingDone) {
+    showMatching();
+  }
+}
+
+// ========== RENTABILIDAD ==========
+var providerList = [];
+var matchMap = {};
+var matchingDone = false;
+var rentOrders = [];
+
+function norm(s) {
+  return (s||'').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function sim(a, b) {
+  var na = norm(a), nb = norm(b);
+  if (na === nb) return 1;
+  var wa = na.split(' ').filter(function(w){return w.length>2;});
+  var wb = new Set(nb.split(' ').filter(function(w){return w.length>2;}));
+  var matches = wa.filter(function(w){return wb.has(w);}).length;
+  var union = new Set([...na.split(' '),...nb.split(' ')].filter(function(w){return w.length>2;})).size;
+  return union > 0 ? matches/union : 0;
+}
+
+async function loadExcel(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs');
+  var buf = await file.arrayBuffer();
+  var wb = XLSX.read(buf);
+  var ws = wb.Sheets[wb.SheetNames[0]];
+  var rows = XLSX.utils.sheet_to_json(ws, {header:1});
+  providerList = [];
+  rows.forEach(function(row, i) {
+    if (i===0) return;
+    var nombre = (row[0]||'').toString().trim();
+    var costo = parseFloat(row[2])||0;
+    if (nombre && costo>0) providerList.push({nombre:nombre, costo:costo});
+  });
+  document.getElementById('excel-status').textContent = providerList.length + ' libros cargados';
+  localStorage.setItem('lpe_provider_list', JSON.stringify(providerList));
+  matchingDone = false;
+  if (allOrders.length>0) showMatching();
+}
+
+function useMayoList() {
+  providerList = MAYO_LIST;
+  document.getElementById('excel-status').textContent = providerList.length + ' libros cargados (lista Mayo)';
+  localStorage.setItem('lpe_provider_list', JSON.stringify(providerList));
+  matchingDone = false;
+  if (allOrders.length>0) showMatching();
+}
+
+function showMatching() {
+  var titulos = new Set();
+  allOrders.forEach(function(o){ (o.products||[]).forEach(function(p){ if(p.name) titulos.add(p.name); }); });
+
+  var rows = [];
+  titulos.forEach(function(titulo) {
+    var bestMatch = null, bestScore = 0;
+    providerList.forEach(function(p) {
+      var s = sim(titulo, p.nombre);
+      if (s > bestScore) { bestScore = s; bestMatch = p; }
+    });
+    rows.push({titulo:titulo, bestMatch:bestMatch, bestScore:bestScore});
+  });
+  rows.sort(function(a,b){ return a.bestScore - b.bestScore; });
+
+  document.getElementById('card-matching').style.display = 'block';
+  var list = document.getElementById('matching-list');
+  list.innerHTML = rows.map(function(r,i) {
+    var icon = r.bestScore>=0.6 ? '✅' : r.bestScore>=0.3 ? '⚠️' : '❓';
+    var options = '<option value="">— Sin match —</option>' + providerList.map(function(p) {
+      return '<option value="' + p.nombre + '" ' + (p.nombre === (r.bestMatch&&r.bestMatch.nombre) ? 'selected' : '') + '>' + p.nombre + ' ($' + p.costo.toLocaleString('es-AR') + ')</option>';
+    }).join('');
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px;flex-wrap:wrap;">'
+      + '<span>' + icon + '</span>'
+      + '<span style="flex:1;min-width:160px;color:#1a1a18;">' + r.titulo + '</span>'
+      + '<span style="color:#888780;font-size:11px;width:36px;">' + Math.round(r.bestScore*100) + '%</span>'
+      + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" style="flex:1;min-width:180px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
+      + '</div>';
+  }).join('');
+}
+
+function applyMatching() {
+  matchMap = {};
+  document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
+    var titulo = sel.dataset.titulo;
+    var val = sel.value;
+    if (val) {
+      var p = providerList.find(function(x){ return x.nombre===val; });
+      if (p) matchMap[titulo] = p.costo;
+    }
+  });
+  localStorage.setItem('lpe_matchmap', JSON.stringify(matchMap));
+  matchingDone = true;
+  renderRentabilidad();
+}
+
+function renderRentabilidad() {
+  var pctTN = parseFloat(document.getElementById('pct-tn').value)/100 || 0.03;
+  var pctMP = parseFloat(document.getElementById('pct-mp').value)/100 || 0.0499;
+  var costoFijo = parseFloat(document.getElementById('costo-fijo').value)||0;
+
+  rentOrders = allOrders.map(function(o) {
+    var venta = parseFloat(o.total||0);
+    var costoProveedor = 0;
+    var libros = [];
+    (o.products||[]).forEach(function(p) {
+      var costo = matchMap[p.name]||0;
+      costoProveedor += costo*(p.quantity||1);
+      libros.push(p.name + (p.quantity>1?' x'+p.quantity:''));
+    });
+    var comTN = venta*pctTN;
+    var comMP = venta*pctMP;
+    var ganancia = venta - costoProveedor - comTN - comMP - costoFijo;
+    var margen = venta>0 ? (ganancia/venta)*100 : 0;
+    return {o:o, venta:venta, costoProveedor:costoProveedor, comTN:comTN, comMP:comMP, costoFijo:costoFijo, ganancia:ganancia, margen:margen, libros:libros, esDS:costoProveedor>0};
+  });
+
+  var dsOrders = rentOrders.filter(function(r){return r.esDS;});
+  var totalVenta = dsOrders.reduce(function(s,r){return s+r.venta;},0);
+  var totalCosto = dsOrders.reduce(function(s,r){return s+r.costoProveedor;},0);
+  var totalGanancia = dsOrders.reduce(function(s,r){return s+r.ganancia;},0);
+  var margenProm = totalVenta>0 ? (totalGanancia/totalVenta)*100 : 0;
+
+  document.getElementById('rent-metrics').innerHTML =
+    '<div class="metric"><div class="metric-label">Pedidos dropshipping</div><div class="metric-value">' + dsOrders.length + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Facturacion total</div><div class="metric-value" style="font-size:18px">$' + Math.round(totalVenta).toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">A pagar al proveedor</div><div class="metric-value" style="font-size:18px;color:#e24b4a">$' + Math.round(totalCosto).toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Tu ganancia neta</div><div class="metric-value" style="font-size:18px;color:#16a34a">$' + Math.round(totalGanancia).toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Margen promedio</div><div class="metric-value">' + margenProm.toFixed(1) + '%</div></div>';
+
+  // Resumen semanal
+  var semanas = {};
+  dsOrders.forEach(function(r) {
+    var d = new Date(r.o.created_at);
+    var day = d.getDay();
+    var mon = new Date(d);
+    mon.setDate(d.getDate()-(day===0?6:day-1));
+    var k = mon.toISOString().split('T')[0];
+    if (!semanas[k]) semanas[k]={costo:0,count:0,ganancia:0};
+    semanas[k].costo+=r.costoProveedor;
+    semanas[k].count++;
+    semanas[k].ganancia+=r.ganancia;
+  });
+  var semanasSort = Object.entries(semanas).sort(function(a,b){return b[0].localeCompare(a[0]);});
+  document.getElementById('proveedor-summary').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:0.75rem;">' +
+    '<thead><tr style="border-bottom:1px solid rgba(0,0,0,0.08);">' +
+    '<th style="padding:8px 6px;text-align:left;color:#888780;font-weight:500;">Semana</th>' +
+    '<th style="padding:8px 6px;text-align:right;color:#888780;font-weight:500;">Pedidos</th>' +
+    '<th style="padding:8px 6px;text-align:right;color:#888780;font-weight:500;">A pagar proveedor</th>' +
+    '<th style="padding:8px 6px;text-align:right;color:#888780;font-weight:500;">Tu ganancia</th>' +
+    '</tr></thead><tbody>' +
+    semanasSort.map(function(entry) {
+      var k=entry[0], v=entry[1];
+      var d=new Date(k);
+      return '<tr style="border-bottom:0.5px solid rgba(0,0,0,0.06);">' +
+        '<td style="padding:8px 6px;">Semana del ' + d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear() + '</td>' +
+        '<td style="padding:8px 6px;text-align:right;">' + v.count + '</td>' +
+        '<td style="padding:8px 6px;text-align:right;color:#e24b4a;font-weight:500;">$' + Math.round(v.costo).toLocaleString('es-AR') + '</td>' +
+        '<td style="padding:8px 6px;text-align:right;color:#16a34a;font-weight:500;">$' + Math.round(v.ganancia).toLocaleString('es-AR') + '</td>' +
+        '</tr>';
+    }).join('') + '</tbody></table>';
+
+  // Tabla por pedido
+  document.getElementById('rent-tbody').innerHTML = rentOrders.map(function(r) {
+    var d=new Date(r.o.created_at);
+    var fecha=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+    var mc=r.margen>30?'#16a34a':r.margen>15?'#d97706':'#e24b4a';
+    return '<tr style="border-bottom:0.5px solid rgba(0,0,0,0.06);">' +
+      '<td style="padding:7px 6px;font-weight:500;">#'+r.o.number+'</td>' +
+      '<td style="padding:7px 6px;color:#888780;">'+fecha+'</td>' +
+      '<td style="padding:7px 6px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+r.libros.join(', ')+'">'+r.libros.join(', ')+'</td>' +
+      '<td style="padding:7px 6px;text-align:right;">$'+Math.round(r.venta).toLocaleString('es-AR')+'</td>' +
+      '<td style="padding:7px 6px;text-align:right;color:#e24b4a;">'+(r.esDS?'$'+Math.round(r.costoProveedor).toLocaleString('es-AR'):'—')+'</td>' +
+      '<td style="padding:7px 6px;text-align:right;color:#888780;">$'+Math.round(r.comTN).toLocaleString('es-AR')+'</td>' +
+      '<td style="padding:7px 6px;text-align:right;color:#888780;">$'+Math.round(r.comMP).toLocaleString('es-AR')+'</td>' +
+      '<td style="padding:7px 6px;text-align:right;font-weight:500;color:'+mc+';">$'+Math.round(r.ganancia).toLocaleString('es-AR')+'</td>' +
+      '<td style="padding:7px 6px;text-align:right;color:'+mc+';">'+(r.esDS?r.margen.toFixed(1)+'%':'—')+'</td>' +
+      '</tr>';
+  }).join('');
+
+  document.getElementById('rent-summary').style.display='block';
+}
+
+function exportCSV() {
+  var rows = [['Pedido','Fecha','Libros','Venta','Costo Proveedor','Comision TN','Comision MP','Ganancia','Margen']];
+  rentOrders.forEach(function(r) {
+    var d=new Date(r.o.created_at);
+    rows.push([r.o.number, d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear(), r.libros.join(' | '), Math.round(r.venta), Math.round(r.costoProveedor), Math.round(r.comTN), Math.round(r.comMP), Math.round(r.ganancia), r.margen.toFixed(1)+'%']);
+  });
+  var csv = rows.map(function(r){return r.join(',');}).join('\n');
+  var blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href=url; a.download='lpe-rentabilidad.csv'; a.click();
+}
+
+// Cargar lista guardada del localStorage al iniciar rentabilidad
+function initRent() {
+  var saved = localStorage.getItem('lpe_provider_list');
+  var savedMatch = localStorage.getItem('lpe_matchmap');
+  if (saved) {
+    providerList = JSON.parse(saved);
+    document.getElementById('excel-status').textContent = providerList.length + ' libros cargados (guardados)';
+  }
+  if (savedMatch) {
+    matchMap = JSON.parse(savedMatch);
+    matchingDone = true;
+  }
 }
 
 function resetApp() {
