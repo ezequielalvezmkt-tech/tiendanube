@@ -1093,39 +1093,56 @@ function useMayoList() {
 }
 
 function showMatching() {
+  // Cargar matching guardado
+  var savedMatching = {};
+  try { savedMatching = JSON.parse(localStorage.getItem('lpe_matching') || '{}'); } catch(e) {}
+
   var titulos = new Set();
   allOrders.forEach(function(o){ (o.products||[]).forEach(function(p){ if(p.name) titulos.add(p.name); }); });
 
   var rows = [];
   titulos.forEach(function(titulo) {
-    var savedCosto = matchMap[titulo] || 0;
-    var names = window._matchMapNames || {};
-    var savedName = names[titulo] || null;
-    // Preseleccionar según nombre guardado (exacto, sin ambigüedad por costo)
-    var savedProvItem = null;
-    if (savedName && savedName !== '__manual__' && savedName !== '__none__') {
+    var saved = savedMatching[titulo] || null;
+    var savedTipo = saved ? saved.tipo : null;
+    var savedNombre = saved ? saved.nombre : null;
+    var savedCosto = saved ? saved.costo : 0;
+
+    var bestMatch = null, bestScore = 0;
+
+    if (savedTipo === 'lista' && savedNombre) {
+      // Usar el match guardado exacto por nombre
       providerList.forEach(function(p) {
-        if (p.nombre === savedName) savedProvItem = p;
+        if (p.nombre === savedNombre) { bestMatch = p; bestScore = 0.99; }
       });
-    }
-    // Si no hay nombre guardado, calcular por similitud
-    var bestMatch = savedProvItem, bestScore = savedProvItem ? 0.99 : 0;
-    if (!savedProvItem && savedName !== '__none__') {
+    } else if (savedTipo === 'none') {
+      // Explícitamente sin match — no buscar
+      bestMatch = null; bestScore = 0;
+    } else if (savedTipo === 'manual') {
+      // Precio manual guardado
+      bestMatch = null; bestScore = 0;
+    } else {
+      // Sin historial — buscar por similitud
       providerList.forEach(function(p) {
         var s = sim(titulo, p.nombre);
         if (s > bestScore) { bestScore = s; bestMatch = p; }
       });
     }
-    // Es manual si tiene costo guardado pero no tiene item de proveedor
-    var isManual = savedName === '__manual__' && savedCosto > 0;
-    // Es explícitamente sin match si fue marcado como __none__
-    var isNone = savedName === '__none__';
-    if (isNone) { bestMatch = null; bestScore = 0; }
-    rows.push({titulo:titulo, bestMatch:bestMatch, bestScore:bestScore, savedCosto:savedCosto, isManual:isManual, isNone:isNone});
+
+    rows.push({
+      titulo: titulo,
+      bestMatch: bestMatch,
+      bestScore: bestScore,
+      savedTipo: savedTipo,
+      savedCosto: savedCosto
+    });
   });
 
-  // Sin match primero, luego por score ascendente
+  // Sin match o manuales primero, luego por score
   rows.sort(function(a,b) {
+    var aNew = !a.savedTipo;
+    var bNew = !b.savedTipo;
+    if (aNew && !bNew) return -1;
+    if (!aNew && bNew) return 1;
     if (a.bestScore === 0 && b.bestScore > 0) return -1;
     if (a.bestScore > 0 && b.bestScore === 0) return 1;
     return a.bestScore - b.bestScore;
@@ -1133,19 +1150,18 @@ function showMatching() {
 
   document.getElementById('card-matching').style.display = 'block';
   var list = document.getElementById('matching-list');
-  list.innerHTML = rows.map(function(r,i) {
-    var icon = r.bestScore >= 0.6 ? '✅' : r.bestScore >= 0.3 ? '⚠️' : '❓';
+  list.innerHTML = rows.map(function(r, i) {
+    var icon = r.savedTipo === 'none' ? '🚫' : r.savedTipo === 'manual' ? '✏️' : r.bestScore >= 0.6 ? '✅' : r.bestScore >= 0.3 ? '⚠️' : '❓';
     var options = '<option value="">— Sin match —</option>' + providerList.map(function(p) {
-      var selected = r.bestMatch && p.nombre === r.bestMatch.nombre && !r.isManual && !r.isNone ? 'selected' : '';
+      var selected = r.bestMatch && p.nombre === r.bestMatch.nombre ? 'selected' : '';
       return '<option value="' + p.nombre + '" ' + selected + '>' + p.nombre + ' ($' + p.costo.toLocaleString("es-AR") + ')</option>';
     }).join('');
-    // Campo manual: visible si no hay match de lista O si tiene precio manual guardado
-    var showManual = r.isManual || (r.bestScore === 0 && !r.isNone) || r.bestScore === 0;
-    var manualVal = r.isManual ? r.savedCosto : '';
+    var showManual = r.savedTipo === 'manual' || (r.bestScore === 0 && r.savedTipo !== 'none') || (!r.savedTipo && r.bestScore === 0);
+    var manualVal = r.savedTipo === 'manual' ? r.savedCosto : '';
     return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px;flex-wrap:wrap;">'
-      + '<span style="width:20px">' + icon + '</span>'
+      + '<span style="width:22px">' + icon + '</span>'
       + '<span style="flex:1;min-width:150px;color:#1a1a18;">' + r.titulo + '</span>'
-      + '<span style="color:#888780;font-size:11px;width:30px;">' + Math.round(r.bestScore*100) + '%</span>'
+      + '<span style="color:#888780;font-size:10px;width:30px;">' + (r.savedTipo ? r.savedTipo : Math.round(r.bestScore*100)+'%') + '</span>'
       + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" onchange="window.toggleManual(' + i + ',this.value)" style="flex:1;min-width:160px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
       + '<div id="manual-wrap-' + i + '" style="display:' + (showManual ? 'flex' : 'none') + ';align-items:center;gap:4px;">'
       + '<span style="font-size:11px;color:#888780;">$ manual</span>'
@@ -1162,100 +1178,53 @@ function toggleManual(i, val) {
 }
 
 function applyMatching() {
+  var matching = {}; // { titulo: {costo, nombre, tipo} }
   matchMap = {};
+
   document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
     if (!sel.id.startsWith('match-')) return;
     var titulo = sel.dataset.titulo;
     if (!titulo) return;
     var val = sel.value;
+    var idx = sel.id.replace('match-', '');
+
     if (val) {
-      // Tiene match con lista del proveedor
+      // Match con lista del proveedor
       var p = providerList.find(function(x){ return x.nombre === val; });
-      if (p) matchMap[titulo] = p.costo;
+      if (p) {
+        matchMap[titulo] = p.costo;
+        matching[titulo] = { costo: p.costo, nombre: p.nombre, tipo: 'lista' };
+      }
     } else {
       // Sin match de lista — verificar precio manual
-      var idx = sel.id.replace('match-', '');
       var manualInput = document.getElementById('manual-' + idx);
-      if (manualInput) {
-        var manualCosto = parseFloat(manualInput.value);
-        if (manualCosto > 0) {
-          matchMap[titulo] = manualCosto;
-        }
-        // Si manualCosto es 0 o vacío, NO se agrega al matchMap
-        // → el título queda explícitamente sin costo (correcto)
-      }
-    }
-  });
-  // Guardar también qué nombre de proveedor se eligió para cada título
-  var matchMapNames = {};
-  document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
-    if (!sel.id.startsWith('match-')) return;
-    var titulo = sel.dataset.titulo;
-    if (!titulo) return;
-    var val = sel.value;
-    if (val) matchMapNames[titulo] = val;
-    // Si sin match con precio manual, guardar como '__manual__'
-    else {
-      var idx = sel.id.replace('match-', '');
-      var manualInput = document.getElementById('manual-' + idx);
-      if (manualInput && parseFloat(manualInput.value) > 0) {
-        matchMapNames[titulo] = '__manual__';
+      var manualCosto = manualInput ? parseFloat(manualInput.value) : 0;
+      if (manualCosto > 0) {
+        matchMap[titulo] = manualCosto;
+        matching[titulo] = { costo: manualCosto, nombre: null, tipo: 'manual' };
       } else {
-        matchMapNames[titulo] = '__none__'; // explícitamente sin match
+        // Explícitamente sin costo
+        matching[titulo] = { costo: 0, nombre: null, tipo: 'none' };
       }
     }
   });
+
   localStorage.setItem('lpe_matchmap', JSON.stringify(matchMap));
-  localStorage.setItem('lpe_matchmap_names', JSON.stringify(matchMapNames));
+  localStorage.setItem('lpe_matching', JSON.stringify(matching));
+
   matchingDone = true;
-  // Mostrar resumen del matching guardado
   var card = document.getElementById('card-matching');
   if (card) {
+    var linked = Object.values(matching).filter(function(m){ return m.tipo !== 'none'; }).length;
     card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;">'
       + '<div><div class="card-title">Matching guardado</div>'
-      + '<div class="card-sub">' + Object.keys(matchMap).length + ' productos vinculados</div></div>'
+      + '<div class="card-sub">' + linked + ' productos con costo asignado</div></div>'
       + '<button class="btn-sm" onclick="window.resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
       + '</div>';
   }
   renderRentabilidad();
 }
 
-function setRentPeriod(p) {
-  currentRentPeriod = p;
-  ['dia','semana','mes','custom'].forEach(function(x) {
-    var btn = document.getElementById('rent-period-'+x);
-    if(btn) btn.className = 'filter-btn'+(x===p?' active':'');
-  });
-  var cr = document.getElementById('rent-custom-range');
-  if(cr) cr.style.display = p==='custom'?'flex':'none';
-  if(p!=='custom') renderProveedorTable();
-}
-
-function getGroupKey(dateStr, period) {
-  var d = new Date(dateStr);
-  if(period==='dia') {
-    var mm=d.getMonth()+1, dd=d.getDate();
-    return d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;
-  }
-  if(period==='semana') {
-    var day=d.getDay(), mon=new Date(d);
-    mon.setDate(d.getDate()-(day===0?6:day-1));
-    return mon.toISOString().split('T')[0];
-  }
-  if(period==='mes') {
-    var mm=d.getMonth()+1;
-    return d.getFullYear()+'-'+(mm<10?'0':'')+mm;
-  }
-  return null;
-}
-
-function getGroupLabel(key, period) {
-  var meses=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  if(period==='dia'){var d=new Date(key+'T12:00:00');return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
-  if(period==='semana'){var d=new Date(key+'T12:00:00');return 'Semana del '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
-  if(period==='mes'){var p=key.split('-');return meses[parseInt(p[1])]+' '+p[0];}
-  return key;
-}
 
 function renderProveedorTable() {
   var ds = rentOrders.filter(function(r){return r.esDS;});
