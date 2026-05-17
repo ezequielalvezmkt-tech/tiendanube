@@ -1177,35 +1177,31 @@ function toggleManual(i, val) {
   if (wrap) wrap.style.display = val === '' ? 'flex' : 'none';
 }
 
+var _matchingRows = []; // array global con los títulos en orden
+
 function applyMatching() {
-  var matching = {}; // { titulo: {costo, nombre, tipo} }
+  var matching = {};
   matchMap = {};
 
-  document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
-    if (!sel.id.startsWith('match-')) return;
-    var titulo = sel.dataset.titulo;
-    if (!titulo) return;
+  // Usar _matchingRows que tiene los títulos en el orden exacto del render
+  _matchingRows.forEach(function(titulo, i) {
+    var sel = document.getElementById('match-' + i);
+    if (!sel) return;
     var val = sel.value;
-    var idx = sel.id.replace('match-', '');
+    var manualInput = document.getElementById('manual-' + i);
+    var manualCosto = manualInput ? parseFloat(manualInput.value) || 0 : 0;
 
     if (val) {
-      // Match con lista del proveedor
       var p = providerList.find(function(x){ return x.nombre === val; });
       if (p) {
         matchMap[titulo] = p.costo;
         matching[titulo] = { costo: p.costo, nombre: p.nombre, tipo: 'lista' };
       }
+    } else if (manualCosto > 0) {
+      matchMap[titulo] = manualCosto;
+      matching[titulo] = { costo: manualCosto, nombre: null, tipo: 'manual' };
     } else {
-      // Sin match de lista — verificar precio manual
-      var manualInput = document.getElementById('manual-' + idx);
-      var manualCosto = manualInput ? parseFloat(manualInput.value) : 0;
-      if (manualCosto > 0) {
-        matchMap[titulo] = manualCosto;
-        matching[titulo] = { costo: manualCosto, nombre: null, tipo: 'manual' };
-      } else {
-        // Explícitamente sin costo
-        matching[titulo] = { costo: 0, nombre: null, tipo: 'none' };
-      }
+      matching[titulo] = { costo: 0, nombre: null, tipo: 'none' };
     }
   });
 
