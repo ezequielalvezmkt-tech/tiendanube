@@ -1001,7 +1001,23 @@ async function loadExcel(input) {
   document.getElementById('excel-status').textContent = providerList.length + ' libros cargados';
   localStorage.setItem('lpe_provider_list', JSON.stringify(providerList));
   matchingDone = false;
-  if (allOrders.length>0) showMatching();
+  if (allOrders.length > 0) {
+    var savedMatch = localStorage.getItem('lpe_matchmap');
+    if (savedMatch) {
+      matchMap = JSON.parse(savedMatch);
+      matchingDone = true;
+      renderRentabilidad();
+      document.getElementById('card-matching').style.display = 'block';
+      document.getElementById('card-matching').innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;">'
+        + '<div><div class="card-title">Matching guardado</div>'
+        + '<div class="card-sub">' + Object.keys(matchMap).length + ' productos vinculados</div></div>'
+        + '<button class="btn-sm" onclick="resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
+        + '</div>';
+    } else {
+      showMatching();
+    }
+  }
 }
 
 function useMayoList() {
@@ -1009,7 +1025,23 @@ function useMayoList() {
   document.getElementById('excel-status').textContent = providerList.length + ' libros cargados (lista Mayo)';
   localStorage.setItem('lpe_provider_list', JSON.stringify(providerList));
   matchingDone = false;
-  if (allOrders.length>0) showMatching();
+  if (allOrders.length > 0) {
+    var savedMatch = localStorage.getItem('lpe_matchmap');
+    if (savedMatch) {
+      matchMap = JSON.parse(savedMatch);
+      matchingDone = true;
+      renderRentabilidad();
+      document.getElementById('card-matching').style.display = 'block';
+      document.getElementById('card-matching').innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;">'
+        + '<div><div class="card-title">Matching guardado</div>'
+        + '<div class="card-sub">' + Object.keys(matchMap).length + ' productos vinculados desde la ultima sesion</div></div>'
+        + '<button class="btn-sm" onclick="resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
+        + '</div>';
+    } else {
+      showMatching();
+    }
+  }
 }
 
 function showMatching() {
