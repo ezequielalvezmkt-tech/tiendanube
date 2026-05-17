@@ -405,16 +405,41 @@
 
     <div id="rent-summary" style="display:none;">
       <div class="metrics-grid" id="rent-metrics"></div>
+
+      <!-- COSTO AL PROVEEDOR POR PERÍODO -->
       <div class="card">
-        <div class="card-title">Resumen semanal para el proveedor</div>
-        <div class="card-sub">Total a pagarle por semana</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div class="card-title">Costo al proveedor por período</div>
+            <div class="card-sub">Total a pagarle según agrupación temporal</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="filter-btn active" id="rent-period-dia" onclick="setRentPeriod('dia')">Diario</button>
+            <button class="filter-btn" id="rent-period-semana" onclick="setRentPeriod('semana')">Semanal</button>
+            <button class="filter-btn" id="rent-period-mes" onclick="setRentPeriod('mes')">Mensual</button>
+            <button class="filter-btn" id="rent-period-custom" onclick="setRentPeriod('custom')">Personalizado</button>
+          </div>
+        </div>
+        <div id="rent-custom-range" style="display:none;gap:12px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;">
+            <label style="color:var(--muted)">Desde:</label>
+            <input type="date" id="rent-date-from" style="padding:5px 8px;font-size:12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;" />
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;">
+            <label style="color:var(--muted)">Hasta:</label>
+            <input type="date" id="rent-date-to" style="padding:5px 8px;font-size:12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;" />
+          </div>
+          <button class="btn-sm" onclick="renderProveedorTable()" style="padding:5px 14px;">Aplicar</button>
+        </div>
         <div id="proveedor-summary"></div>
       </div>
+
+      <!-- RENTABILIDAD POR PEDIDO -->
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:8px;">
           <div>
             <div class="card-title">Rentabilidad por pedido</div>
-            <div class="card-sub">Desglose: venta, costo proveedor, comisiones, ganancia neta</div>
+            <div class="card-sub">Clic en cada fila para ver el detalle de libros y costos</div>
           </div>
           <button class="btn-sm" onclick="exportCSV()">Exportar CSV</button>
         </div>
@@ -423,13 +448,13 @@
             <thead><tr style="border-bottom:1px solid var(--border);text-align:left;">
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;">#</th>
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Fecha</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Libros</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Venta</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Venta</th>
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Costo prov.</th>
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Com.TN</th>
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Com.MP</th>
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Ganancia</th>
               <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Margen</th>
+              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:center;">Det.</th>
             </tr></thead>
             <tbody id="rent-tbody"></tbody>
           </table>
@@ -1016,6 +1041,14 @@ function showMatching() {
       + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" style="flex:1;min-width:180px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
       + '</div>';
   }).join('');
+  // Mostrar campo manual para los que arrancan sin match
+  rows.forEach(function(r, i) {
+    var sel = document.getElementById('match-' + i);
+    if (sel && sel.value === '') {
+      var wrap = document.getElementById('manual-wrap-' + i);
+      if (wrap) wrap.style.display = 'flex';
+    }
+  });
 }
 
 function toggleManual(i, val) {
@@ -1046,89 +1079,166 @@ function applyMatching() {
   renderRentabilidad();
 }
 
+function setRentPeriod(p) {
+  currentRentPeriod = p;
+  ['dia','semana','mes','custom'].forEach(function(x) {
+    var btn = document.getElementById('rent-period-'+x);
+    if(btn) btn.className = 'filter-btn'+(x===p?' active':'');
+  });
+  var cr = document.getElementById('rent-custom-range');
+  if(cr) cr.style.display = p==='custom'?'flex':'none';
+  if(p!=='custom') renderProveedorTable();
+}
+
+function getGroupKey(dateStr, period) {
+  var d = new Date(dateStr);
+  if(period==='dia') {
+    var mm=d.getMonth()+1, dd=d.getDate();
+    return d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;
+  }
+  if(period==='semana') {
+    var day=d.getDay(), mon=new Date(d);
+    mon.setDate(d.getDate()-(day===0?6:day-1));
+    return mon.toISOString().split('T')[0];
+  }
+  if(period==='mes') {
+    var mm=d.getMonth()+1;
+    return d.getFullYear()+'-'+(mm<10?'0':'')+mm;
+  }
+  return null;
+}
+
+function getGroupLabel(key, period) {
+  var meses=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  if(period==='dia'){var d=new Date(key+'T12:00:00');return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
+  if(period==='semana'){var d=new Date(key+'T12:00:00');return 'Semana del '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
+  if(period==='mes'){var p=key.split('-');return meses[parseInt(p[1])]+' '+p[0];}
+  return key;
+}
+
+function renderProveedorTable() {
+  var ds = rentOrders.filter(function(r){return r.esDS;});
+  var period = currentRentPeriod;
+  var filtered = ds;
+  if(period==='custom') {
+    var from = document.getElementById('rent-date-from').value;
+    var to = document.getElementById('rent-date-to').value;
+    if(from) filtered = filtered.filter(function(r){return r.o.created_at>=from;});
+    if(to) filtered = filtered.filter(function(r){return r.o.created_at<=to+'T23:59:59';});
+  }
+  var groups = {};
+  filtered.forEach(function(r) {
+    var k = period==='custom'?'Período seleccionado':getGroupKey(r.o.created_at,period);
+    if(!groups[k]) groups[k]={costo:0,count:0,ganancia:0,venta:0};
+    groups[k].costo+=r.costoProveedor; groups[k].count++; groups[k].ganancia+=r.ganancia; groups[k].venta+=r.venta;
+  });
+  var sorted = Object.entries(groups).sort(function(a,b){return b[0].localeCompare(a[0]);});
+  var tc = filtered.reduce(function(s,r){return s+r.costoProveedor;},0);
+  var tg = filtered.reduce(function(s,r){return s+r.ganancia;},0);
+  var tv = filtered.reduce(function(s,r){return s+r.venta;},0);
+  document.getElementById('proveedor-summary').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:.75rem;">'+
+    '<thead><tr style="border-bottom:1px solid var(--border);">'+
+    '<th style="padding:8px 6px;text-align:left;color:var(--muted);font-weight:500">Período</th>'+
+    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">Pedidos</th>'+
+    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">Facturado</th>'+
+    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">A pagar</th>'+
+    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">Ganancia</th>'+
+    '</tr></thead><tbody>'+
+    sorted.map(function(e){
+      var k=e[0],v=e[1],label=period==='custom'?k:getGroupLabel(k,period);
+      return '<tr style="border-bottom:0.5px solid var(--border);">'+
+        '<td style="padding:8px 6px;font-weight:500">'+label+'</td>'+
+        '<td style="padding:8px 6px;text-align:right">'+v.count+'</td>'+
+        '<td style="padding:8px 6px;text-align:right;color:var(--muted)">$'+Math.round(v.venta).toLocaleString('es-AR')+'</td>'+
+        '<td style="padding:8px 6px;text-align:right;color:#e24b4a;font-weight:500">$'+Math.round(v.costo).toLocaleString('es-AR')+'</td>'+
+        '<td style="padding:8px 6px;text-align:right;color:#16a34a;font-weight:500">$'+Math.round(v.ganancia).toLocaleString('es-AR')+'</td>'+
+        '</tr>';
+    }).join('')+
+    '<tr style="border-top:2px solid var(--border);font-weight:700;">'+
+    '<td style="padding:8px 6px">TOTAL</td>'+
+    '<td style="padding:8px 6px;text-align:right">'+filtered.length+'</td>'+
+    '<td style="padding:8px 6px;text-align:right">$'+Math.round(tv).toLocaleString('es-AR')+'</td>'+
+    '<td style="padding:8px 6px;text-align:right;color:#e24b4a">$'+Math.round(tc).toLocaleString('es-AR')+'</td>'+
+    '<td style="padding:8px 6px;text-align:right;color:#16a34a">$'+Math.round(tg).toLocaleString('es-AR')+'</td>'+
+    '</tr></tbody></table>';
+}
+
+function toggleRentDetail(num) {
+  var el = document.getElementById('rent-detail-'+num);
+  if(el) el.style.display = el.style.display==='none'?'table-row':'none';
+}
+
+var currentRentPeriod = 'dia';
+
 function renderRentabilidad() {
-  var pctTN = parseFloat(document.getElementById('pct-tn').value)/100 || 0.03;
-  var pctMP = parseFloat(document.getElementById('pct-mp').value)/100 || 0.0499;
+  var pctTN = (parseFloat(document.getElementById('pct-tn').value)||3)/100;
+  var pctMP = (parseFloat(document.getElementById('pct-mp').value)||4.99)/100;
   var costoFijo = parseFloat(document.getElementById('costo-fijo').value)||0;
 
   rentOrders = allOrders.map(function(o) {
     var venta = parseFloat(o.total||0);
-    var costoProveedor = 0;
-    var libros = [];
+    var costoProveedor = 0, librosDetalle = [];
     (o.products||[]).forEach(function(p) {
-      var costo = matchMap[p.name]||0;
-      costoProveedor += costo*(p.quantity||1);
-      libros.push(p.name + (p.quantity>1?' x'+p.quantity:''));
+      var cu = matchMap[p.name]||0;
+      var qty = p.quantity||1;
+      costoProveedor += cu*qty;
+      librosDetalle.push({nombre:p.name, qty:qty, costoUnit:cu, costoTotal:cu*qty, sinMatch:cu===0});
     });
-    var comTN = venta*pctTN;
-    var comMP = venta*pctMP;
-    var ganancia = venta - costoProveedor - comTN - comMP - costoFijo;
-    var margen = venta>0 ? (ganancia/venta)*100 : 0;
-    return {o:o, venta:venta, costoProveedor:costoProveedor, comTN:comTN, comMP:comMP, costoFijo:costoFijo, ganancia:ganancia, margen:margen, libros:libros, esDS:costoProveedor>0};
+    var comTN=venta*pctTN, comMP=venta*pctMP;
+    var ganancia=venta-costoProveedor-comTN-comMP-costoFijo;
+    var margen=venta>0?(ganancia/venta)*100:0;
+    return {o:o, venta:venta, costoProveedor:costoProveedor, comTN:comTN, comMP:comMP, ganancia:ganancia, margen:margen, librosDetalle:librosDetalle, esDS:costoProveedor>0};
   });
 
-  var dsOrders = rentOrders.filter(function(r){return r.esDS;});
-  var totalVenta = dsOrders.reduce(function(s,r){return s+r.venta;},0);
-  var totalCosto = dsOrders.reduce(function(s,r){return s+r.costoProveedor;},0);
-  var totalGanancia = dsOrders.reduce(function(s,r){return s+r.ganancia;},0);
-  var margenProm = totalVenta>0 ? (totalGanancia/totalVenta)*100 : 0;
+  var ds=rentOrders.filter(function(r){return r.esDS;});
+  var tv=ds.reduce(function(s,r){return s+r.venta;},0);
+  var tc=ds.reduce(function(s,r){return s+r.costoProveedor;},0);
+  var tg=ds.reduce(function(s,r){return s+r.ganancia;},0);
+  var mp=tv>0?(tg/tv)*100:0;
+  var sinMatch=rentOrders.reduce(function(s,r){return s+r.librosDetalle.filter(function(l){return l.sinMatch;}).length;},0);
 
   document.getElementById('rent-metrics').innerHTML =
-    '<div class="metric"><div class="metric-label">Pedidos dropshipping</div><div class="metric-value">' + dsOrders.length + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Facturacion total</div><div class="metric-value" style="font-size:18px">$' + Math.round(totalVenta).toLocaleString('es-AR') + '</div></div>' +
-    '<div class="metric"><div class="metric-label">A pagar al proveedor</div><div class="metric-value" style="font-size:18px;color:#e24b4a">$' + Math.round(totalCosto).toLocaleString('es-AR') + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Tu ganancia neta</div><div class="metric-value" style="font-size:18px;color:#16a34a">$' + Math.round(totalGanancia).toLocaleString('es-AR') + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Margen promedio</div><div class="metric-value">' + margenProm.toFixed(1) + '%</div></div>';
+    '<div class="metric"><div class="metric-label">Pedidos DS</div><div class="metric-value">'+ds.length+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Facturacion</div><div class="metric-value" style="font-size:18px">$'+Math.round(tv).toLocaleString('es-AR')+'</div></div>'+
+    '<div class="metric"><div class="metric-label">A pagar proveedor</div><div class="metric-value" style="font-size:18px;color:#e24b4a">$'+Math.round(tc).toLocaleString('es-AR')+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Tu ganancia neta</div><div class="metric-value" style="font-size:18px;color:#16a34a">$'+Math.round(tg).toLocaleString('es-AR')+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Margen promedio</div><div class="metric-value">'+mp.toFixed(1)+'%</div></div>'+
+    (sinMatch>0?'<div class="metric" style="border-color:#d97706;"><div class="metric-label" style="color:#d97706">Sin costo asignado</div><div class="metric-value" style="color:#d97706">'+sinMatch+' libros</div></div>':'');
 
-  // Resumen semanal
-  var semanas = {};
-  dsOrders.forEach(function(r) {
-    var d = new Date(r.o.created_at);
-    var day = d.getDay();
-    var mon = new Date(d);
-    mon.setDate(d.getDate()-(day===0?6:day-1));
-    var k = mon.toISOString().split('T')[0];
-    if (!semanas[k]) semanas[k]={costo:0,count:0,ganancia:0};
-    semanas[k].costo+=r.costoProveedor;
-    semanas[k].count++;
-    semanas[k].ganancia+=r.ganancia;
-  });
-  var semanasSort = Object.entries(semanas).sort(function(a,b){return b[0].localeCompare(a[0]);});
-  document.getElementById('proveedor-summary').innerHTML =
-    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:0.75rem;">' +
-    '<thead><tr style="border-bottom:1px solid rgba(0,0,0,0.08);">' +
-    '<th style="padding:8px 6px;text-align:left;color:#888780;font-weight:500;">Semana</th>' +
-    '<th style="padding:8px 6px;text-align:right;color:#888780;font-weight:500;">Pedidos</th>' +
-    '<th style="padding:8px 6px;text-align:right;color:#888780;font-weight:500;">A pagar proveedor</th>' +
-    '<th style="padding:8px 6px;text-align:right;color:#888780;font-weight:500;">Tu ganancia</th>' +
-    '</tr></thead><tbody>' +
-    semanasSort.map(function(entry) {
-      var k=entry[0], v=entry[1];
-      var d=new Date(k);
-      return '<tr style="border-bottom:0.5px solid rgba(0,0,0,0.06);">' +
-        '<td style="padding:8px 6px;">Semana del ' + d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear() + '</td>' +
-        '<td style="padding:8px 6px;text-align:right;">' + v.count + '</td>' +
-        '<td style="padding:8px 6px;text-align:right;color:#e24b4a;font-weight:500;">$' + Math.round(v.costo).toLocaleString('es-AR') + '</td>' +
-        '<td style="padding:8px 6px;text-align:right;color:#16a34a;font-weight:500;">$' + Math.round(v.ganancia).toLocaleString('es-AR') + '</td>' +
-        '</tr>';
-    }).join('') + '</tbody></table>';
+  renderProveedorTable();
 
-  // Tabla por pedido
   document.getElementById('rent-tbody').innerHTML = rentOrders.map(function(r) {
     var d=new Date(r.o.created_at);
     var fecha=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
     var mc=r.margen>30?'#16a34a':r.margen>15?'#d97706':'#e24b4a';
-    return '<tr style="border-bottom:0.5px solid rgba(0,0,0,0.06);">' +
-      '<td style="padding:7px 6px;font-weight:500;">#'+r.o.number+'</td>' +
-      '<td style="padding:7px 6px;color:#888780;">'+fecha+'</td>' +
-      '<td style="padding:7px 6px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+r.libros.join(', ')+'">'+r.libros.join(', ')+'</td>' +
-      '<td style="padding:7px 6px;text-align:right;">$'+Math.round(r.venta).toLocaleString('es-AR')+'</td>' +
-      '<td style="padding:7px 6px;text-align:right;color:#e24b4a;">'+(r.esDS?'$'+Math.round(r.costoProveedor).toLocaleString('es-AR'):'—')+'</td>' +
-      '<td style="padding:7px 6px;text-align:right;color:#888780;">$'+Math.round(r.comTN).toLocaleString('es-AR')+'</td>' +
-      '<td style="padding:7px 6px;text-align:right;color:#888780;">$'+Math.round(r.comMP).toLocaleString('es-AR')+'</td>' +
-      '<td style="padding:7px 6px;text-align:right;font-weight:500;color:'+mc+';">$'+Math.round(r.ganancia).toLocaleString('es-AR')+'</td>' +
-      '<td style="padding:7px 6px;text-align:right;color:'+mc+';">'+(r.esDS?r.margen.toFixed(1)+'%':'—')+'</td>' +
-      '</tr>';
+    var hasSM=r.librosDetalle.some(function(l){return l.sinMatch;});
+    var detRows=r.librosDetalle.map(function(l){
+      return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:11px;">'+
+        '<span style="flex:1;color:'+(l.sinMatch?'#d97706':'var(--text)')+'">'+l.nombre+(l.qty>1?' x'+l.qty:'')+(l.sinMatch?' ⚠️ sin costo asignado':'')+'</span>'+
+        '<span style="color:#e24b4a;font-weight:500;min-width:90px;text-align:right">'+(l.sinMatch?'— (no cobrado)':'$'+l.costoTotal.toLocaleString('es-AR'))+'</span>'+
+        '</div>';
+    }).join('');
+    return '<tr style="border-bottom:0.5px solid var(--border);cursor:pointer;background:var(--surface);" onclick="toggleRentDetail(''+r.o.number+'')">'+
+      '<td style="padding:7px 6px;font-weight:500">#'+r.o.number+'</td>'+
+      '<td style="padding:7px 6px;color:var(--muted)">'+fecha+'</td>'+
+      '<td style="padding:7px 6px;text-align:right">$'+Math.round(r.venta).toLocaleString('es-AR')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:#e24b4a">'+(r.esDS?'$'+Math.round(r.costoProveedor).toLocaleString('es-AR'):'—')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comTN).toLocaleString('es-AR')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comMP).toLocaleString('es-AR')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;font-weight:500;color:'+mc+'">$'+Math.round(r.ganancia).toLocaleString('es-AR')+'</td>'+
+      '<td style="padding:7px 6px;text-align:right;color:'+mc+'">'+(r.esDS?r.margen.toFixed(1)+'%':'—')+'</td>'+
+      '<td style="padding:7px 6px;text-align:center;font-size:10px;color:var(--muted)">▼'+(hasSM?' ⚠️':'')+'</td>'+
+      '</tr>'+
+      '<tr id="rent-detail-'+r.o.number+'" style="display:none;background:var(--bg);">'+
+      '<td colspan="9" style="padding:10px 20px;">'+
+      '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Detalle de libros en este pedido</div>'+
+      detRows+
+      '<div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-size:12px;font-weight:700;border-top:1px solid var(--border);margin-top:4px;">'+
+      '<span>Total costo proveedor</span>'+
+      '<span style="color:#e24b4a">$'+Math.round(r.costoProveedor).toLocaleString('es-AR')+'</span>'+
+      '</div>'+
+      '</td></tr>';
   }).join('');
 
   document.getElementById('rent-summary').style.display='block';
