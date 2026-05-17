@@ -1018,6 +1018,11 @@ function showMatching() {
   }).join('');
 }
 
+function toggleManual(i, val) {
+  var wrap = document.getElementById('manual-wrap-' + i);
+  if (wrap) wrap.style.display = val === '' ? 'flex' : 'none';
+}
+
 function applyMatching() {
   matchMap = {};
   document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
@@ -1026,6 +1031,14 @@ function applyMatching() {
     if (val) {
       var p = providerList.find(function(x){ return x.nombre===val; });
       if (p) matchMap[titulo] = p.costo;
+    } else {
+      // Buscar input manual correspondiente
+      var idx = sel.id.replace('match-','');
+      var manualInput = document.getElementById('manual-' + idx);
+      if (manualInput) {
+        var manualCosto = parseFloat(manualInput.value);
+        if (manualCosto > 0) matchMap[titulo] = manualCosto;
+      }
     }
   });
   localStorage.setItem('lpe_matchmap', JSON.stringify(matchMap));
