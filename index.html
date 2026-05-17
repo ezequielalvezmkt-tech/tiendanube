@@ -1114,11 +1114,17 @@ function showMatching() {
     var options = '<option value="">— Sin match —</option>' + providerList.map(function(p) {
       return '<option value="' + p.nombre + '" ' + (p.nombre === (r.bestMatch&&r.bestMatch.nombre) ? 'selected' : '') + '>' + p.nombre + ' ($' + p.costo.toLocaleString('es-AR') + ')</option>';
     }).join('');
+    var noMatch = (!r.bestMatch || r.bestScore === 0);
+    var manualVal = (noMatch && r.savedCosto > 0) ? r.savedCosto : '';
     return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px;flex-wrap:wrap;">'
       + '<span>' + icon + '</span>'
-      + '<span style="flex:1;min-width:160px;color:#1a1a18;">' + r.titulo + '</span>'
-      + '<span style="color:#888780;font-size:11px;width:36px;">' + Math.round(r.bestScore*100) + '%</span>'
-      + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" style="flex:1;min-width:180px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
+      + '<span style="flex:1;min-width:150px;color:#1a1a18;">' + r.titulo + '</span>'
+      + '<span style="color:#888780;font-size:11px;width:30px;">' + Math.round(r.bestScore*100) + '%</span>'
+      + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" onchange="window.toggleManual(' + i + ',this.value)" style="flex:1;min-width:160px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
+      + '<div id="manual-wrap-' + i + '" style="display:' + (noMatch ? 'flex' : 'none') + ';align-items:center;gap:4px;">'
+      + '<span style="font-size:11px;color:#888780;">$ manual</span>'
+      + '<input type="number" id="manual-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" value="' + manualVal + '" placeholder="0" min="0" step="100" style="width:80px;padding:4px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;" />'
+      + '</div>'
       + '</div>';
   }).join('');
   // Mostrar campo manual para los que arrancan sin match
