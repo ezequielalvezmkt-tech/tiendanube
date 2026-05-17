@@ -1208,38 +1208,66 @@ function renderRentabilidad() {
 
   renderProveedorTable();
 
-  document.getElementById('rent-tbody').innerHTML = rentOrders.map(function(r) {
-    var d=new Date(r.o.created_at);
-    var fecha=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-    var mc=r.margen>30?'#16a34a':r.margen>15?'#d97706':'#e24b4a';
-    var hasSM=r.librosDetalle.some(function(l){return l.sinMatch;});
-    var detRows=r.librosDetalle.map(function(l){
-      return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:11px;">'+
-        '<span style="flex:1;color:'+(l.sinMatch?'#d97706':'var(--text)')+'">'+l.nombre+(l.qty>1?' x'+l.qty:'')+(l.sinMatch?' ⚠️ sin costo asignado':'')+'</span>'+
-        '<span style="color:#e24b4a;font-weight:500;min-width:90px;text-align:right">'+(l.sinMatch?'— (no cobrado)':'$'+l.costoTotal.toLocaleString("es-AR"))+'</span>'+
-        '</div>';
-    }).join('');
-    return '<tr style="border-bottom:0.5px solid var(--border);cursor:pointer;background:var(--surface);" onclick="toggleRentDetail(''+r.o.number+'')">'+
-      '<td style="padding:7px 6px;font-weight:500">#'+r.o.number+'</td>'+
-      '<td style="padding:7px 6px;color:var(--muted)">'+fecha+'</td>'+
-      '<td style="padding:7px 6px;text-align:right">$'+Math.round(r.venta).toLocaleString("es-AR")+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:#e24b4a">'+(r.esDS?'$'+Math.round(r.costoProveedor).toLocaleString("es-AR"):'—')+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comTN).toLocaleString("es-AR")+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:var(--muted)">$'+Math.round(r.comMP).toLocaleString("es-AR")+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;font-weight:500;color:'+mc+'">$'+Math.round(r.ganancia).toLocaleString("es-AR")+'</td>'+
-      '<td style="padding:7px 6px;text-align:right;color:'+mc+'">'+(r.esDS?r.margen.toFixed(1)+'%':'—')+'</td>'+
-      '<td style="padding:7px 6px;text-align:center;font-size:10px;color:var(--muted)">▼'+(hasSM?' ⚠️':'')+'</td>'+
-      '</tr>'+
-      '<tr id="rent-detail-'+r.o.number+'" style="display:none;background:var(--bg);">'+
-      '<td colspan="9" style="padding:10px 20px;">'+
-      '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Detalle de libros en este pedido</div>'+
-      detRows+
-      '<div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-size:12px;font-weight:700;border-top:1px solid var(--border);margin-top:4px;">'+
-      '<span>Total costo proveedor</span>'+
-      '<span style="color:#e24b4a">$'+Math.round(r.costoProveedor).toLocaleString("es-AR")+'</span>'+
-      '</div>'+
-      '</td></tr>';
-  }).join('');
+  // Construir tabla con DOM para evitar conflictos de comillas
+  var tbody = document.getElementById('rent-tbody');
+  tbody.innerHTML = '';
+  rentOrders.forEach(function(r) {
+    var d = new Date(r.o.created_at);
+    var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+    var mc = r.margen>30 ? '#16a34a' : r.margen>15 ? '#d97706' : '#e24b4a';
+    var hasSM = r.librosDetalle.some(function(l){return l.sinMatch;});
+
+    // Fila principal
+    var tr = document.createElement('tr');
+    tr.style.cssText = 'border-bottom:0.5px solid var(--border);cursor:pointer;background:var(--surface);';
+    tr.onclick = (function(num){ return function(){ toggleRentDetail(num); }; })(r.o.number);
+
+    var cells = [
+      {html: '#'+r.o.number, style: 'padding:7px 6px;font-weight:500'},
+      {html: fecha, style: 'padding:7px 6px;color:var(--muted)'},
+      {html: '$'+Math.round(r.venta).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right'},
+      {html: r.esDS ? '$'+Math.round(r.costoProveedor).toLocaleString("es-AR") : '—', style: 'padding:7px 6px;text-align:right;color:#e24b4a'},
+      {html: '$'+Math.round(r.comTN).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right;color:var(--muted)'},
+      {html: '$'+Math.round(r.comMP).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right;color:var(--muted)'},
+      {html: '$'+Math.round(r.ganancia).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right;font-weight:500;color:'+mc},
+      {html: r.esDS ? r.margen.toFixed(1)+'%' : '—', style: 'padding:7px 6px;text-align:right;color:'+mc},
+      {html: '▼'+(hasSM?' ⚠️':''), style: 'padding:7px 6px;text-align:center;font-size:10px;color:var(--muted)'},
+    ];
+    cells.forEach(function(cell) {
+      var td = document.createElement('td');
+      td.style.cssText = cell.style;
+      td.innerHTML = cell.html;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+
+    // Fila de detalle (oculta)
+    var trDetail = document.createElement('tr');
+    trDetail.id = 'rent-detail-'+r.o.number;
+    trDetail.style.display = 'none';
+    trDetail.style.background = 'var(--bg)';
+    var tdDetail = document.createElement('td');
+    tdDetail.colSpan = 9;
+    tdDetail.style.cssText = 'padding:10px 20px;';
+
+    var detHTML = '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Detalle de libros</div>';
+    r.librosDetalle.forEach(function(l) {
+      detHTML += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:11px;">'
+        + '<span style="flex:1;color:'+(l.sinMatch?'#d97706':'var(--text)')+';">'
+        + l.nombre+(l.qty>1?' x'+l.qty:'')+(l.sinMatch?' ⚠️ sin costo asignado':'')
+        + '</span>'
+        + '<span style="color:#e24b4a;font-weight:500;min-width:90px;text-align:right;">'
+        + (l.sinMatch ? '— (no cobrado)' : '$'+l.costoTotal.toLocaleString("es-AR"))
+        + '</span></div>';
+    });
+    detHTML += '<div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-size:12px;font-weight:700;border-top:1px solid var(--border);margin-top:4px;">'
+      + '<span>Total costo proveedor</span>'
+      + '<span style="color:#e24b4a;">$'+Math.round(r.costoProveedor).toLocaleString("es-AR")+'</span></div>';
+
+    tdDetail.innerHTML = detHTML;
+    trDetail.appendChild(tdDetail);
+    tbody.appendChild(trDetail);
+  });
 
   document.getElementById('rent-summary').style.display='block';
 }
