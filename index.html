@@ -1098,44 +1098,59 @@ function showMatching() {
 
   var rows = [];
   titulos.forEach(function(titulo) {
-    var bestMatch = null, bestScore = 0;
-    providerList.forEach(function(p) {
-      var s = sim(titulo, p.nombre);
-      if (s > bestScore) { bestScore = s; bestMatch = p; }
-    });
-    rows.push({titulo:titulo, bestMatch:bestMatch, bestScore:bestScore});
+    // Costo guardado en matchMap de sesión anterior
+    var savedCosto = matchMap[titulo] || 0;
+    // Buscar en providerList si hay un item con ese costo (para preseleccionar dropdown)
+    var savedProvItem = null;
+    if (savedCosto > 0) {
+      providerList.forEach(function(p) {
+        if (p.costo === savedCosto && sim(titulo, p.nombre) > 0.2) savedProvItem = p;
+      });
+    }
+    // Calcular mejor match por similitud
+    var bestMatch = savedProvItem, bestScore = savedProvItem ? 0.99 : 0;
+    if (!savedProvItem) {
+      providerList.forEach(function(p) {
+        var s = sim(titulo, p.nombre);
+        if (s > bestScore) { bestScore = s; bestMatch = p; }
+      });
+    }
+    // Si el costo guardado no coincide con ningún item de la lista, es un precio manual
+    var isManual = savedCosto > 0 && !savedProvItem;
+    rows.push({titulo:titulo, bestMatch:bestMatch, bestScore:bestScore, savedCosto:savedCosto, isManual:isManual});
   });
-  rows.sort(function(a,b){ return a.bestScore - b.bestScore; });
+
+  // Sin match primero, luego por score ascendente
+  rows.sort(function(a,b) {
+    if (a.bestScore === 0 && b.bestScore > 0) return -1;
+    if (a.bestScore > 0 && b.bestScore === 0) return 1;
+    return a.bestScore - b.bestScore;
+  });
 
   document.getElementById('card-matching').style.display = 'block';
   var list = document.getElementById('matching-list');
   list.innerHTML = rows.map(function(r,i) {
-    var icon = r.bestScore>=0.6 ? '✅' : r.bestScore>=0.3 ? '⚠️' : '❓';
+    var icon = r.bestScore >= 0.6 ? '✅' : r.bestScore >= 0.3 ? '⚠️' : '❓';
     var options = '<option value="">— Sin match —</option>' + providerList.map(function(p) {
-      return '<option value="' + p.nombre + '" ' + (p.nombre === (r.bestMatch&&r.bestMatch.nombre) ? 'selected' : '') + '>' + p.nombre + ' ($' + p.costo.toLocaleString('es-AR') + ')</option>';
+      var selected = r.bestMatch && p.nombre === r.bestMatch.nombre && !r.isManual ? 'selected' : '';
+      return '<option value="' + p.nombre + '" ' + selected + '>' + p.nombre + ' ($' + p.costo.toLocaleString("es-AR") + ')</option>';
     }).join('');
-    var noMatch = (!r.bestMatch || r.bestScore === 0);
-    var manualVal = (noMatch && r.savedCosto > 0) ? r.savedCosto : '';
+    // Campo manual: visible si no hay match de lista O si tiene precio manual guardado
+    var showManual = r.bestScore === 0 || r.isManual;
+    var manualVal = r.isManual ? r.savedCosto : '';
     return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px;flex-wrap:wrap;">'
-      + '<span>' + icon + '</span>'
+      + '<span style="width:20px">' + icon + '</span>'
       + '<span style="flex:1;min-width:150px;color:#1a1a18;">' + r.titulo + '</span>'
       + '<span style="color:#888780;font-size:11px;width:30px;">' + Math.round(r.bestScore*100) + '%</span>'
       + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" onchange="window.toggleManual(' + i + ',this.value)" style="flex:1;min-width:160px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
-      + '<div id="manual-wrap-' + i + '" style="display:' + (noMatch ? 'flex' : 'none') + ';align-items:center;gap:4px;">'
+      + '<div id="manual-wrap-' + i + '" style="display:' + (showManual ? 'flex' : 'none') + ';align-items:center;gap:4px;">'
       + '<span style="font-size:11px;color:#888780;">$ manual</span>'
       + '<input type="number" id="manual-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" value="' + manualVal + '" placeholder="0" min="0" step="100" style="width:80px;padding:4px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;" />'
       + '</div>'
       + '</div>';
   }).join('');
-  // Mostrar campo manual para los que arrancan sin match
-  rows.forEach(function(r, i) {
-    var sel = document.getElementById('match-' + i);
-    if (sel && sel.value === '') {
-      var wrap = document.getElementById('manual-wrap-' + i);
-      if (wrap) wrap.style.display = 'flex';
-    }
-  });
 }
+
 
 function toggleManual(i, val) {
   var wrap = document.getElementById('manual-wrap-' + i);
