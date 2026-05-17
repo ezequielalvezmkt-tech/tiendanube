@@ -1098,26 +1098,30 @@ function showMatching() {
 
   var rows = [];
   titulos.forEach(function(titulo) {
-    // Costo guardado en matchMap de sesión anterior
     var savedCosto = matchMap[titulo] || 0;
-    // Buscar en providerList si hay un item con ese costo (para preseleccionar dropdown)
+    var names = window._matchMapNames || {};
+    var savedName = names[titulo] || null;
+    // Preseleccionar según nombre guardado (exacto, sin ambigüedad por costo)
     var savedProvItem = null;
-    if (savedCosto > 0) {
+    if (savedName && savedName !== '__manual__' && savedName !== '__none__') {
       providerList.forEach(function(p) {
-        if (p.costo === savedCosto && sim(titulo, p.nombre) > 0.2) savedProvItem = p;
+        if (p.nombre === savedName) savedProvItem = p;
       });
     }
-    // Calcular mejor match por similitud
+    // Si no hay nombre guardado, calcular por similitud
     var bestMatch = savedProvItem, bestScore = savedProvItem ? 0.99 : 0;
-    if (!savedProvItem) {
+    if (!savedProvItem && savedName !== '__none__') {
       providerList.forEach(function(p) {
         var s = sim(titulo, p.nombre);
         if (s > bestScore) { bestScore = s; bestMatch = p; }
       });
     }
-    // Si el costo guardado no coincide con ningún item de la lista, es un precio manual
-    var isManual = savedCosto > 0 && !savedProvItem;
-    rows.push({titulo:titulo, bestMatch:bestMatch, bestScore:bestScore, savedCosto:savedCosto, isManual:isManual});
+    // Es manual si tiene costo guardado pero no tiene item de proveedor
+    var isManual = savedName === '__manual__' && savedCosto > 0;
+    // Es explícitamente sin match si fue marcado como __none__
+    var isNone = savedName === '__none__';
+    if (isNone) { bestMatch = null; bestScore = 0; }
+    rows.push({titulo:titulo, bestMatch:bestMatch, bestScore:bestScore, savedCosto:savedCosto, isManual:isManual, isNone:isNone});
   });
 
   // Sin match primero, luego por score ascendente
@@ -1132,11 +1136,11 @@ function showMatching() {
   list.innerHTML = rows.map(function(r,i) {
     var icon = r.bestScore >= 0.6 ? '✅' : r.bestScore >= 0.3 ? '⚠️' : '❓';
     var options = '<option value="">— Sin match —</option>' + providerList.map(function(p) {
-      var selected = r.bestMatch && p.nombre === r.bestMatch.nombre && !r.isManual ? 'selected' : '';
+      var selected = r.bestMatch && p.nombre === r.bestMatch.nombre && !r.isManual && !r.isNone ? 'selected' : '';
       return '<option value="' + p.nombre + '" ' + selected + '>' + p.nombre + ' ($' + p.costo.toLocaleString("es-AR") + ')</option>';
     }).join('');
     // Campo manual: visible si no hay match de lista O si tiene precio manual guardado
-    var showManual = r.bestScore === 0 || r.isManual;
+    var showManual = r.isManual || (r.bestScore === 0 && !r.isNone) || r.bestScore === 0;
     var manualVal = r.isManual ? r.savedCosto : '';
     return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px;flex-wrap:wrap;">'
       + '<span style="width:20px">' + icon + '</span>'
@@ -1160,23 +1164,59 @@ function toggleManual(i, val) {
 function applyMatching() {
   matchMap = {};
   document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
+    if (!sel.id.startsWith('match-')) return;
     var titulo = sel.dataset.titulo;
+    if (!titulo) return;
     var val = sel.value;
     if (val) {
-      var p = providerList.find(function(x){ return x.nombre===val; });
+      // Tiene match con lista del proveedor
+      var p = providerList.find(function(x){ return x.nombre === val; });
       if (p) matchMap[titulo] = p.costo;
     } else {
-      // Buscar input manual correspondiente
-      var idx = sel.id.replace('match-','');
+      // Sin match de lista — verificar precio manual
+      var idx = sel.id.replace('match-', '');
       var manualInput = document.getElementById('manual-' + idx);
       if (manualInput) {
         var manualCosto = parseFloat(manualInput.value);
-        if (manualCosto > 0) matchMap[titulo] = manualCosto;
+        if (manualCosto > 0) {
+          matchMap[titulo] = manualCosto;
+        }
+        // Si manualCosto es 0 o vacío, NO se agrega al matchMap
+        // → el título queda explícitamente sin costo (correcto)
+      }
+    }
+  });
+  // Guardar también qué nombre de proveedor se eligió para cada título
+  var matchMapNames = {};
+  document.querySelectorAll('[id^="match-"]').forEach(function(sel) {
+    if (!sel.id.startsWith('match-')) return;
+    var titulo = sel.dataset.titulo;
+    if (!titulo) return;
+    var val = sel.value;
+    if (val) matchMapNames[titulo] = val;
+    // Si sin match con precio manual, guardar como '__manual__'
+    else {
+      var idx = sel.id.replace('match-', '');
+      var manualInput = document.getElementById('manual-' + idx);
+      if (manualInput && parseFloat(manualInput.value) > 0) {
+        matchMapNames[titulo] = '__manual__';
+      } else {
+        matchMapNames[titulo] = '__none__'; // explícitamente sin match
       }
     }
   });
   localStorage.setItem('lpe_matchmap', JSON.stringify(matchMap));
+  localStorage.setItem('lpe_matchmap_names', JSON.stringify(matchMapNames));
   matchingDone = true;
+  // Mostrar resumen del matching guardado
+  var card = document.getElementById('card-matching');
+  if (card) {
+    card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;">'
+      + '<div><div class="card-title">Matching guardado</div>'
+      + '<div class="card-sub">' + Object.keys(matchMap).length + ' productos vinculados</div></div>'
+      + '<button class="btn-sm" onclick="window.resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
+      + '</div>';
+  }
   renderRentabilidad();
 }
 
