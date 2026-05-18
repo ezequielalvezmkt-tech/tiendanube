@@ -1398,8 +1398,7 @@ async function procesarImagenOrden(input) {
     var mediaType = file.type || 'image/jpeg';
 
     try {
-      var geminiPath = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp%3AgenerateContent';
-      var proxyUrl = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + geminiPath;
+      var proxyUrl = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/gemini';
 
       var response = await fetch(proxyUrl, {
         method: 'POST',
