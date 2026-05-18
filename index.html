@@ -427,37 +427,6 @@
       </div>
     </div>
 
-    <!-- CARGAR DESDE IMAGEN -->
-    <div class="card">
-      <div class="card-title">Cargar orden desde imagen</div>
-      <div class="card-sub">Subí la foto del detalle de envío y la IA extrae los libros automáticamente</div>
-
-      <div style="margin-top:1rem;">
-        <input type="file" id="img-orden-input" accept="image/*" style="display:none;" onchange="window.procesarImagenOrden(this)" />
-        <button class="btn-sm" onclick="document.getElementById('img-orden-input').click()" style="padding:9px 20px;">📷 Subir imagen</button>
-        <span id="img-status" style="font-size:13px;color:var(--muted);margin-left:12px;"></span>
-      </div>
-
-      <div id="img-preview-wrap" style="display:none;margin-top:1.25rem;">
-        <img id="img-preview" style="max-width:100%;max-height:300px;border-radius:var(--radius-sm);border:0.5px solid var(--border);object-fit:contain;" />
-      </div>
-
-      <div id="img-resultado" style="display:none;margin-top:1.25rem;">
-        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Libros detectados — confirmá o corregí antes de guardar</div>
-        <div id="img-libros-list"></div>
-        <div style="margin-top:1rem;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-          <div>
-            <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Fecha</label>
-            <input type="date" id="img-orden-fecha" style="padding:7px 10px;font-size:13px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
-          </div>
-          <div style="margin-top:18px;">
-            <button class="btn-sm" onclick="window.confirmarOrdenImagen()" style="padding:9px 20px;background:var(--accent);color:#fff;border-color:var(--accent);">Confirmar y guardar orden</button>
-            <span id="img-confirm-msg" style="font-size:13px;color:#16a34a;margin-left:10px;"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- REGISTRAR ORDEN -->
     <div class="card">
       <div class="card-title">Registrar orden dropshipping</div>
@@ -1367,6 +1336,353 @@ function switchTab(tab) {
 }
 
 
+// ===== CUENTA CORRIENTE CON PROVEEDOR =====
+var _ordenes = [];   // [{id, numero, fecha, libros:[{nombre,costo,qty}], total}]
+var _pagos = [];     // [{id, fecha, monto, nota}]
+var _deudaInicial = 3000000;
+var _librosCarrito = []; // libros seleccionados para la orden en curso
+
+function loadProveedorData() {
+  try {
+    var o = localStorage.getItem('lpe_ordenes');
+    var p = localStorage.getItem('lpe_pagos');
+    var d = localStorage.getItem('lpe_deuda_inicial');
+    if (o) _ordenes = JSON.parse(o);
+    if (p) _pagos = JSON.parse(p);
+    if (d) _deudaInicial = parseFloat(d);
+  } catch(e) {}
+}
+
+function saveProveedorData() {
+  localStorage.setItem('lpe_ordenes', JSON.stringify(_ordenes));
+  localStorage.setItem('lpe_pagos', JSON.stringify(_pagos));
+  localStorage.setItem('lpe_deuda_inicial', String(_deudaInicial));
+}
+
+function initRentabilidad() {
+  loadProveedorData();
+  // Setear fecha de hoy en los inputs
+  var hoy = new Date().toISOString().split('T')[0];
+  var of = document.getElementById('orden-fecha');
+  var pf = document.getElementById('pago-fecha');
+  var di = document.getElementById('deuda-inicial');
+  if (of) of.value = hoy;
+  if (pf) pf.value = hoy;
+  if (di) di.value = _deudaInicial;
+  renderSaldo();
+  renderHistorial();
+}
+
+function toggleSaldoConfig() {
+  var el = document.getElementById('saldo-config');
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveDeudaInicial() {
+  var val = parseFloat(document.getElementById('deuda-inicial').value) || 0;
+  _deudaInicial = val;
+  saveProveedorData();
+  renderSaldo();
+  document.getElementById('saldo-config').style.display = 'none';
+}
+
+function renderSaldo() {
+  var totalOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
+  var totalPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
+  var saldo = _deudaInicial + totalOrdenes - totalPagos;
+
+  document.getElementById('saldo-metrics').innerHTML =
+    '<div class="metric"><div class="metric-label">Deuda inicial</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(_deudaInicial).toLocaleString("es-AR") + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Órdenes acumuladas</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(totalOrdenes).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _ordenes.length + ' órdenes</div></div>' +
+    '<div class="metric"><div class="metric-label">Pagos realizados</div><div class="metric-value" style="font-size:18px;color:#16a34a;">$' + Math.round(totalPagos).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _pagos.length + ' pagos</div></div>' +
+    '<div class="metric" style="border-color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + '"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + ';">$' + Math.round(saldo).toLocaleString("es-AR") + '</div><div class="metric-sub">' + (saldo > 0 ? 'Debés al proveedor' : 'A favor tuyo') + '</div></div>';
+}
+
+function registrarPago() {
+  var monto = parseFloat(document.getElementById('pago-monto').value) || 0;
+  var fecha = document.getElementById('pago-fecha').value;
+  var nota = document.getElementById('pago-nota').value.trim();
+  if (!monto || !fecha) { alert('Completá el monto y la fecha.'); return; }
+  _pagos.push({ id: Date.now(), fecha: fecha, monto: monto, nota: nota || 'Pago al proveedor' });
+  saveProveedorData();
+  document.getElementById('pago-monto').value = '';
+  document.getElementById('pago-nota').value = '';
+  renderSaldo();
+  renderHistorial();
+}
+
+function filtrarLibros() {
+  var q = (document.getElementById('libro-search').value || '').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'');
+  var res = document.getElementById('libro-results');
+  if (q.length < 1) { res.style.display = 'none'; return; }
+  window._lastMatches = MAYO_LIST.filter(function(l) {
+    return l.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q);
+  }).slice(0, 10);
+  if (!window._lastMatches.length) { res.style.display = 'none'; return; }
+  res.style.display = 'block';
+  res.innerHTML = '';
+  window._lastMatches.forEach(function(l, i) {
+    var div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;';
+    div.addEventListener('mouseover', function(){ this.style.background='var(--bg)'; });
+    div.addEventListener('mouseout', function(){ this.style.background=''; });
+    div.addEventListener('click', function() { window.agregarLibro(window._lastMatches[i]); });
+    var sp1 = document.createElement('span'); sp1.textContent = l.nombre;
+    var sp2 = document.createElement('span');
+    sp2.style.cssText = 'color:var(--muted);font-weight:500;';
+    sp2.textContent = '$' + l.costo.toLocaleString("es-AR");
+    div.appendChild(sp1); div.appendChild(sp2);
+    res.appendChild(div);
+  });
+}
+function agregarLibro(libro) {
+  // Ver si ya está en el carrito
+  var existing = _librosCarrito.find(function(l){ return l.nombre === libro.nombre; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    _librosCarrito.push({ nombre: libro.nombre, costo: libro.costo, qty: 1 });
+  }
+  document.getElementById('libro-search').value = '';
+  document.getElementById('libro-results').style.display = 'none';
+  renderCarrito();
+}
+
+function quitarLibro(nombre) {
+  _librosCarrito = _librosCarrito.filter(function(l){ return l.nombre !== nombre; });
+  renderCarrito();
+}
+
+function cambiarQty(nombre, delta) {
+  var l = _librosCarrito.find(function(l){ return l.nombre === nombre; });
+  if (!l) return;
+  l.qty = Math.max(1, l.qty + delta);
+  renderCarrito();
+}
+
+function renderCarrito() {
+  var el = document.getElementById('libros-seleccionados');
+  var totalEl = document.getElementById('orden-total');
+  if (!_librosCarrito.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--muted);">Ningún libro seleccionado aún.</p>';
+    totalEl.textContent = '';
+    return;
+  }
+  var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
+  el.innerHTML = '';
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;';
+  _librosCarrito.forEach(function(l) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:13px;';
+    var nombre = document.createElement('span');
+    nombre.style.flex = '1'; nombre.textContent = l.nombre;
+    var controls = document.createElement('div');
+    controls.style.cssText = 'display:flex;align-items:center;gap:6px;';
+    var btnM = document.createElement('button');
+    btnM.textContent = '−'; btnM.style.cssText = 'width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;';
+    btnM.onclick = (function(n){ return function(){ window.cambiarQty(n,-1); }; })(l.nombre);
+    var qtyEl = document.createElement('span');
+    qtyEl.style.cssText = 'min-width:20px;text-align:center;'; qtyEl.textContent = l.qty;
+    var btnP = document.createElement('button');
+    btnP.textContent = '+'; btnP.style.cssText = 'width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;';
+    btnP.onclick = (function(n){ return function(){ window.cambiarQty(n,1); }; })(l.nombre);
+    controls.appendChild(btnM); controls.appendChild(qtyEl); controls.appendChild(btnP);
+    var precio = document.createElement('span');
+    precio.style.cssText = 'color:#e24b4a;font-weight:500;min-width:80px;text-align:right;';
+    precio.textContent = '$' + (l.costo * l.qty).toLocaleString("es-AR");
+    var btnDel = document.createElement('button');
+    btnDel.textContent = '×'; btnDel.style.cssText = 'color:var(--muted);background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;';
+    btnDel.onclick = (function(n){ return function(){ window.quitarLibro(n); }; })(l.nombre);
+    row.appendChild(nombre); row.appendChild(controls); row.appendChild(precio); row.appendChild(btnDel);
+    wrapper.appendChild(row);
+  });
+  el.appendChild(wrapper);
+  totalEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600;">'
+    + '<span>Total costo proveedor:</span>'
+    + '<span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span></div>';
+}
+function guardarOrden() {
+  var numero = document.getElementById('orden-numero').value.trim();
+  var fecha = document.getElementById('orden-fecha').value;
+  if (!numero) { alert('Ingresá el número de orden.'); return; }
+  if (!fecha) { alert('Seleccioná la fecha.'); return; }
+  if (!_librosCarrito.length) { alert('Agregá al menos un libro.'); return; }
+  var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
+  _ordenes.push({
+    id: Date.now(),
+    numero: numero,
+    fecha: fecha,
+    libros: JSON.parse(JSON.stringify(_librosCarrito)),
+    total: total
+  });
+  saveProveedorData();
+  _librosCarrito = [];
+  document.getElementById('orden-numero').value = '';
+  document.getElementById('libros-seleccionados').innerHTML = '';
+  document.getElementById('orden-total').innerHTML = '';
+  var msg = document.getElementById('orden-msg');
+  msg.textContent = 'Orden #' + numero + ' guardada ($' + total.toLocaleString("es-AR") + ')';
+  setTimeout(function(){ msg.textContent = ''; }, 3000);
+  renderSaldo();
+  renderHistorial();
+}
+
+function getWeekKey(fecha) {
+  var d = new Date(fecha + 'T12:00:00');
+  var day = d.getDay();
+  // Semana que cierra el viernes: buscar el viernes de esa semana
+  var diffToFri = (5 - day + 7) % 7;
+  var fri = new Date(d);
+  fri.setDate(d.getDate() + diffToFri);
+  return fri.toISOString().split('T')[0];
+}
+
+function getWeekLabel(friDate) {
+  var d = new Date(friDate + 'T12:00:00');
+  var lun = new Date(d);
+  lun.setDate(d.getDate() - 4);
+  return 'Semana ' + lun.getDate() + '/' + (lun.getMonth()+1) + ' — ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+}
+
+function renderHistorial() {
+  // Agrupar por semana
+  var semanas = {};
+  _ordenes.forEach(function(o) {
+    var k = getWeekKey(o.fecha);
+    if (!semanas[k]) semanas[k] = { ordenes: [], pagos: [], totalOrdenes: 0, totalPagos: 0 };
+    semanas[k].ordenes.push(o);
+    semanas[k].totalOrdenes += o.total;
+  });
+  _pagos.forEach(function(p) {
+    var k = getWeekKey(p.fecha);
+    if (!semanas[k]) semanas[k] = { ordenes: [], pagos: [], totalOrdenes: 0, totalPagos: 0 };
+    semanas[k].pagos.push(p);
+    semanas[k].totalPagos += p.monto;
+  });
+
+  var sorted = Object.entries(semanas).sort(function(a,b){ return b[0].localeCompare(a[0]); });
+
+  // Resumen semanal
+  var semHtml = '';
+  if (!sorted.length) {
+    semHtml = '<p style="font-size:13px;color:var(--muted);">No hay órdenes ni pagos registrados aún.</p>';
+  } else {
+    semHtml = '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
+      + '<thead><tr style="border-bottom:1px solid var(--border);">'
+      + '<th style="padding:8px 6px;text-align:left;color:var(--muted);font-weight:500;">Semana</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Órdenes</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Costo total</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Pagos</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Balance semana</th>'
+      + '</tr></thead><tbody>'
+      + sorted.map(function(e) {
+          var k=e[0], s=e[1];
+          var balance = s.totalPagos - s.totalOrdenes;
+          var bc = balance >= 0 ? '#16a34a' : '#e24b4a';
+          return '<tr style="border-bottom:0.5px solid var(--border);">'
+            + '<td style="padding:8px 6px;font-weight:500;">' + getWeekLabel(k) + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;">' + s.ordenes.length + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:#e24b4a;">$' + Math.round(s.totalOrdenes).toLocaleString("es-AR") + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:#16a34a;">$' + Math.round(s.totalPagos).toLocaleString("es-AR") + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:'+bc+';font-weight:500;">$' + Math.round(Math.abs(balance)).toLocaleString("es-AR") + ' ' + (balance >= 0 ? '✓' : '↑debe') + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+  }
+  document.getElementById('historial-semanal').innerHTML = semHtml;
+
+  // Historial detalle
+  var all = [];
+  _ordenes.forEach(function(o){ all.push({tipo:'orden', fecha:o.fecha, data:o}); });
+  _pagos.forEach(function(p){ all.push({tipo:'pago', fecha:p.fecha, data:p}); });
+  all.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
+
+  var detHtml = all.length ? all.map(function(item) {
+    if (item.tipo === 'orden') {
+      var o = item.data;
+      var d = new Date(o.fecha+'T12:00:00');
+      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+      var librosStr = o.libros.map(function(l){ return l.nombre+(l.qty>1?' x'+l.qty:''); }).join(', ');
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
+        + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:13px;font-weight:500;">#' + o.numero + ' — ' + fecha + '</div>'
+        + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + librosStr + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+        + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$' + Math.round(o.total).toLocaleString("es-AR") + '</div>'
+        + '<button onclick="window.eliminarOrden(' + o.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+        + '</div>'
+        + '</div>';
+    } else {
+      var p = item.data;
+      var d = new Date(p.fecha+'T12:00:00');
+      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
+        + '<span style="font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Pago</span>'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:13px;font-weight:500;">' + p.nota + ' — ' + fecha + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+        + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$' + Math.round(p.monto).toLocaleString("es-AR") + '</div>'
+        + '<button onclick="window.eliminarPago(' + p.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+        + '</div>'
+        + '</div>';
+    }
+  }).join('') : '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
+
+  document.getElementById('historial-detalle').innerHTML = detHtml;
+}
+
+function eliminarOrden(id) {
+  if (!confirm('¿Eliminar esta orden?')) return;
+  _ordenes = _ordenes.filter(function(o){ return o.id !== id; });
+  saveProveedorData();
+  renderSaldo();
+  renderHistorial();
+}
+
+function eliminarPago(id) {
+  if (!confirm('¿Eliminar este pago?')) return;
+  _pagos = _pagos.filter(function(p){ return p.id !== id; });
+  saveProveedorData();
+  renderSaldo();
+  renderHistorial();
+}
+
+function exportarResumen() {
+  var rows = [['Tipo','Fecha','Numero/Nota','Libros','Total']];
+  _ordenes.forEach(function(o) {
+    rows.push(['Orden', o.fecha, '#'+o.numero, o.libros.map(function(l){return l.nombre+(l.qty>1?' x'+l.qty:'');}).join(' | '), o.total]);
+  });
+  _pagos.forEach(function(p) {
+    rows.push(['Pago', p.fecha, p.nota, '', -p.monto]);
+  });
+  rows.sort(function(a,b){ return a[1].localeCompare(b[1]); });
+  var csv = rows.map(function(r){ return r.join(','); }).join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lpe-proveedor.csv'; a.click();
+}
+
+
+function switchTab(tab) {
+  var pm = document.getElementById('panel-metricas');
+  var pr = document.getElementById('panel-rentabilidad');
+  var tm = document.getElementById('tab-metricas');
+  var tr2 = document.getElementById('tab-rentabilidad');
+  if (!pm || !pr) return;
+  pm.style.display = tab === 'metricas' ? 'block' : 'none';
+  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
+  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
+  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
+  tr2.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
+  tr2.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
+  if (tab === 'rentabilidad') initRentabilidad();
+}
+
+
 // ===== CARGA DE ORDEN DESDE IMAGEN =====
 var _imagenOrdenData = null; // base64 de la imagen
 var _librosDetectados = [];  // [{nombre, qty, costo, encontrado}]
@@ -1419,9 +1735,7 @@ async function procesarImagenOrden(input) {
       });
 
       var data = await response.json();
-      console.log('Gemini raw response:', JSON.stringify(data).slice(0, 500));
       var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text || '{}';
-      console.log('Gemini text:', text.slice(0, 300));
       text = text.replace(/```json|```/g, '').trim();
       var parsed = JSON.parse(text);
 
@@ -1591,8 +1905,6 @@ window.eliminarOrden = eliminarOrden;
 window.eliminarPago = eliminarPago;
 window.exportarResumen = exportarResumen;
 window.resetApp = resetApp;
-window.procesarImagenOrden = procesarImagenOrden;
-window.confirmarOrdenImagen = confirmarOrdenImagen;
 </script>
 </body>
 </html>
