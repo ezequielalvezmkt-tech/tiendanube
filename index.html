@@ -1172,7 +1172,10 @@ function renderCarrito() {
     wrapper.appendChild(row);
   });
   el.appendChild(wrapper);
-  totalEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600;">'
+  var unidades = _librosCarrito.reduce(function(s,l){ return s + l.qty; }, 0);
+  totalEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 0 4px;font-size:13px;color:var(--muted);">'
+    + '<span>' + unidades + ' unidad' + (unidades !== 1 ? 'es' : '') + ' en el pedido</span></div>'
+    + '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:15px;font-weight:700;">'
     + '<span>Total costo proveedor:</span>'
     + '<span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span></div>';
 }
@@ -1272,17 +1275,24 @@ function renderHistorial() {
   _pagos.forEach(function(p){ all.push({tipo:'pago', fecha:p.fecha, data:p}); });
   all.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
 
+  // Total general de todas las ordenes
+  var totalGenOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
+  var totalGenUnidades = _ordenes.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
+  var totalGenPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
+
   var detHtml = all.length ? all.map(function(item) {
     if (item.tipo === 'orden') {
       var o = item.data;
       var d = new Date(o.fecha+'T12:00:00');
       var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+      var unidades = o.libros.reduce(function(s,l){ return s + l.qty; }, 0);
       var librosStr = o.libros.map(function(l){ return l.nombre+(l.qty>1?' x'+l.qty:''); }).join(', ');
       return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
         + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
         + '<div style="flex:1;">'
         + '<div style="font-size:13px;font-weight:500;">#' + o.numero + ' — ' + fecha + '</div>'
         + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + librosStr + '</div>'
+        + '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + unidades + ' unidad' + (unidades!==1?'es':'') + '</div>'
         + '</div>'
         + '<div style="text-align:right;">'
         + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$' + Math.round(o.total).toLocaleString("es-AR") + '</div>'
@@ -1305,6 +1315,20 @@ function renderHistorial() {
         + '</div>';
     }
   }).join('') : '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
+
+  // Fila de totales generales
+  if (all.length) {
+    detHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:4px;border-top:2px solid var(--border);font-size:13px;">'
+      + '<div>'
+      + '<div style="font-weight:700;">TOTAL GENERAL</div>'
+      + '<div style="color:var(--muted);font-size:12px;margin-top:2px;">' + _ordenes.length + ' órdenes · ' + totalGenUnidades + ' unidades</div>'
+      + '</div>'
+      + '<div style="text-align:right;">'
+      + '<div style="color:#e24b4a;font-weight:700;font-size:15px;">$' + Math.round(totalGenOrdenes).toLocaleString("es-AR") + ' en órdenes</div>'
+      + '<div style="color:#16a34a;font-weight:600;font-size:13px;margin-top:2px;">−$' + Math.round(totalGenPagos).toLocaleString("es-AR") + ' pagado</div>'
+      + '</div>'
+      + '</div>';
+  }
 
   document.getElementById('historial-detalle').innerHTML = detHtml;
 }
