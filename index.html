@@ -1173,11 +1173,18 @@ function renderCarrito() {
   });
   el.appendChild(wrapper);
   var unidades = _librosCarrito.reduce(function(s,l){ return s + l.qty; }, 0);
-  totalEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 0 4px;font-size:13px;color:var(--muted);">'
-    + '<span>' + unidades + ' unidad' + (unidades !== 1 ? 'es' : '') + ' en el pedido</span></div>'
-    + '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:15px;font-weight:700;">'
-    + '<span>Total costo proveedor:</span>'
-    + '<span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span></div>';
+  totalEl.innerHTML = '';
+  var row1 = document.createElement('div');
+  row1.style.cssText = 'display:flex;justify-content:space-between;padding:6px 0 2px;font-size:13px;color:var(--muted);';
+  row1.textContent = unidades + ' unidad' + (unidades !== 1 ? 'es' : '') + ' en el pedido';
+  var row2 = document.createElement('div');
+  row2.style.cssText = 'display:flex;justify-content:space-between;padding:4px 0;font-size:15px;font-weight:700;';
+  var label = document.createElement('span'); label.textContent = 'Total costo proveedor:';
+  var amount = document.createElement('span');
+  amount.style.color = '#e24b4a';
+  amount.textContent = '$' + total.toLocaleString("es-AR");
+  row2.appendChild(label); row2.appendChild(amount);
+  totalEl.appendChild(row1); totalEl.appendChild(row2);
 }
 function guardarOrden() {
   var numero = document.getElementById('orden-numero').value.trim();
