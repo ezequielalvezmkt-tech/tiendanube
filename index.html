@@ -446,6 +446,26 @@
         <input type="text" id="libro-search" placeholder="Escribí el nombre del libro..." oninput="window.filtrarLibros()" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
         <div id="libro-results" style="margin-top:6px;max-height:200px;overflow-y:auto;border:0.5px solid var(--border);border-radius:var(--radius-sm);display:none;background:var(--surface);"></div>
       </div>
+
+      <!-- Libro manual -->
+      <div style="margin-top:0.75rem;">
+        <button class="btn-sm" onclick="window.toggleLibroManual()" id="btn-libro-manual" style="font-size:12px;padding:5px 14px;">+ Agregar libro que no está en la lista</button>
+        <div id="libro-manual-form" style="display:none;margin-top:10px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:0.5px solid var(--border);">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+            <div style="flex:2;min-width:180px;">
+              <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">Nombre del libro</label>
+              <input type="text" id="manual-libro-nombre" placeholder="ej: El inversor inteligente" style="width:100%;padding:7px 10px;font-size:13px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:inherit;" />
+            </div>
+            <div style="flex:1;min-width:120px;">
+              <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">Costo proveedor ($)</label>
+              <input type="number" id="manual-libro-costo" placeholder="ej: 9500" min="0" step="100" style="width:100%;padding:7px 10px;font-size:13px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:inherit;" />
+            </div>
+            <button class="btn-sm" onclick="window.agregarLibroManual()" style="padding:7px 16px;background:var(--accent);color:#fff;border-color:var(--accent);">Agregar</button>
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px;">Este libro se agrega solo a esta orden, no a la lista Mayo.</p>
+        </div>
+      <div style="display:none"><!-- cierre dummy -->
+      </div>
       <div id="libros-seleccionados" style="margin-top:1rem;"></div>
       <div id="orden-total" style="margin-top:0.75rem;font-size:14px;color:var(--muted);"></div>
       <button class="btn-sm" onclick="window.guardarOrden()" style="margin-top:1rem;padding:9px 20px;background:var(--accent);color:#fff;border-color:var(--accent);">Guardar orden</button>
@@ -1889,6 +1909,25 @@ function confirmarOrdenImagen() {
   renderHistorial();
 }
 
+function toggleLibroManual() {
+  var form = document.getElementById('libro-manual-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  if (form.style.display === 'block') {
+    document.getElementById('manual-libro-nombre').focus();
+  }
+}
+
+function agregarLibroManual() {
+  var nombre = (document.getElementById('manual-libro-nombre').value || '').trim();
+  var costo = parseFloat(document.getElementById('manual-libro-costo').value) || 0;
+  if (!nombre) { alert('Ingresá el nombre del libro.'); return; }
+  if (!costo) { alert('Ingresá el costo del libro.'); return; }
+  agregarLibro({ nombre: nombre, costo: costo });
+  document.getElementById('manual-libro-nombre').value = '';
+  document.getElementById('manual-libro-costo').value = '';
+  document.getElementById('libro-manual-form').style.display = 'none';
+}
+
 // Exponer funciones al scope global
 window.switchTab = switchTab;
 window.connectStore = connectStore;
@@ -1904,6 +1943,8 @@ window.guardarOrden = guardarOrden;
 window.eliminarOrden = eliminarOrden;
 window.eliminarPago = eliminarPago;
 window.exportarResumen = exportarResumen;
+window.toggleLibroManual = toggleLibroManual;
+window.agregarLibroManual = agregarLibroManual;
 window.resetApp = resetApp;
 </script>
 </body>
