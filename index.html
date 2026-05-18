@@ -1222,6 +1222,43 @@ function applyMatching() {
 }
 
 
+function setRentPeriod(p) {
+  currentRentPeriod = p;
+  ['dia','semana','mes','custom'].forEach(function(x) {
+    var btn = document.getElementById('rent-period-'+x);
+    if(btn) btn.className = 'filter-btn'+(x===p?' active':'');
+  });
+  var cr = document.getElementById('rent-custom-range');
+  if(cr) cr.style.display = p==='custom'?'flex':'none';
+  if(p!=='custom') renderProveedorTable();
+}
+
+function getGroupKey(dateStr, period) {
+  var d = new Date(dateStr);
+  if(period==='dia') {
+    var mm=d.getMonth()+1, dd=d.getDate();
+    return d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;
+  }
+  if(period==='semana') {
+    var day=d.getDay(), mon=new Date(d);
+    mon.setDate(d.getDate()-(day===0?6:day-1));
+    return mon.toISOString().split('T')[0];
+  }
+  if(period==='mes') {
+    var mm=d.getMonth()+1;
+    return d.getFullYear()+'-'+(mm<10?'0':'')+mm;
+  }
+  return null;
+}
+
+function getGroupLabel(key, period) {
+  var meses=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  if(period==='dia'){var d=new Date(key+'T12:00:00');return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
+  if(period==='semana'){var d=new Date(key+'T12:00:00');return 'Semana del '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
+  if(period==='mes'){var p=key.split('-');return meses[parseInt(p[1])]+' '+p[0];}
+  return key;
+}
+
 function renderProveedorTable() {
   var ds = rentOrders.filter(function(r){return r.esDS;});
   var period = currentRentPeriod;
@@ -1440,6 +1477,9 @@ window.applyMatching = applyMatching;
 window.useMayoList = useMayoList;
 window.toggleManual = toggleManual;
 window.toggleRentDetail = toggleRentDetail;
+window.setRentPeriod = setRentPeriod;
+window.getGroupKey = getGroupKey;
+window.getGroupLabel = getGroupLabel;
 window.renderProveedorTable = renderProveedorTable;
 window.exportCSV = exportCSV;
 window.connectStore = connectStore;
