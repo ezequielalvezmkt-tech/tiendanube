@@ -1175,7 +1175,7 @@ function renderCarrito() {
   var unidades = _librosCarrito.reduce(function(s,l){ return s + l.qty; }, 0);
   totalEl.innerHTML = '';
   var row1 = document.createElement('div');
-  row1.style.cssText = 'display:flex;justify-content:space-between;padding:6px 0 2px;font-size:13px;color:var(--muted);';
+  row1.style.cssText = 'padding:6px 0 2px;font-size:13px;color:var(--muted);';
   row1.textContent = unidades + ' unidad' + (unidades !== 1 ? 'es' : '') + ' en el pedido';
   var row2 = document.createElement('div');
   row2.style.cssText = 'display:flex;justify-content:space-between;padding:4px 0;font-size:15px;font-weight:700;';
