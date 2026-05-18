@@ -427,6 +427,37 @@
       </div>
     </div>
 
+    <!-- CARGAR DESDE IMAGEN -->
+    <div class="card">
+      <div class="card-title">Cargar orden desde imagen</div>
+      <div class="card-sub">Subí la foto del detalle de envío y la IA extrae los libros automáticamente</div>
+
+      <div style="margin-top:1rem;">
+        <input type="file" id="img-orden-input" accept="image/*" style="display:none;" onchange="window.procesarImagenOrden(this)" />
+        <button class="btn-sm" onclick="document.getElementById('img-orden-input').click()" style="padding:9px 20px;">📷 Subir imagen</button>
+        <span id="img-status" style="font-size:13px;color:var(--muted);margin-left:12px;"></span>
+      </div>
+
+      <div id="img-preview-wrap" style="display:none;margin-top:1.25rem;">
+        <img id="img-preview" style="max-width:100%;max-height:300px;border-radius:var(--radius-sm);border:0.5px solid var(--border);object-fit:contain;" />
+      </div>
+
+      <div id="img-resultado" style="display:none;margin-top:1.25rem;">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Libros detectados — confirmá o corregí antes de guardar</div>
+        <div id="img-libros-list"></div>
+        <div style="margin-top:1rem;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Fecha</label>
+            <input type="date" id="img-orden-fecha" style="padding:7px 10px;font-size:13px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+          </div>
+          <div style="margin-top:18px;">
+            <button class="btn-sm" onclick="window.confirmarOrdenImagen()" style="padding:9px 20px;background:var(--accent);color:#fff;border-color:var(--accent);">Confirmar y guardar orden</button>
+            <span id="img-confirm-msg" style="font-size:13px;color:#16a34a;margin-left:10px;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- REGISTRAR ORDEN -->
     <div class="card">
       <div class="card-title">Registrar orden dropshipping</div>
@@ -1335,6 +1366,211 @@ function switchTab(tab) {
   if (tab === 'rentabilidad') initRentabilidad();
 }
 
+
+// ===== CARGA DE ORDEN DESDE IMAGEN =====
+var _imagenOrdenData = null; // base64 de la imagen
+var _librosDetectados = [];  // [{nombre, qty, costo, encontrado}]
+
+async function procesarImagenOrden(input) {
+  var file = input.files[0];
+  if (!file) return;
+
+  // Mostrar preview
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _imagenOrdenData = e.target.result; // data URL
+    var img = document.getElementById('img-preview');
+    img.src = _imagenOrdenData;
+    document.getElementById('img-preview-wrap').style.display = 'block';
+    document.getElementById('img-resultado').style.display = 'none';
+    document.getElementById('img-resultado').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+
+  document.getElementById('img-status').textContent = 'Analizando imagen con IA...';
+
+  // Convertir a base64 puro para la API
+  var b64reader = new FileReader();
+  b64reader.onload = async function(e) {
+    var dataUrl = e.target.result;
+    var base64 = dataUrl.split(',')[1];
+    var mediaType = file.type || 'image/jpeg';
+
+    try {
+      var response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: { type: 'base64', media_type: mediaType, data: base64 }
+              },
+              {
+                type: 'text',
+                text: 'Analizá esta imagen de un envío de libros. Extraé la lista de libros con su cantidad. Respondé ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto: {"libros": [{"nombre": "Titulo del libro", "qty": 1}, ...]}. Si hay un número antes del nombre (ej: "1. Habitos Atomicos") ignorá el número. Solo incluí los títulos de libros, no direcciones ni otros datos.'
+              }
+            ]
+          }]
+        })
+      });
+
+      var data = await response.json();
+      var text = data.content && data.content[0] && data.content[0].text || '{}';
+
+      // Limpiar posibles backticks
+      text = text.replace(/```json|```/g, '').trim();
+      var parsed = JSON.parse(text);
+      var libros = parsed.libros || [];
+
+      // Buscar cada libro en la lista Mayo
+      _librosDetectados = libros.map(function(l) {
+        var normL = l.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+        var mejor = null, mejorScore = 0;
+        MAYO_LIST.forEach(function(m) {
+          var normM = m.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+          var wordsL = new Set(normL.split(' ').filter(function(w){return w.length>2;}));
+          var wordsM = normM.split(' ').filter(function(w){return w.length>2;});
+          var matches = wordsM.filter(function(w){return wordsL.has(w);}).length;
+          var union = new Set([...normL.split(' '),...normM.split(' ')].filter(function(w){return w.length>2;})).size;
+          var score = union > 0 ? matches/union : 0;
+          if (score > mejorScore) { mejorScore = score; mejor = m; }
+        });
+        return {
+          nombreDetectado: l.nombre,
+          qty: l.qty || 1,
+          match: mejorScore > 0.3 ? mejor : null,
+          score: mejorScore
+        };
+      });
+
+      renderLibrosDetectados();
+      document.getElementById('img-status').textContent = libros.length + ' libros detectados';
+      // Setear fecha de hoy
+      var hoy = new Date().toISOString().split('T')[0];
+      document.getElementById('img-orden-fecha').value = hoy;
+      document.getElementById('img-resultado').style.display = 'block';
+
+    } catch(err) {
+      document.getElementById('img-status').textContent = 'Error al analizar: ' + err.message;
+    }
+  };
+  b64reader.readAsDataURL(file);
+}
+
+function renderLibrosDetectados() {
+  var el = document.getElementById('img-libros-list');
+  el.innerHTML = '';
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;';
+
+  _librosDetectados.forEach(function(l, i) {
+    var row = document.createElement('div');
+    row.style.cssText = 'padding:10px 12px;border-bottom:0.5px solid var(--border);font-size:13px;';
+
+    var top = document.createElement('div');
+    top.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:6px;';
+
+    var icon = document.createElement('span');
+    icon.textContent = l.match ? (l.score > 0.6 ? '✅' : '⚠️') : '❓';
+
+    var nombreDet = document.createElement('span');
+    nombreDet.style.cssText = 'color:var(--muted);font-size:12px;flex:1;';
+    nombreDet.textContent = 'Detectado: ' + l.nombreDetectado;
+
+    var qtyWrap = document.createElement('div');
+    qtyWrap.style.cssText = 'display:flex;align-items:center;gap:4px;';
+    var btnM = document.createElement('button');
+    btnM.textContent = '−'; btnM.style.cssText = 'width:22px;height:22px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;';
+    btnM.onclick = (function(idx){ return function(){ _librosDetectados[idx].qty = Math.max(1, _librosDetectados[idx].qty-1); renderLibrosDetectados(); }; })(i);
+    var qtyEl = document.createElement('span');
+    qtyEl.style.cssText = 'min-width:18px;text-align:center;font-weight:600;';
+    qtyEl.textContent = l.qty;
+    var btnP = document.createElement('button');
+    btnP.textContent = '+'; btnP.style.cssText = 'width:22px;height:22px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;';
+    btnP.onclick = (function(idx){ return function(){ _librosDetectados[idx].qty++; renderLibrosDetectados(); }; })(i);
+    qtyWrap.appendChild(btnM); qtyWrap.appendChild(qtyEl); qtyWrap.appendChild(btnP);
+
+    top.appendChild(icon); top.appendChild(nombreDet); top.appendChild(qtyWrap);
+
+    var bottom = document.createElement('div');
+    bottom.style.cssText = 'display:flex;align-items:center;gap:8px;';
+
+    var sel = document.createElement('select');
+    sel.style.cssText = 'flex:1;padding:5px 8px;font-size:12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;';
+    var optNone = document.createElement('option');
+    optNone.value = ''; optNone.textContent = '— Sin match (no cobrar) —';
+    sel.appendChild(optNone);
+    MAYO_LIST.forEach(function(m) {
+      var opt = document.createElement('option');
+      opt.value = m.nombre;
+      opt.textContent = m.nombre + ' ($' + m.costo.toLocaleString("es-AR") + ')';
+      if (l.match && m.nombre === l.match.nombre) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.onchange = (function(idx){ return function(e) {
+      var m = MAYO_LIST.find(function(x){ return x.nombre === e.target.value; });
+      _librosDetectados[idx].match = m || null;
+    }; })(i);
+
+    var costoEl = document.createElement('span');
+    costoEl.style.cssText = 'color:#e24b4a;font-weight:500;min-width:90px;text-align:right;font-size:13px;';
+    costoEl.textContent = l.match ? '$' + (l.match.costo * l.qty).toLocaleString("es-AR") : '—';
+
+    bottom.appendChild(sel); bottom.appendChild(costoEl);
+    row.appendChild(top); row.appendChild(bottom);
+    wrapper.appendChild(row);
+  });
+
+  // Total
+  var total = _librosDetectados.reduce(function(s,l){ return s + (l.match ? l.match.costo * l.qty : 0); }, 0);
+  var totalRow = document.createElement('div');
+  totalRow.style.cssText = 'display:flex;justify-content:space-between;padding:10px 12px;font-size:14px;font-weight:700;background:var(--bg);';
+  totalRow.innerHTML = '<span>Total costo proveedor</span><span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span>';
+  wrapper.appendChild(totalRow);
+
+  el.appendChild(wrapper);
+}
+
+function confirmarOrdenImagen() {
+  var fecha = document.getElementById('img-orden-fecha').value;
+  if (!fecha) { alert('Seleccioná la fecha.'); return; }
+
+  var libros = [];
+  _librosDetectados.forEach(function(l) {
+    if (l.match) {
+      libros.push({ nombre: l.match.nombre, costo: l.match.costo, qty: l.qty });
+    }
+  });
+
+  if (!libros.length) { alert('Ningún libro tiene match. Asociá al menos uno antes de guardar.'); return; }
+
+  var total = libros.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
+  var numero = 'IMG-' + Date.now().toString().slice(-6);
+
+  _ordenes.push({ id: Date.now(), numero: numero, fecha: fecha, libros: libros, total: total });
+  saveProveedorData();
+
+  // Reset
+  _librosDetectados = [];
+  _imagenOrdenData = null;
+  document.getElementById('img-resultado').style.display = 'none';
+  document.getElementById('img-preview-wrap').style.display = 'none';
+  document.getElementById('img-orden-input').value = '';
+  document.getElementById('img-status').textContent = '';
+
+  var msg = document.getElementById('img-confirm-msg');
+  msg.textContent = 'Orden ' + numero + ' guardada — $' + total.toLocaleString("es-AR");
+  setTimeout(function(){ msg.textContent = ''; }, 4000);
+
+  renderSaldo();
+  renderHistorial();
+}
+
 // Exponer funciones al scope global
 window.switchTab = switchTab;
 window.connectStore = connectStore;
@@ -1350,6 +1586,8 @@ window.guardarOrden = guardarOrden;
 window.eliminarOrden = eliminarOrden;
 window.eliminarPago = eliminarPago;
 window.exportarResumen = exportarResumen;
+window.procesarImagenOrden = procesarImagenOrden;
+window.confirmarOrdenImagen = confirmarOrdenImagen;
 </script>
 </body>
 </html>
