@@ -593,7 +593,7 @@ async function connectStore() {
     const periodMap = {30:'Últimos 30 días',60:'Últimos 60 días',90:'Últimos 90 días',180:'Últimos 6 meses',365:'Último año'};
     document.getElementById('period-label').textContent = periodMap[days] || `Últimos ${days} días`;
     document.getElementById('store-badge').textContent = `Store ${storeId}`;
-    initRent();
+    initRentabilidad();
     document.getElementById('footer').textContent = `${allOrders.length} pedidos analizados (cancelados excluidos)`;
 
     const filtersEl = document.getElementById('filters');
