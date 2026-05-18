@@ -1398,8 +1398,8 @@ async function procesarImagenOrden(input) {
     var mediaType = file.type || 'image/jpeg';
 
     try {
-      var geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-      var proxyUrl = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + encodeURIComponent(geminiUrl);
+      var geminiPath = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp%3AgenerateContent';
+      var proxyUrl = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + geminiPath;
 
       var response = await fetch(proxyUrl, {
         method: 'POST',
@@ -1420,7 +1420,9 @@ async function procesarImagenOrden(input) {
       });
 
       var data = await response.json();
+      console.log('Gemini raw response:', JSON.stringify(data).slice(0, 500));
       var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text || '{}';
+      console.log('Gemini text:', text.slice(0, 300));
       text = text.replace(/```json|```/g, '').trim();
       var parsed = JSON.parse(text);
 
