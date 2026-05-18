@@ -378,102 +378,99 @@
   <div class="footer" id="footer"></div>
   </div><!-- /panel-metricas -->
 
-  <div id="panel-rentabilidad" style="display:none;padding-bottom:2rem;">
+
+
+  <div id="panel-rentabilidad" style="display:none;padding-bottom:3rem;">
+
+    <!-- SALDO CON EL PROVEEDOR -->
+    <div class="card" id="card-saldo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-title">Cuenta corriente con el proveedor</div>
+          <div class="card-sub">Deuda acumulada + órdenes pendientes − pagos realizados</div>
+        </div>
+        <button class="btn-sm" onclick="window.toggleSaldoConfig()" style="padding:6px 14px;">⚙ Configurar</button>
+      </div>
+
+      <div id="saldo-config" style="display:none;margin-top:1rem;padding:1rem;background:var(--bg);border-radius:var(--radius-sm);border:0.5px solid var(--border);">
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;">
+          <div style="flex:1;min-width:200px;">
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Deuda inicial con el proveedor ($)</label>
+            <input type="number" id="deuda-inicial" placeholder="3000000" step="1000" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:inherit;" />
+          </div>
+          <button class="btn-sm" onclick="window.saveDeudaInicial()" style="padding:8px 18px;">Guardar</button>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px;">Esta deuda es el saldo que ya tenés antes de las órdenes registradas acá.</p>
+      </div>
+
+      <div class="metrics-grid" style="margin-top:1.25rem;" id="saldo-metrics"></div>
+    </div>
+
+    <!-- REGISTRAR PAGO -->
     <div class="card">
-      <div class="card-title">Configuracion de costos</div>
-      <div class="card-sub">Se deducen automaticamente de cada pedido usando los datos de la orden</div>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;">
-        <div style="flex:1;min-width:140px;">
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">% Comision Tiendanube</label>
-          <input type="number" id="pct-tn" value="3" step="0.1" min="0" max="100" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+      <div class="card-title">Registrar pago al proveedor</div>
+      <div class="card-sub">Cada pago se descuenta del saldo total</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-top:0.75rem;">
+        <div style="flex:1;min-width:160px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Monto pagado ($)</label>
+          <input type="number" id="pago-monto" placeholder="500000" step="1000" min="0" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
         </div>
-        <div style="flex:1;min-width:140px;">
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">% Comision Mercado Pago</label>
-          <input type="number" id="pct-mp" value="4.99" step="0.01" min="0" max="100" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+        <div style="flex:1;min-width:160px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Fecha</label>
+          <input type="date" id="pago-fecha" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
         </div>
-        <div style="flex:1;min-width:140px;">
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Costo fijo por pedido ($)</label>
-          <input type="number" id="costo-fijo" value="0" step="100" min="0" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+        <div style="flex:2;min-width:200px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Nota (opcional)</label>
+          <input type="text" id="pago-nota" placeholder="ej: Transferencia semana 3 mayo" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
         </div>
+        <button class="btn-sm" onclick="window.registrarPago()" style="padding:9px 20px;background:var(--accent);color:#fff;border-color:var(--accent);">Registrar pago</button>
       </div>
     </div>
 
+    <!-- REGISTRAR ORDEN -->
     <div class="card">
-      <div class="card-title">Lista de precios del proveedor</div>
-      <div class="card-sub">Subi el Excel mensual o usa la lista de Mayo ya cargada</div>
-      <div style="margin-top:1rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none;" onchange="loadExcel(this)" />
-        <button class="btn-sm" onclick="document.getElementById('excel-input').click()" style="padding:8px 18px;">Subir Excel</button>
-        <button class="btn-sm" onclick="useMayoList()" style="padding:8px 18px;background:var(--accent);color:#fff;border-color:var(--accent);">Usar lista Mayo</button>
-        <span id="excel-status" style="font-size:13px;color:var(--muted);">Sin lista cargada</span>
-      </div>
-    </div>
-
-    <div class="card" id="card-matching" style="display:none;">
-      <div class="card-title">Matching de productos</div>
-      <div class="card-sub">✅ Match automatico &nbsp;⚠️ Revisar &nbsp;❓ No encontrado — corregi con el dropdown</div>
-      <div id="matching-list" style="margin-top:1rem;max-height:420px;overflow-y:auto;"></div>
-      <button class="btn" onclick="applyMatching()" style="margin-top:1rem;width:auto;padding:10px 24px;">Confirmar y calcular</button>
-    </div>
-
-    <div id="rent-summary" style="display:none;">
-      <div class="metrics-grid" id="rent-metrics"></div>
-
-      <!-- COSTO AL PROVEEDOR POR PERÍODO -->
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div>
-            <div class="card-title">Costo al proveedor por período</div>
-            <div class="card-sub">Total a pagarle según agrupación temporal</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="filter-btn active" id="rent-period-dia" onclick="setRentPeriod('dia')">Diario</button>
-            <button class="filter-btn" id="rent-period-semana" onclick="setRentPeriod('semana')">Semanal</button>
-            <button class="filter-btn" id="rent-period-mes" onclick="setRentPeriod('mes')">Mensual</button>
-            <button class="filter-btn" id="rent-period-custom" onclick="setRentPeriod('custom')">Personalizado</button>
-          </div>
+      <div class="card-title">Registrar orden dropshipping</div>
+      <div class="card-sub">Buscá los libros de la lista Mayo que pidió el cliente y guardá la orden</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start;margin-top:0.75rem;">
+        <div style="flex:1;min-width:160px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Nro. de orden</label>
+          <input type="text" id="orden-numero" placeholder="ej: 19278" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
         </div>
-        <div id="rent-custom-range" style="display:none;gap:12px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
-          <div style="display:flex;align-items:center;gap:6px;font-size:13px;">
-            <label style="color:var(--muted)">Desde:</label>
-            <input type="date" id="rent-date-from" style="padding:5px 8px;font-size:12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;" />
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:13px;">
-            <label style="color:var(--muted)">Hasta:</label>
-            <input type="date" id="rent-date-to" style="padding:5px 8px;font-size:12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;" />
-          </div>
-          <button class="btn-sm" onclick="renderProveedorTable()" style="padding:5px 14px;">Aplicar</button>
-        </div>
-        <div id="proveedor-summary"></div>
-      </div>
-
-      <!-- RENTABILIDAD POR PEDIDO -->
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:8px;">
-          <div>
-            <div class="card-title">Rentabilidad por pedido</div>
-            <div class="card-sub">Clic en cada fila para ver el detalle de libros y costos</div>
-          </div>
-          <button class="btn-sm" onclick="exportCSV()">Exportar CSV</button>
-        </div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;font-size:12px;">
-            <thead><tr style="border-bottom:1px solid var(--border);text-align:left;">
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">#</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Fecha</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;">Venta</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Costo prov.</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Com.TN</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Com.MP</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Ganancia</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:right;">Margen</th>
-              <th style="padding:8px 6px;color:var(--muted);font-weight:500;text-align:center;">Det.</th>
-            </tr></thead>
-            <tbody id="rent-tbody"></tbody>
-          </table>
+        <div style="flex:1;min-width:160px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Fecha</label>
+          <input type="date" id="orden-fecha" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
         </div>
       </div>
+      <div style="margin-top:1rem;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Buscar libros</label>
+        <input type="text" id="libro-search" placeholder="Escribí el nombre del libro..." oninput="window.filtrarLibros()" style="width:100%;padding:8px 12px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:inherit;" />
+        <div id="libro-results" style="margin-top:6px;max-height:200px;overflow-y:auto;border:0.5px solid var(--border);border-radius:var(--radius-sm);display:none;background:var(--surface);"></div>
+      </div>
+      <div id="libros-seleccionados" style="margin-top:1rem;"></div>
+      <div id="orden-total" style="margin-top:0.75rem;font-size:14px;color:var(--muted);"></div>
+      <button class="btn-sm" onclick="window.guardarOrden()" style="margin-top:1rem;padding:9px 20px;background:var(--accent);color:#fff;border-color:var(--accent);">Guardar orden</button>
+      <span id="orden-msg" style="font-size:13px;margin-left:12px;color:#16a34a;"></span>
     </div>
+
+    <!-- HISTORIAL SEMANAL -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div class="card-title">Resumen semanal</div>
+          <div class="card-sub">Órdenes y pagos agrupados por semana (cierre viernes)</div>
+        </div>
+        <button class="btn-sm" onclick="window.exportarResumen()">Exportar CSV</button>
+      </div>
+      <div id="historial-semanal"></div>
+    </div>
+
+    <!-- HISTORIAL DETALLE -->
+    <div class="card">
+      <div class="card-title">Historial completo</div>
+      <div class="card-sub">Todas las órdenes y pagos registrados</div>
+      <div id="historial-detalle" style="margin-top:0.75rem;"></div>
+    </div>
+
   </div><!-- /panel-rentabilidad -->
 
 </div><!-- dashboard -->
@@ -992,482 +989,315 @@ function renderProvRevenue(orders) {
 
 var MAYO_LIST = [{"nombre": "50 Capsulas de amor propio", "costo": 13000}, {"nombre": "Amor fati", "costo": 8200}, {"nombre": "Ansiosamente Sara Espejo", "costo": 13500}, {"nombre": "Artificial Mariana Sigman", "costo": 9500}, {"nombre": "Basta de amores de mierda 3", "costo": 6000}, {"nombre": "Basta de amores de mierda 4", "costo": 6000}, {"nombre": "Basta de amores de mierda 5", "costo": 6000}, {"nombre": "Basta de amores de mierda 6", "costo": 6000}, {"nombre": "Brida", "costo": 5000}, {"nombre": "Cara a cara Gabriel Rolon", "costo": 9000}, {"nombre": "Centrate Deep work", "costo": 11500}, {"nombre": "Como ganar amigos e influir en las personas", "costo": 9000}, {"nombre": "Como hacer que te pasen cosas buenas", "costo": 13200}, {"nombre": "Como mandar a la mierda de forma educada", "costo": 12000}, {"nombre": "Como ser un estoico Massimo Pigliucci", "costo": 11000}, {"nombre": "Conecta con el dinero Brian Tracy", "costo": 12000}, {"nombre": "De mi para mi", "costo": 12000}, {"nombre": "De mi para mi 2", "costo": 12500}, {"nombre": "Deja de ser tu Joe dispenza", "costo": 13500}, {"nombre": "Desbloquea tu mente millonaria Victoria Mills", "costo": 6600}, {"nombre": "Deshacer la ansiedad", "costo": 12300}, {"nombre": "El abc de la actitud John C Maxwell", "costo": 6500}, {"nombre": "El abc del exito", "costo": 6500}, {"nombre": "El abc del liderazgo John C Maxwell", "costo": 6500}, {"nombre": "El arte de la guerra", "costo": 5500}, {"nombre": "El caballero de la armadura oxidada", "costo": 7000}, {"nombre": "El camino del artista", "costo": 16000}, {"nombre": "El club de las 5 de la manana Robin Sharma", "costo": 12600}, {"nombre": "El cuadrante del flujo del dinero", "costo": 8300}, {"nombre": "El demonio y la senorita prym", "costo": 5500}, {"nombre": "El duelo Gabriel rolon", "costo": 14000}, {"nombre": "El ego es el enemigo Ryan Holiday", "costo": 11500}, {"nombre": "El hombre en busca de sentido", "costo": 7000}, {"nombre": "El hombre mas rico de babilonia George clason", "costo": 7000}, {"nombre": "El kybalion", "costo": 5500}, {"nombre": "El libro de bill", "costo": 11500}, {"nombre": "El metodo Briones Beltran Briones", "costo": 8000}, {"nombre": "El monje que vendio su ferrari Robin Sharma", "costo": 8000}, {"nombre": "El negocio del siglo XXI", "costo": 7000}, {"nombre": "El placebo eres tu", "costo": 13500}, {"nombre": "El plan fenix Brian Tracy", "costo": 11000}, {"nombre": "El poder de la mente subconsciente Joseph Murphy", "costo": 11500}, {"nombre": "El poder de las palabras", "costo": 13000}, {"nombre": "El poder de los habitos", "costo": 12000}, {"nombre": "El poder del ahora", "costo": 10300}, {"nombre": "El poder esta dentro de ti Louise Hay", "costo": 8000}, {"nombre": "El poder frente la fuerza", "costo": 12000}, {"nombre": "El principe Nicolas Maquiavelo", "costo": 6000}, {"nombre": "El principito", "costo": 4500}, {"nombre": "El quinto acuerdo Miguel Ruiz", "costo": 8500}, {"nombre": "El regreso del caballero de la armadura oxidada", "costo": 6000}, {"nombre": "El sutil arte de que casi todo te importe una mierda", "costo": 9500}, {"nombre": "El vendedor mas grande del mundo", "costo": 6000}, {"nombre": "El viento conoce mi nombre Isabel allende", "costo": 12000}, {"nombre": "Empieza con el porque", "costo": 12000}, {"nombre": "Emprende tu propio negocio", "costo": 8000}, {"nombre": "En agosto nos vemos Garcia Marquez", "costo": 9200}, {"nombre": "Encuentra tu persona vitamina", "costo": 12500}, {"nombre": "Encuentros Gabriel rolon bolsillo", "costo": 9500}, {"nombre": "Es facil dejar de fumar Allen Carr", "costo": 9900}, {"nombre": "Escuela de negocios", "costo": 6500}, {"nombre": "Este dolor no es mio", "costo": 12000}, {"nombre": "Fleur Ariana Godoy", "costo": 8500}, {"nombre": "Folleto del millonario", "costo": 6800}, {"nombre": "Fuera del laberinto Spencer Johnson", "costo": 7500}, {"nombre": "Generacion ansiosa", "costo": 13000}, {"nombre": "Go pro Eric Worre", "costo": 6000}, {"nombre": "Habitos atomicos", "costo": 13000}, {"nombre": "Habitos para ser millonario Bryan tracy", "costo": 11000}, {"nombre": "Habla menos actua mas Brian Tracy", "costo": 6500}, {"nombre": "Influencia", "costo": 15000}, {"nombre": "Inquebrantable", "costo": 8500}, {"nombre": "Kaizen Daniel herrero", "costo": 10000}, {"nombre": "La bolsa o la vida", "costo": 13500}, {"nombre": "La disciplina marcara tu destino Ryan Holiday", "costo": 12500}, {"nombre": "La espia", "costo": 5000}, {"nombre": "La felicidad mas alla de la Gabriel rolon", "costo": 13400}, {"nombre": "La inteligencia emocional daniel goleman", "costo": 10500}, {"nombre": "La llamada del coraje", "costo": 12500}, {"nombre": "La naranja mecanica", "costo": 6000}, {"nombre": "La novia de sandro Camila villada", "costo": 6000}, {"nombre": "La psicologia del dinero", "costo": 12500}, {"nombre": "La quinta montana", "costo": 5500}, {"nombre": "La riqueza que el dinero no puede comprar", "costo": 12000}, {"nombre": "La soledad Gabriel Rolon", "costo": 12400}, {"nombre": "La teoria Let Them", "costo": 13000}, {"nombre": "La vaca purpura", "costo": 6500}, {"nombre": "Las 48 leyes del poder abreviado Robert Greene", "costo": 9500}, {"nombre": "Las Malas", "costo": 10000}, {"nombre": "Las siete leyes espirituales del exito Deepak chopra", "costo": 6500}, {"nombre": "Loca Lorena pronsky", "costo": 10200}, {"nombre": "Los 7 habitos de la gente altamente efectiva", "costo": 16500}, {"nombre": "Los cuatro acuerdos", "costo": 8000}, {"nombre": "Los ingenieros del caos Giuliano da Empoli", "costo": 9400}, {"nombre": "Los lideres comen al final Simon Sinek", "costo": 12500}, {"nombre": "Los peligros de fumar en la cama", "costo": 9700}, {"nombre": "Los secretos de la mente millonaria", "costo": 11500}, {"nombre": "Manual de vida Epicteto", "costo": 5500}, {"nombre": "Martin fierro", "costo": 5500}, {"nombre": "Mas vivo que el diablo", "costo": 11500}, {"nombre": "Meditaciones Marco aurelio", "costo": 5500}, {"nombre": "Memento mori recuerda tu muerte", "costo": 11500}, {"nombre": "Metas", "costo": 12500}, {"nombre": "Mi nombre es Emilia del valle", "costo": 14000}, {"nombre": "Mi psicologa me dijo", "costo": 9000}, {"nombre": "Muchas vidas muchos maestros Brian weiss", "costo": 8500}, {"nombre": "Muchos cuerpos una misma alma", "costo": 9000}, {"nombre": "No me puedes lastimar", "costo": 12500}, {"nombre": "No te creas todo lo que piensas", "costo": 9000}, {"nombre": "Ofertas de 100M bolsillo", "costo": 8000}, {"nombre": "Orgullo y prejuicio Jane Austen", "costo": 6500}, {"nombre": "Padre rico padre pobre Robert kiyosaki", "costo": 12900}, {"nombre": "Pasa a la accion", "costo": 11000}, {"nombre": "Piense y hagase rico", "costo": 8500}, {"nombre": "Poder sin limites", "costo": 13000}, {"nombre": "Psicologia oscura", "costo": 9000}, {"nombre": "Quien se ha llevado mi queso", "costo": 6000}, {"nombre": "Random estanislao nachrach", "costo": 6500}, {"nombre": "Recupera tu mente reconquista tu vida Marian Estape", "costo": 13000}, {"nombre": "Relato de un naufrago Gabriel Garcia Marquez", "costo": 5500}, {"nombre": "Rompe la barrera del no", "costo": 12900}, {"nombre": "Romper el circulo", "costo": 12000}, {"nombre": "Rota se camina igual", "costo": 11000}, {"nombre": "Si lo crees lo creas", "costo": 9000}, {"nombre": "Sobre la brevedad de la vida Seneca", "costo": 5500}, {"nombre": "Sobrenatural", "costo": 13500}, {"nombre": "Terapia para llevar", "costo": 12000}, {"nombre": "Tesis sobre una domesticacion Camila villada", "costo": 10000}, {"nombre": "Tiende tu cama", "costo": 9000}, {"nombre": "Titanes Tim Ferris", "costo": 22000}, {"nombre": "Trading en la zona", "costo": 12000}, {"nombre": "Traguese ese sapo Brian Tracy", "costo": 7500}, {"nombre": "Tus zonas erroneas", "costo": 9000}, {"nombre": "Un lugar soleado para gente sombria", "costo": 9900}, {"nombre": "Una nueva tierra", "costo": 10000}, {"nombre": "Usted puede sanar su vida", "costo": 8000}, {"nombre": "Vendele a la mente no a la gente", "costo": 10000}, {"nombre": "Vendes o vendes", "costo": 8900}, {"nombre": "Zensorialmente", "costo": 12400}];
 
-// ========== TABS ==========
-function switchTab(tab) {
-  var pm = document.getElementById('panel-metricas');
-  var pr = document.getElementById('panel-rentabilidad');
-  var tm = document.getElementById('tab-metricas');
-  var tr = document.getElementById('tab-rentabilidad');
-  pm.style.display = tab === 'metricas' ? 'block' : 'none';
-  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
-  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
-  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
-  tr.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
-  tr.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
-  if (tab === 'rentabilidad' && allOrders.length > 0 && providerList.length > 0 && !matchingDone) {
-    showMatching();
-  }
+// ===== CUENTA CORRIENTE CON PROVEEDOR =====
+var _ordenes = [];   // [{id, numero, fecha, libros:[{nombre,costo,qty}], total}]
+var _pagos = [];     // [{id, fecha, monto, nota}]
+var _deudaInicial = 3000000;
+var _librosCarrito = []; // libros seleccionados para la orden en curso
+
+function loadProveedorData() {
+  try {
+    var o = localStorage.getItem('lpe_ordenes');
+    var p = localStorage.getItem('lpe_pagos');
+    var d = localStorage.getItem('lpe_deuda_inicial');
+    if (o) _ordenes = JSON.parse(o);
+    if (p) _pagos = JSON.parse(p);
+    if (d) _deudaInicial = parseFloat(d);
+  } catch(e) {}
 }
 
-// ========== RENTABILIDAD ==========
-var providerList = [];
-var matchMap = {};
-var matchingDone = false;
-var rentOrders = [];
-
-function norm(s) {
-  return (s||'').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+function saveProveedorData() {
+  localStorage.setItem('lpe_ordenes', JSON.stringify(_ordenes));
+  localStorage.setItem('lpe_pagos', JSON.stringify(_pagos));
+  localStorage.setItem('lpe_deuda_inicial', String(_deudaInicial));
 }
 
-function sim(a, b) {
-  var na = norm(a), nb = norm(b);
-  if (na === nb) return 1;
-  var wa = na.split(' ').filter(function(w){return w.length>2;});
-  var wb = new Set(nb.split(' ').filter(function(w){return w.length>2;}));
-  var matches = wa.filter(function(w){return wb.has(w);}).length;
-  var union = new Set([...na.split(' '),...nb.split(' ')].filter(function(w){return w.length>2;})).size;
-  return union > 0 ? matches/union : 0;
+function initRentabilidad() {
+  loadProveedorData();
+  // Setear fecha de hoy en los inputs
+  var hoy = new Date().toISOString().split('T')[0];
+  var of = document.getElementById('orden-fecha');
+  var pf = document.getElementById('pago-fecha');
+  var di = document.getElementById('deuda-inicial');
+  if (of) of.value = hoy;
+  if (pf) pf.value = hoy;
+  if (di) di.value = _deudaInicial;
+  renderSaldo();
+  renderHistorial();
 }
 
-async function loadExcel(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs');
-  var buf = await file.arrayBuffer();
-  var wb = XLSX.read(buf);
-  var ws = wb.Sheets[wb.SheetNames[0]];
-  var rows = XLSX.utils.sheet_to_json(ws, {header:1});
-  providerList = [];
-  rows.forEach(function(row, i) {
-    if (i===0) return;
-    var nombre = (row[0]||'').toString().trim();
-    var costo = parseFloat(row[2])||0;
-    if (nombre && costo>0) providerList.push({nombre:nombre, costo:costo});
-  });
-  document.getElementById('excel-status').textContent = providerList.length + ' libros cargados';
-  localStorage.setItem('lpe_provider_list', JSON.stringify(providerList));
-  matchingDone = false;
-  if (allOrders.length > 0) {
-    var savedMatch = localStorage.getItem('lpe_matchmap');
-    if (savedMatch) {
-      matchMap = JSON.parse(savedMatch);
-      matchingDone = true;
-      renderRentabilidad();
-      document.getElementById('card-matching').style.display = 'block';
-      document.getElementById('card-matching').innerHTML =
-        '<div style="display:flex;justify-content:space-between;align-items:center;">'
-        + '<div><div class="card-title">Matching guardado</div>'
-        + '<div class="card-sub">' + Object.keys(matchMap).length + ' productos vinculados</div></div>'
-        + '<button class="btn-sm" onclick="resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
-        + '</div>';
-    } else {
-      showMatching();
-    }
-  }
+function toggleSaldoConfig() {
+  var el = document.getElementById('saldo-config');
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-function useMayoList() {
-  providerList = MAYO_LIST;
-  document.getElementById('excel-status').textContent = providerList.length + ' libros cargados (lista Mayo)';
-  localStorage.setItem('lpe_provider_list', JSON.stringify(providerList));
-  matchingDone = false;
-  if (allOrders.length > 0) {
-    var savedMatch = localStorage.getItem('lpe_matchmap');
-    if (savedMatch) {
-      matchMap = JSON.parse(savedMatch);
-      matchingDone = true;
-      renderRentabilidad();
-      document.getElementById('card-matching').style.display = 'block';
-      document.getElementById('card-matching').innerHTML =
-        '<div style="display:flex;justify-content:space-between;align-items:center;">'
-        + '<div><div class="card-title">Matching guardado</div>'
-        + '<div class="card-sub">' + Object.keys(matchMap).length + ' productos vinculados desde la ultima sesion</div></div>'
-        + '<button class="btn-sm" onclick="resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
-        + '</div>';
-    } else {
-      showMatching();
-    }
-  }
+function saveDeudaInicial() {
+  var val = parseFloat(document.getElementById('deuda-inicial').value) || 0;
+  _deudaInicial = val;
+  saveProveedorData();
+  renderSaldo();
+  document.getElementById('saldo-config').style.display = 'none';
 }
 
-function showMatching() {
-  // Cargar matching guardado
-  var savedMatching = {};
-  try { savedMatching = JSON.parse(localStorage.getItem('lpe_matching') || '{}'); } catch(e) {}
+function renderSaldo() {
+  var totalOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
+  var totalPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
+  var saldo = _deudaInicial + totalOrdenes - totalPagos;
 
-  var titulos = new Set();
-  allOrders.forEach(function(o){ (o.products||[]).forEach(function(p){ if(p.name) titulos.add(p.name); }); });
+  document.getElementById('saldo-metrics').innerHTML =
+    '<div class="metric"><div class="metric-label">Deuda inicial</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(_deudaInicial).toLocaleString("es-AR") + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Órdenes acumuladas</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(totalOrdenes).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _ordenes.length + ' órdenes</div></div>' +
+    '<div class="metric"><div class="metric-label">Pagos realizados</div><div class="metric-value" style="font-size:18px;color:#16a34a;">$' + Math.round(totalPagos).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _pagos.length + ' pagos</div></div>' +
+    '<div class="metric" style="border-color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + '"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + ';">$' + Math.round(saldo).toLocaleString("es-AR") + '</div><div class="metric-sub">' + (saldo > 0 ? 'Debés al proveedor' : 'A favor tuyo') + '</div></div>';
+}
 
-  var rows = [];
-  titulos.forEach(function(titulo) {
-    var saved = savedMatching[titulo] || null;
-    var savedTipo = saved ? saved.tipo : null;
-    var savedNombre = saved ? saved.nombre : null;
-    var savedCosto = saved ? saved.costo : 0;
+function registrarPago() {
+  var monto = parseFloat(document.getElementById('pago-monto').value) || 0;
+  var fecha = document.getElementById('pago-fecha').value;
+  var nota = document.getElementById('pago-nota').value.trim();
+  if (!monto || !fecha) { alert('Completá el monto y la fecha.'); return; }
+  _pagos.push({ id: Date.now(), fecha: fecha, monto: monto, nota: nota || 'Pago al proveedor' });
+  saveProveedorData();
+  document.getElementById('pago-monto').value = '';
+  document.getElementById('pago-nota').value = '';
+  renderSaldo();
+  renderHistorial();
+}
 
-    var bestMatch = null, bestScore = 0;
-
-    if (savedTipo === 'lista' && savedNombre) {
-      // Usar el match guardado exacto por nombre
-      providerList.forEach(function(p) {
-        if (p.nombre === savedNombre) { bestMatch = p; bestScore = 0.99; }
-      });
-    } else if (savedTipo === 'none') {
-      // Explícitamente sin match — no buscar
-      bestMatch = null; bestScore = 0;
-    } else if (savedTipo === 'manual') {
-      // Precio manual guardado
-      bestMatch = null; bestScore = 0;
-    } else {
-      // Sin historial — buscar por similitud
-      providerList.forEach(function(p) {
-        var s = sim(titulo, p.nombre);
-        if (s > bestScore) { bestScore = s; bestMatch = p; }
-      });
-    }
-
-    rows.push({
-      titulo: titulo,
-      bestMatch: bestMatch,
-      bestScore: bestScore,
-      savedTipo: savedTipo,
-      savedCosto: savedCosto
-    });
-  });
-
-  // Sin match o manuales primero, luego por score
-  rows.sort(function(a,b) {
-    var aNew = !a.savedTipo;
-    var bNew = !b.savedTipo;
-    if (aNew && !bNew) return -1;
-    if (!aNew && bNew) return 1;
-    if (a.bestScore === 0 && b.bestScore > 0) return -1;
-    if (a.bestScore > 0 && b.bestScore === 0) return 1;
-    return a.bestScore - b.bestScore;
-  });
-
-  document.getElementById('card-matching').style.display = 'block';
-  var list = document.getElementById('matching-list');
-  list.innerHTML = rows.map(function(r, i) {
-    var icon = r.savedTipo === 'none' ? '🚫' : r.savedTipo === 'manual' ? '✏️' : r.bestScore >= 0.6 ? '✅' : r.bestScore >= 0.3 ? '⚠️' : '❓';
-    var options = '<option value="">— Sin match —</option>' + providerList.map(function(p) {
-      var selected = r.bestMatch && p.nombre === r.bestMatch.nombre ? 'selected' : '';
-      return '<option value="' + p.nombre + '" ' + selected + '>' + p.nombre + ' ($' + p.costo.toLocaleString("es-AR") + ')</option>';
-    }).join('');
-    var showManual = r.savedTipo === 'manual' || (r.bestScore === 0 && r.savedTipo !== 'none') || (!r.savedTipo && r.bestScore === 0);
-    var manualVal = r.savedTipo === 'manual' ? r.savedCosto : '';
-    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px;flex-wrap:wrap;">'
-      + '<span style="width:22px">' + icon + '</span>'
-      + '<span style="flex:1;min-width:150px;color:#1a1a18;">' + r.titulo + '</span>'
-      + '<span style="color:#888780;font-size:10px;width:30px;">' + (r.savedTipo ? r.savedTipo : Math.round(r.bestScore*100)+'%') + '</span>'
-      + '<select id="match-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" onchange="window.toggleManual(' + i + ',this.value)" style="flex:1;min-width:160px;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;">' + options + '</select>'
-      + '<div id="manual-wrap-' + i + '" style="display:' + (showManual ? 'flex' : 'none') + ';align-items:center;gap:4px;">'
-      + '<span style="font-size:11px;color:#888780;">$ manual</span>'
-      + '<input type="number" id="manual-' + i + '" data-titulo="' + r.titulo.replace(/"/g,'&quot;') + '" value="' + manualVal + '" placeholder="0" min="0" step="100" style="width:80px;padding:4px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#f7f6f3;color:#1a1a18;font-family:inherit;" />'
-      + '</div>'
+function filtrarLibros() {
+  var q = (document.getElementById('libro-search').value || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  var res = document.getElementById('libro-results');
+  if (q.length < 1) { res.style.display = 'none'; return; }
+  var matches = MAYO_LIST.filter(function(l) {
+    return l.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q);
+  }).slice(0, 10);
+  if (!matches.length) { res.style.display = 'none'; return; }
+  res.style.display = 'block';
+  res.innerHTML = matches.map(function(l) {
+    return '<div onclick="window.agregarLibro(' + JSON.stringify(l).replace(/"/g,"'") + ')" style="padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='var(--surface)'">'
+      + '<span>' + l.nombre + '</span>'
+      + '<span style="color:var(--muted);font-weight:500;">$' + l.costo.toLocaleString("es-AR") + '</span>'
       + '</div>';
   }).join('');
 }
 
-
-function toggleManual(i, val) {
-  var wrap = document.getElementById('manual-wrap-' + i);
-  if (wrap) wrap.style.display = val === '' ? 'flex' : 'none';
+function agregarLibro(libro) {
+  // Ver si ya está en el carrito
+  var existing = _librosCarrito.find(function(l){ return l.nombre === libro.nombre; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    _librosCarrito.push({ nombre: libro.nombre, costo: libro.costo, qty: 1 });
+  }
+  document.getElementById('libro-search').value = '';
+  document.getElementById('libro-results').style.display = 'none';
+  renderCarrito();
 }
 
-var _matchingRows = []; // array global con los títulos en orden
+function quitarLibro(nombre) {
+  _librosCarrito = _librosCarrito.filter(function(l){ return l.nombre !== nombre; });
+  renderCarrito();
+}
 
-function applyMatching() {
-  var matching = {};
-  matchMap = {};
+function cambiarQty(nombre, delta) {
+  var l = _librosCarrito.find(function(l){ return l.nombre === nombre; });
+  if (!l) return;
+  l.qty = Math.max(1, l.qty + delta);
+  renderCarrito();
+}
 
-  // Usar _matchingRows que tiene los títulos en el orden exacto del render
-  _matchingRows.forEach(function(titulo, i) {
-    var sel = document.getElementById('match-' + i);
-    if (!sel) return;
-    var val = sel.value;
-    var manualInput = document.getElementById('manual-' + i);
-    var manualCosto = manualInput ? parseFloat(manualInput.value) || 0 : 0;
+function renderCarrito() {
+  var el = document.getElementById('libros-seleccionados');
+  var totalEl = document.getElementById('orden-total');
+  if (!_librosCarrito.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--muted);">Ningún libro seleccionado aún.</p>';
+    totalEl.textContent = '';
+    return;
+  }
+  var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
+  el.innerHTML = '<div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">' +
+    _librosCarrito.map(function(l) {
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:13px;">'
+        + '<span style="flex:1;">' + l.nombre + '</span>'
+        + '<div style="display:flex;align-items:center;gap:6px;">'
+        + '<button onclick="window.cambiarQty('' + l.nombre.replace(/'/g,"\'") + '',-1)" style="width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;line-height:1;">−</button>'
+        + '<span style="min-width:20px;text-align:center;">' + l.qty + '</span>'
+        + '<button onclick="window.cambiarQty('' + l.nombre.replace(/'/g,"\'") + '',1)" style="width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;line-height:1;">+</button>'
+        + '</div>'
+        + '<span style="color:#e24b4a;font-weight:500;min-width:80px;text-align:right;">$' + (l.costo * l.qty).toLocaleString("es-AR") + '</span>'
+        + '<button onclick="window.quitarLibro('' + l.nombre.replace(/'/g,"\'") + '')" style="color:var(--muted);background:none;border:none;cursor:pointer;font-size:16px;padding:0 4px;">×</button>'
+        + '</div>';
+    }).join('') + '</div>';
+  totalEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600;">'
+    + '<span>Total costo proveedor:</span>'
+    + '<span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span>'
+    + '</div>';
+}
 
-    if (val) {
-      var p = providerList.find(function(x){ return x.nombre === val; });
-      if (p) {
-        matchMap[titulo] = p.costo;
-        matching[titulo] = { costo: p.costo, nombre: p.nombre, tipo: 'lista' };
-      }
-    } else if (manualCosto > 0) {
-      matchMap[titulo] = manualCosto;
-      matching[titulo] = { costo: manualCosto, nombre: null, tipo: 'manual' };
+function guardarOrden() {
+  var numero = document.getElementById('orden-numero').value.trim();
+  var fecha = document.getElementById('orden-fecha').value;
+  if (!numero) { alert('Ingresá el número de orden.'); return; }
+  if (!fecha) { alert('Seleccioná la fecha.'); return; }
+  if (!_librosCarrito.length) { alert('Agregá al menos un libro.'); return; }
+  var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
+  _ordenes.push({
+    id: Date.now(),
+    numero: numero,
+    fecha: fecha,
+    libros: JSON.parse(JSON.stringify(_librosCarrito)),
+    total: total
+  });
+  saveProveedorData();
+  _librosCarrito = [];
+  document.getElementById('orden-numero').value = '';
+  document.getElementById('libros-seleccionados').innerHTML = '';
+  document.getElementById('orden-total').innerHTML = '';
+  var msg = document.getElementById('orden-msg');
+  msg.textContent = 'Orden #' + numero + ' guardada ($' + total.toLocaleString("es-AR") + ')';
+  setTimeout(function(){ msg.textContent = ''; }, 3000);
+  renderSaldo();
+  renderHistorial();
+}
+
+function getWeekKey(fecha) {
+  var d = new Date(fecha + 'T12:00:00');
+  var day = d.getDay();
+  // Semana que cierra el viernes: buscar el viernes de esa semana
+  var diffToFri = (5 - day + 7) % 7;
+  var fri = new Date(d);
+  fri.setDate(d.getDate() + diffToFri);
+  return fri.toISOString().split('T')[0];
+}
+
+function getWeekLabel(friDate) {
+  var d = new Date(friDate + 'T12:00:00');
+  var lun = new Date(d);
+  lun.setDate(d.getDate() - 4);
+  return 'Semana ' + lun.getDate() + '/' + (lun.getMonth()+1) + ' — ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+}
+
+function renderHistorial() {
+  // Agrupar por semana
+  var semanas = {};
+  _ordenes.forEach(function(o) {
+    var k = getWeekKey(o.fecha);
+    if (!semanas[k]) semanas[k] = { ordenes: [], pagos: [], totalOrdenes: 0, totalPagos: 0 };
+    semanas[k].ordenes.push(o);
+    semanas[k].totalOrdenes += o.total;
+  });
+  _pagos.forEach(function(p) {
+    var k = getWeekKey(p.fecha);
+    if (!semanas[k]) semanas[k] = { ordenes: [], pagos: [], totalOrdenes: 0, totalPagos: 0 };
+    semanas[k].pagos.push(p);
+    semanas[k].totalPagos += p.monto;
+  });
+
+  var sorted = Object.entries(semanas).sort(function(a,b){ return b[0].localeCompare(a[0]); });
+
+  // Resumen semanal
+  var semHtml = '';
+  if (!sorted.length) {
+    semHtml = '<p style="font-size:13px;color:var(--muted);">No hay órdenes ni pagos registrados aún.</p>';
+  } else {
+    semHtml = '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
+      + '<thead><tr style="border-bottom:1px solid var(--border);">'
+      + '<th style="padding:8px 6px;text-align:left;color:var(--muted);font-weight:500;">Semana</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Órdenes</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Costo total</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Pagos</th>'
+      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Balance semana</th>'
+      + '</tr></thead><tbody>'
+      + sorted.map(function(e) {
+          var k=e[0], s=e[1];
+          var balance = s.totalPagos - s.totalOrdenes;
+          var bc = balance >= 0 ? '#16a34a' : '#e24b4a';
+          return '<tr style="border-bottom:0.5px solid var(--border);">'
+            + '<td style="padding:8px 6px;font-weight:500;">' + getWeekLabel(k) + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;">' + s.ordenes.length + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:#e24b4a;">$' + Math.round(s.totalOrdenes).toLocaleString("es-AR") + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:#16a34a;">$' + Math.round(s.totalPagos).toLocaleString("es-AR") + '</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:'+bc+';font-weight:500;">$' + Math.round(Math.abs(balance)).toLocaleString("es-AR") + ' ' + (balance >= 0 ? '✓' : '↑debe') + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+  }
+  document.getElementById('historial-semanal').innerHTML = semHtml;
+
+  // Historial detalle
+  var all = [];
+  _ordenes.forEach(function(o){ all.push({tipo:'orden', fecha:o.fecha, data:o}); });
+  _pagos.forEach(function(p){ all.push({tipo:'pago', fecha:p.fecha, data:p}); });
+  all.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
+
+  var detHtml = all.length ? all.map(function(item) {
+    if (item.tipo === 'orden') {
+      var o = item.data;
+      var d = new Date(o.fecha+'T12:00:00');
+      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+      var librosStr = o.libros.map(function(l){ return l.nombre+(l.qty>1?' x'+l.qty:''); }).join(', ');
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
+        + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:13px;font-weight:500;">#' + o.numero + ' — ' + fecha + '</div>'
+        + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + librosStr + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+        + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$' + Math.round(o.total).toLocaleString("es-AR") + '</div>'
+        + '<button onclick="window.eliminarOrden(' + o.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+        + '</div>'
+        + '</div>';
     } else {
-      matching[titulo] = { costo: 0, nombre: null, tipo: 'none' };
+      var p = item.data;
+      var d = new Date(p.fecha+'T12:00:00');
+      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
+        + '<span style="font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Pago</span>'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:13px;font-weight:500;">' + p.nota + ' — ' + fecha + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+        + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$' + Math.round(p.monto).toLocaleString("es-AR") + '</div>'
+        + '<button onclick="window.eliminarPago(' + p.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+        + '</div>'
+        + '</div>';
     }
+  }).join('') : '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
+
+  document.getElementById('historial-detalle').innerHTML = detHtml;
+}
+
+function eliminarOrden(id) {
+  if (!confirm('¿Eliminar esta orden?')) return;
+  _ordenes = _ordenes.filter(function(o){ return o.id !== id; });
+  saveProveedorData();
+  renderSaldo();
+  renderHistorial();
+}
+
+function eliminarPago(id) {
+  if (!confirm('¿Eliminar este pago?')) return;
+  _pagos = _pagos.filter(function(p){ return p.id !== id; });
+  saveProveedorData();
+  renderSaldo();
+  renderHistorial();
+}
+
+function exportarResumen() {
+  var rows = [['Tipo','Fecha','Numero/Nota','Libros','Total']];
+  _ordenes.forEach(function(o) {
+    rows.push(['Orden', o.fecha, '#'+o.numero, o.libros.map(function(l){return l.nombre+(l.qty>1?' x'+l.qty:'');}).join(' | '), o.total]);
   });
-
-  localStorage.setItem('lpe_matchmap', JSON.stringify(matchMap));
-  localStorage.setItem('lpe_matching', JSON.stringify(matching));
-
-  matchingDone = true;
-  var card = document.getElementById('card-matching');
-  if (card) {
-    var linked = Object.values(matching).filter(function(m){ return m.tipo !== 'none'; }).length;
-    card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;">'
-      + '<div><div class="card-title">Matching guardado</div>'
-      + '<div class="card-sub">' + linked + ' productos con costo asignado</div></div>'
-      + '<button class="btn-sm" onclick="window.resetMatching()" style="padding:8px 16px;">Revisar matching</button>'
-      + '</div>';
-  }
-  renderRentabilidad();
-}
-
-
-function setRentPeriod(p) {
-  currentRentPeriod = p;
-  ['dia','semana','mes','custom'].forEach(function(x) {
-    var btn = document.getElementById('rent-period-'+x);
-    if(btn) btn.className = 'filter-btn'+(x===p?' active':'');
+  _pagos.forEach(function(p) {
+    rows.push(['Pago', p.fecha, p.nota, '', -p.monto]);
   });
-  var cr = document.getElementById('rent-custom-range');
-  if(cr) cr.style.display = p==='custom'?'flex':'none';
-  if(p!=='custom') renderProveedorTable();
+  rows.sort(function(a,b){ return a[1].localeCompare(b[1]); });
+  var csv = rows.map(function(r){ return r.join(','); }).join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lpe-proveedor.csv'; a.click();
 }
 
-function getGroupKey(dateStr, period) {
-  var d = new Date(dateStr);
-  if(period==='dia') {
-    var mm=d.getMonth()+1, dd=d.getDate();
-    return d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;
-  }
-  if(period==='semana') {
-    var day=d.getDay(), mon=new Date(d);
-    mon.setDate(d.getDate()-(day===0?6:day-1));
-    return mon.toISOString().split('T')[0];
-  }
-  if(period==='mes') {
-    var mm=d.getMonth()+1;
-    return d.getFullYear()+'-'+(mm<10?'0':'')+mm;
-  }
-  return null;
-}
-
-function getGroupLabel(key, period) {
-  var meses=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  if(period==='dia'){var d=new Date(key+'T12:00:00');return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
-  if(period==='semana'){var d=new Date(key+'T12:00:00');return 'Semana del '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
-  if(period==='mes'){var p=key.split('-');return meses[parseInt(p[1])]+' '+p[0];}
-  return key;
-}
-
-function renderProveedorTable() {
-  var ds = rentOrders.filter(function(r){return r.esDS;});
-  var period = currentRentPeriod;
-  var filtered = ds;
-  if(period==='custom') {
-    var from = document.getElementById('rent-date-from').value;
-    var to = document.getElementById('rent-date-to').value;
-    if(from) filtered = filtered.filter(function(r){return r.o.created_at>=from;});
-    if(to) filtered = filtered.filter(function(r){return r.o.created_at<=to+'T23:59:59';});
-  }
-  var groups = {};
-  filtered.forEach(function(r) {
-    var k = period==='custom'?'Período seleccionado':getGroupKey(r.o.created_at,period);
-    if(!groups[k]) groups[k]={costo:0,count:0,ganancia:0,venta:0};
-    groups[k].costo+=r.costoProveedor; groups[k].count++; groups[k].ganancia+=r.ganancia; groups[k].venta+=r.venta;
-  });
-  var sorted = Object.entries(groups).sort(function(a,b){return b[0].localeCompare(a[0]);});
-  var tc = filtered.reduce(function(s,r){return s+r.costoProveedor;},0);
-  var tg = filtered.reduce(function(s,r){return s+r.ganancia;},0);
-  var tv = filtered.reduce(function(s,r){return s+r.venta;},0);
-  document.getElementById('proveedor-summary').innerHTML =
-    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:.75rem;">'+
-    '<thead><tr style="border-bottom:1px solid var(--border);">'+
-    '<th style="padding:8px 6px;text-align:left;color:var(--muted);font-weight:500">Período</th>'+
-    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">Pedidos</th>'+
-    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">Facturado</th>'+
-    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">A pagar</th>'+
-    '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500">Ganancia</th>'+
-    '</tr></thead><tbody>'+
-    sorted.map(function(e){
-      var k=e[0],v=e[1],label=period==='custom'?k:getGroupLabel(k,period);
-      return '<tr style="border-bottom:0.5px solid var(--border);">'+
-        '<td style="padding:8px 6px;font-weight:500">'+label+'</td>'+
-        '<td style="padding:8px 6px;text-align:right">'+v.count+'</td>'+
-        '<td style="padding:8px 6px;text-align:right;color:var(--muted)">$'+Math.round(v.venta).toLocaleString("es-AR")+'</td>'+
-        '<td style="padding:8px 6px;text-align:right;color:#e24b4a;font-weight:500">$'+Math.round(v.costo).toLocaleString("es-AR")+'</td>'+
-        '<td style="padding:8px 6px;text-align:right;color:#16a34a;font-weight:500">$'+Math.round(v.ganancia).toLocaleString("es-AR")+'</td>'+
-        '</tr>';
-    }).join('')+
-    '<tr style="border-top:2px solid var(--border);font-weight:700;">'+
-    '<td style="padding:8px 6px">TOTAL</td>'+
-    '<td style="padding:8px 6px;text-align:right">'+filtered.length+'</td>'+
-    '<td style="padding:8px 6px;text-align:right">$'+Math.round(tv).toLocaleString("es-AR")+'</td>'+
-    '<td style="padding:8px 6px;text-align:right;color:#e24b4a">$'+Math.round(tc).toLocaleString("es-AR")+'</td>'+
-    '<td style="padding:8px 6px;text-align:right;color:#16a34a">$'+Math.round(tg).toLocaleString("es-AR")+'</td>'+
-    '</tr></tbody></table>';
-}
-
-function toggleRentDetail(num) {
-  var el = document.getElementById('rent-detail-'+num);
-  if(el) el.style.display = el.style.display==='none'?'table-row':'none';
-}
-
-var currentRentPeriod = 'dia';
-
-function renderRentabilidad() {
-  var pctTN = (parseFloat(document.getElementById('pct-tn').value)||3)/100;
-  var pctMP = (parseFloat(document.getElementById('pct-mp').value)||4.99)/100;
-  var costoFijo = parseFloat(document.getElementById('costo-fijo').value)||0;
-
-  rentOrders = allOrders.map(function(o) {
-    var venta = parseFloat(o.total||0);
-    var costoProveedor = 0, librosDetalle = [];
-    (o.products||[]).forEach(function(p) {
-      var cu = matchMap[p.name]||0;
-      var qty = p.quantity||1;
-      costoProveedor += cu*qty;
-      librosDetalle.push({nombre:p.name, qty:qty, costoUnit:cu, costoTotal:cu*qty, sinMatch:cu===0});
-    });
-    var comTN=venta*pctTN, comMP=venta*pctMP;
-    var ganancia=venta-costoProveedor-comTN-comMP-costoFijo;
-    var margen=venta>0?(ganancia/venta)*100:0;
-    return {o:o, venta:venta, costoProveedor:costoProveedor, comTN:comTN, comMP:comMP, ganancia:ganancia, margen:margen, librosDetalle:librosDetalle, esDS:costoProveedor>0};
-  });
-
-  var ds=rentOrders.filter(function(r){return r.esDS;});
-  var tv=ds.reduce(function(s,r){return s+r.venta;},0);
-  var tc=ds.reduce(function(s,r){return s+r.costoProveedor;},0);
-  var tg=ds.reduce(function(s,r){return s+r.ganancia;},0);
-  var mp=tv>0?(tg/tv)*100:0;
-  var sinMatch=rentOrders.reduce(function(s,r){return s+r.librosDetalle.filter(function(l){return l.sinMatch;}).length;},0);
-
-  document.getElementById('rent-metrics').innerHTML =
-    '<div class="metric"><div class="metric-label">Pedidos DS</div><div class="metric-value">'+ds.length+'</div></div>'+
-    '<div class="metric"><div class="metric-label">Facturacion</div><div class="metric-value" style="font-size:18px">$'+Math.round(tv).toLocaleString("es-AR")+'</div></div>'+
-    '<div class="metric"><div class="metric-label">A pagar proveedor</div><div class="metric-value" style="font-size:18px;color:#e24b4a">$'+Math.round(tc).toLocaleString("es-AR")+'</div></div>'+
-    '<div class="metric"><div class="metric-label">Tu ganancia neta</div><div class="metric-value" style="font-size:18px;color:#16a34a">$'+Math.round(tg).toLocaleString("es-AR")+'</div></div>'+
-    '<div class="metric"><div class="metric-label">Margen promedio</div><div class="metric-value">'+mp.toFixed(1)+'%</div></div>'+
-    (sinMatch>0?'<div class="metric" style="border-color:#d97706;"><div class="metric-label" style="color:#d97706">Sin costo asignado</div><div class="metric-value" style="color:#d97706">'+sinMatch+' libros</div></div>':'');
-
-  renderProveedorTable();
-
-  // Construir tabla con DOM para evitar conflictos de comillas
-  var tbody = document.getElementById('rent-tbody');
-  tbody.innerHTML = '';
-  rentOrders.forEach(function(r) {
-    var d = new Date(r.o.created_at);
-    var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-    var mc = r.margen>30 ? '#16a34a' : r.margen>15 ? '#d97706' : '#e24b4a';
-    var hasSM = r.librosDetalle.some(function(l){return l.sinMatch;});
-
-    // Fila principal
-    var tr = document.createElement('tr');
-    tr.style.cssText = 'border-bottom:0.5px solid var(--border);cursor:pointer;background:var(--surface);';
-    tr.onclick = (function(num){ return function(){ toggleRentDetail(num); }; })(r.o.number);
-
-    var cells = [
-      {html: '#'+r.o.number, style: 'padding:7px 6px;font-weight:500'},
-      {html: fecha, style: 'padding:7px 6px;color:var(--muted)'},
-      {html: '$'+Math.round(r.venta).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right'},
-      {html: r.esDS ? '$'+Math.round(r.costoProveedor).toLocaleString("es-AR") : '—', style: 'padding:7px 6px;text-align:right;color:#e24b4a'},
-      {html: '$'+Math.round(r.comTN).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right;color:var(--muted)'},
-      {html: '$'+Math.round(r.comMP).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right;color:var(--muted)'},
-      {html: '$'+Math.round(r.ganancia).toLocaleString("es-AR"), style: 'padding:7px 6px;text-align:right;font-weight:500;color:'+mc},
-      {html: r.esDS ? r.margen.toFixed(1)+'%' : '—', style: 'padding:7px 6px;text-align:right;color:'+mc},
-      {html: '▼'+(hasSM?' ⚠️':''), style: 'padding:7px 6px;text-align:center;font-size:10px;color:var(--muted)'},
-    ];
-    cells.forEach(function(cell) {
-      var td = document.createElement('td');
-      td.style.cssText = cell.style;
-      td.innerHTML = cell.html;
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-
-    // Fila de detalle (oculta)
-    var trDetail = document.createElement('tr');
-    trDetail.id = 'rent-detail-'+r.o.number;
-    trDetail.style.display = 'none';
-    trDetail.style.background = 'var(--bg)';
-    var tdDetail = document.createElement('td');
-    tdDetail.colSpan = 9;
-    tdDetail.style.cssText = 'padding:10px 20px;';
-
-    var detHTML = '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Detalle de libros</div>';
-    r.librosDetalle.forEach(function(l) {
-      detHTML += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:11px;">'
-        + '<span style="flex:1;color:'+(l.sinMatch?'#d97706':'var(--text)')+';">'
-        + l.nombre+(l.qty>1?' x'+l.qty:'')+(l.sinMatch?' ⚠️ sin costo asignado':'')
-        + '</span>'
-        + '<span style="color:#e24b4a;font-weight:500;min-width:90px;text-align:right;">'
-        + (l.sinMatch ? '— (no cobrado)' : '$'+l.costoTotal.toLocaleString("es-AR"))
-        + '</span></div>';
-    });
-    detHTML += '<div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-size:12px;font-weight:700;border-top:1px solid var(--border);margin-top:4px;">'
-      + '<span>Total costo proveedor</span>'
-      + '<span style="color:#e24b4a;">$'+Math.round(r.costoProveedor).toLocaleString("es-AR")+'</span></div>';
-
-    tdDetail.innerHTML = detHTML;
-    trDetail.appendChild(tdDetail);
-    tbody.appendChild(trDetail);
-  });
-
-  document.getElementById('rent-summary').style.display='block';
-}
-
-function exportCSV() {
-  var rows = [['Pedido','Fecha','Libros','Venta','Costo Proveedor','Comision TN','Comision MP','Ganancia','Margen']];
-  rentOrders.forEach(function(r) {
-    var d=new Date(r.o.created_at);
-    rows.push([r.o.number, d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear(), r.libros.join(' | '), Math.round(r.venta), Math.round(r.costoProveedor), Math.round(r.comTN), Math.round(r.comMP), Math.round(r.ganancia), r.margen.toFixed(1)+'%']);
-  });
-  var csv = rows.map(function(r){return r.join(',');}).join('\n');
-  var blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href=url; a.download='lpe-rentabilidad.csv'; a.click();
-}
-
-// Cargar lista guardada del localStorage al iniciar rentabilidad
-function initRent() {
-  var saved = localStorage.getItem('lpe_provider_list');
-  var savedMatch = localStorage.getItem('lpe_matchmap');
-  if (saved) {
-    providerList = JSON.parse(saved);
-    document.getElementById('excel-status').textContent = providerList.length + ' libros cargados (guardados)';
-  }
-  if (savedMatch) {
-    matchMap = JSON.parse(savedMatch);
-    matchingDone = true;
-  }
-}
-
-function resetApp() {
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('setup').style.display = 'flex';
-  document.getElementById('connect-btn').disabled = false;
-  document.getElementById('token-input').value = '';
-  if (!document.getElementById('remember-chk')?.checked) {
-    localStorage.removeItem('lpe_creds');
-  }
-  document.getElementById('filters').innerHTML = '<span>Ver:</span>';
-  allOrders = [];
-  Object.values(charts).forEach(c => c.destroy());
-  charts = {};
-}
-
-function resetMatching() {
-  matchingDone = false;
-  document.getElementById('rent-summary').style.display = 'none';
-  var card = document.getElementById('card-matching');
-  card.innerHTML =
-    '<div class="card-title">Matching de productos</div>'
-    + '<div class="card-sub">Los sin match aparecen primero. Usá el dropdown o poné precio manual.</div>'
-    + '<div id="matching-list" style="margin-top:1rem;max-height:420px;overflow-y:auto;"></div>'
-    + '<button onclick="window.applyMatching()" style="margin-top:1rem;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;">Confirmar y calcular</button>';
-  card.style.display = 'block';
-  showMatching();
-}
 
 // Exponer funciones al scope global para uso en onclick dinámico
 window.resetMatching = resetMatching;
