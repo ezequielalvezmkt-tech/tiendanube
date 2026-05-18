@@ -1173,8 +1173,25 @@ function renderCarrito() {
   });
   el.appendChild(wrapper);
   var unidades = _librosCarrito.reduce(function(s,l){ return s + l.qty; }, 0);
-  totalEl.innerHTML = '<p style="font-size:13px;color:var(--muted);margin:4px 0 2px;">' + unidades + ' unidad' + (unidades !== 1 ? 'es' : '') + ' en el pedido</p><p style="font-size:15px;font-weight:700;display:flex;justify-content:space-between;margin:2px 0;"><span>Total costo proveedor:</span><span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span></p>';
-}
+  var uLabel = unidades + (unidades !== 1 ? ' unidades' : ' unidad') + ' en el pedido';
+  var uDiv = document.createElement('p');
+  uDiv.style.fontSize = '13px';
+  uDiv.style.color = 'var(--muted)';
+  uDiv.style.margin = '4px 0 2px';
+  uDiv.textContent = uLabel;
+  var tDiv = document.createElement('p');
+  tDiv.style.cssText = 'font-size:15px;font-weight:700;display:flex;justify-content:space-between;margin:2px 0;';
+  var tLabel = document.createElement('span');
+  tLabel.textContent = 'Total costo proveedor:';
+  var tAmount = document.createElement('span');
+  tAmount.style.color = '#e24b4a';
+  tAmount.textContent = '$' + total.toLocaleString("es-AR");
+  tDiv.appendChild(tLabel);
+  tDiv.appendChild(tAmount);
+  totalEl.innerHTML = '';
+  totalEl.appendChild(uDiv);
+  totalEl.appendChild(tDiv);
+
 function guardarOrden() {
   var numero = document.getElementById('orden-numero').value.trim();
   var fecha = document.getElementById('orden-fecha').value;
