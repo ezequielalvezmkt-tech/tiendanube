@@ -1320,6 +1320,21 @@ function exportarResumen() {
 }
 
 
+function switchTab(tab) {
+  var pm = document.getElementById('panel-metricas');
+  var pr = document.getElementById('panel-rentabilidad');
+  var tm = document.getElementById('tab-metricas');
+  var tr2 = document.getElementById('tab-rentabilidad');
+  if (!pm || !pr) return;
+  pm.style.display = tab === 'metricas' ? 'block' : 'none';
+  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
+  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
+  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
+  tr2.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
+  tr2.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
+  if (tab === 'rentabilidad') initRentabilidad();
+}
+
 // Exponer funciones al scope global
 window.switchTab = switchTab;
 window.connectStore = connectStore;
