@@ -1398,30 +1398,29 @@ async function procesarImagenOrden(input) {
     var mediaType = file.type || 'image/jpeg';
 
     try {
-      var response = await fetch('https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
+      var geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+      var proxyUrl = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + encodeURIComponent(geminiUrl);
+
+      var response = await fetch(proxyUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: [
+          contents: [{
+            parts: [
               {
-                type: 'image',
-                source: { type: 'base64', media_type: mediaType, data: base64 }
+                inline_data: { mime_type: mediaType, data: base64 }
               },
               {
-                type: 'text',
-                text: 'Analizá esta imagen que puede contener UNA o VARIAS órdenes de envío de libros (mensajes de WhatsApp o PDFs). Cada orden es un bloque separado que tiene un número de PDF o un separador visual. Para cada orden detectada, extraé los libros con su cantidad. Respondé ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto: {"ordenes": [{"libros": [{"nombre": "Titulo del libro", "qty": 1}]}, ...]}. Si hay un número antes del nombre del libro (ej: "1. Habitos Atomicos") ignorá ese número, es la cantidad. Si dice "1. Titulo - 1. Otro titulo" son dos libros distintos cada uno con qty 1. Si una orden tiene "20 libros en total" o similar, asegurate de incluir todos. Solo incluí títulos de libros reales, ignorá direcciones, fechas, números de envío y otros datos.'
+                text: 'Analizá esta imagen que puede contener UNA o VARIAS órdenes de envío de libros (mensajes de WhatsApp o PDFs). Cada orden es un bloque separado que tiene un número de PDF o un separador visual. Para cada orden detectada, extraé los libros con su cantidad. Respondé ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto: {"ordenes": [{"libros": [{"nombre": "Titulo del libro", "qty": 1}]}, ...]}. Si hay un número antes del nombre del libro (ej: "1. Habitos Atomicos") ignorá ese número, es la cantidad. Si dice "1. Titulo - 1. Otro titulo" son dos libros distintos cada uno con qty 1. Si una orden tiene "20 libros en total" incluí todos esos libros. Solo incluí títulos de libros reales, ignorá direcciones, fechas, números de envío y otros datos.'
               }
             ]
-          }]
+          }],
+          generationConfig: { temperature: 0 }
         })
       });
 
       var data = await response.json();
-      var text = data.content && data.content[0] && data.content[0].text || '{}';
+      var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text || '{}';
       text = text.replace(/```json|```/g, '').trim();
       var parsed = JSON.parse(text);
 
@@ -1590,6 +1589,7 @@ window.guardarOrden = guardarOrden;
 window.eliminarOrden = eliminarOrden;
 window.eliminarPago = eliminarPago;
 window.exportarResumen = exportarResumen;
+window.resetApp = resetApp;
 window.procesarImagenOrden = procesarImagenOrden;
 window.confirmarOrdenImagen = confirmarOrdenImagen;
 </script>
