@@ -1397,7 +1397,7 @@ async function procesarImagenOrden(input) {
     var mediaType = file.type || 'image/jpeg';
 
     try {
-      var response = await fetch('https://api.anthropic.com/v1/messages', {
+      var response = await fetch('https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
