@@ -991,15 +991,33 @@ function saveDeudaInicial() {
   document.getElementById('saldo-config').style.display = 'none';
 }
 
+function getSemanaActualKey() {
+  // Devuelve el weekKey (viernes de cierre) de la semana que está corriendo ahora
+  var hoy = new Date();
+  var yyyy = hoy.getFullYear();
+  var mm = String(hoy.getMonth()+1).padStart(2,'0');
+  var dd = String(hoy.getDate()).padStart(2,'0');
+  return getWeekKey(yyyy+'-'+mm+'-'+dd);
+}
+
 function renderSaldo() {
   var totalOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
   var totalPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
   var saldo = _deudaInicial + totalOrdenes - totalPagos;
+
+  // Unidades de la semana actual
+  var semActual = getSemanaActualKey();
+  var unidadesSemana = _ordenes
+    .filter(function(o){ return getWeekKey(o.fecha) === semActual; })
+    .reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a + l.qty; }, 0); }, 0);
+  var ordenesSemana = _ordenes.filter(function(o){ return getWeekKey(o.fecha) === semActual; }).length;
+
   document.getElementById('saldo-metrics').innerHTML =
     '<div class="metric"><div class="metric-label">Deuda inicial</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$'+Math.round(_deudaInicial).toLocaleString('es-AR')+'</div></div>' +
     '<div class="metric"><div class="metric-label">Órdenes acumuladas</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$'+Math.round(totalOrdenes).toLocaleString('es-AR')+'</div><div class="metric-sub">'+_ordenes.length+' órdenes</div></div>' +
     '<div class="metric"><div class="metric-label">Pagos realizados</div><div class="metric-value" style="font-size:18px;color:#16a34a;">$'+Math.round(totalPagos).toLocaleString('es-AR')+'</div><div class="metric-sub">'+_pagos.length+' pagos</div></div>' +
-    '<div class="metric" style="border-color:'+(saldo>0?'#e24b4a':'#16a34a')+'"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:'+(saldo>0?'#e24b4a':'#16a34a')+';">$'+Math.round(saldo).toLocaleString('es-AR')+'</div><div class="metric-sub">'+(saldo>0?'Debés al proveedor':'A favor tuyo')+'</div></div>';
+    '<div class="metric" style="border-color:'+(saldo>0?'#e24b4a':'#16a34a')+'"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:'+(saldo>0?'#e24b4a':'#16a34a')+';">$'+Math.round(saldo).toLocaleString('es-AR')+'</div><div class="metric-sub">'+(saldo>0?'Debés al proveedor':'A favor tuyo')+'</div></div>' +
+    '<div class="metric" style="border-color:var(--blue)"><div class="metric-label">Semana actual</div><div class="metric-value" style="font-size:20px;color:#378add;">'+unidadesSemana+'</div><div class="metric-sub">unid. · '+ordenesSemana+' orden'+(ordenesSemana!==1?'es':'')+'</div></div>';
 }
 
 function registrarPago() {
