@@ -28,7 +28,6 @@
     min-height: 100vh;
   }
 
-  /* SETUP */
   #setup {
     min-height: 100vh;
     display: flex;
@@ -46,46 +45,24 @@
     max-width: 480px;
   }
 
-  .setup-logo {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-  }
-
+  .setup-logo { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 1.5rem; }
   .setup-title { font-size: 22px; font-weight: 500; margin-bottom: 6px; }
   .setup-sub { font-size: 14px; color: var(--muted); margin-bottom: 2rem; line-height: 1.5; }
 
   .field { margin-bottom: 1.25rem; }
   .field label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
   .field input, .field select {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 14px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    background: var(--bg);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-    font-family: inherit;
+    width: 100%; padding: 10px 14px; font-size: 14px;
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text); outline: none;
+    transition: border-color 0.15s; font-family: inherit;
   }
   .field input:focus, .field select:focus { border-color: var(--accent); }
 
   .btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    font-family: inherit;
+    width: 100%; padding: 12px; background: var(--accent); color: #fff;
+    border: none; border-radius: var(--radius-sm); font-size: 14px;
+    font-weight: 500; cursor: pointer; transition: opacity 0.15s; font-family: inherit;
   }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn:hover:not(:disabled) { opacity: 0.85; }
@@ -94,95 +71,44 @@
   .loading-msg { color: var(--muted); font-size: 13px; margin-top: 10px; }
   .hint { font-size: 11px; color: var(--muted); margin-top: 1.25rem; line-height: 1.6; border-top: 0.5px solid var(--border); padding-top: 1rem; }
 
-  /* DASHBOARD */
   #dashboard { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
 
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-  }
+  .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
   .topbar-title { font-size: 22px; font-weight: 500; }
   .topbar-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
   .topbar-right { display: flex; gap: 8px; align-items: center; }
 
-  .badge {
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 0.5px solid var(--border-strong);
-    color: var(--muted);
-    background: var(--surface);
-  }
+  .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; border: 0.5px solid var(--border-strong); color: var(--muted); background: var(--surface); }
 
   .btn-sm {
-    font-size: 12px;
-    padding: 6px 14px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    cursor: pointer;
-    color: var(--text);
-    font-family: inherit;
-    transition: background 0.15s;
+    font-size: 12px; padding: 6px 14px; border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm); background: transparent; cursor: pointer;
+    color: var(--text); font-family: inherit; transition: background 0.15s;
   }
   .btn-sm:hover { background: rgba(0,0,0,0.05); }
 
-  /* FILTER */
   .filters { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
   .filters span { font-size: 12px; color: var(--muted); }
   .filter-btn {
-    font-size: 12px;
-    padding: 5px 14px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: 20px;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
+    font-size: 12px; padding: 5px 14px; border: 0.5px solid var(--border-strong);
+    border-radius: 20px; background: transparent; color: var(--muted);
+    cursor: pointer; font-family: inherit; transition: all 0.15s;
   }
-  .filter-btn.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  /* METRICS */
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-  .metric {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 1rem 1.25rem;
-  }
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .metric { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 1rem 1.25rem; }
   .metric-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
   .metric-value { font-size: 24px; font-weight: 500; color: var(--text); }
   .metric-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
-  /* CHARTS */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
 
-  .card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-  }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
   .card-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
   .card-sub { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
 
-  canvas-wrap { position: relative; width: 100%; }
-
-  /* PROVINCE LIST */
   .prov-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
   .prov-row:last-child { border-bottom: none; }
   .prov-name { width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -190,7 +116,6 @@
   .prov-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
   .prov-pct { width: 44px; text-align: right; font-size: 11px; color: var(--muted); }
 
-  /* COMBO LIST */
   .combo-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
   .combo-row:last-child { border-bottom: none; }
   .combo-rank { width: 22px; font-size: 11px; font-weight: 600; color: var(--muted); padding-top: 1px; flex-shrink: 0; }
@@ -278,111 +203,105 @@
     <button id="tab-metricas" onclick="switchTab('metricas')" style="padding:10px 20px;font-size:13px;font-weight:500;border:none;background:transparent;cursor:pointer;border-bottom:2px solid #1a1a18;color:#1a1a18;font-family:inherit;">Metricas</button>
     <button id="tab-rentabilidad" onclick="switchTab('rentabilidad')" style="padding:10px 20px;font-size:13px;font-weight:500;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:#888780;font-family:inherit;">Rentabilidad</button>
   </div>
+
+  <!-- PANEL METRICAS -->
   <div id="panel-metricas">
-  <div class="filters" id="filters">
-    <span>Ver:</span>
-  </div>
+    <div class="filters" id="filters"><span>Ver:</span></div>
+    <div class="metrics-grid" id="metrics"></div>
 
-  <div class="metrics-grid" id="metrics"></div>
-
-  <div class="card">
-    <div class="card-title">Horarios de mayor volumen</div>
-    <div class="card-sub">Pedidos por hora del día (hora Argentina, GMT-3)</div>
-    <div style="position:relative;width:100%;height:200px;">
-      <canvas id="hours-chart" role="img" aria-label="Pedidos por hora"></canvas>
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Días con más ventas</div>
-      <div class="card-sub">Cantidad de pedidos por día</div>
+    <div class="card">
+      <div class="card-title">Horarios de mayor volumen</div>
+      <div class="card-sub">Pedidos por hora del día (hora Argentina, GMT-3)</div>
       <div style="position:relative;width:100%;height:200px;">
-        <canvas id="days-chart" role="img" aria-label="Pedidos por día"></canvas>
+        <canvas id="hours-chart" role="img" aria-label="Pedidos por hora"></canvas>
       </div>
     </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Ticket promedio por día</div>
-      <div class="card-sub">Valor medio del pedido en ARS</div>
+
+    <div class="grid-2">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Días con más ventas</div>
+        <div class="card-sub">Cantidad de pedidos por día</div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="days-chart" role="img" aria-label="Pedidos por día"></canvas>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Ticket promedio por día</div>
+        <div class="card-sub">Valor medio del pedido en ARS</div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="avg-chart" role="img" aria-label="Ticket promedio por día"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:1rem"></div>
+
+    <div class="card">
+      <div class="card-title">Libros más combinados</div>
+      <div class="card-sub">Pares que aparecen juntos en el mismo pedido</div>
+      <div id="combo-list"></div>
+    </div>
+
+    <div style="height:1rem"></div>
+
+    <div class="card">
+      <div class="card-title">Tendencia semanal de ingresos</div>
+      <div class="card-sub">Ingresos totales por semana (ARS)</div>
       <div style="position:relative;width:100%;height:200px;">
-        <canvas id="avg-chart" role="img" aria-label="Ticket promedio por día"></canvas>
+        <canvas id="trend-chart" role="img" aria-label="Tendencia semanal"></canvas>
       </div>
     </div>
-  </div>
 
-  <div style="height:1rem"></div>
-
-  <div class="card">
-    <div class="card-title">Libros más combinados</div>
-    <div class="card-sub">Pares que aparecen juntos en el mismo pedido</div>
-    <div id="combo-list"></div>
-  </div>
-
-  <div style="height:1rem"></div>
-
-  <div class="card">
-    <div class="card-title">Tendencia semanal de ingresos</div>
-    <div class="card-sub">Ingresos totales por semana (ARS)</div>
-    <div style="position:relative;width:100%;height:200px;">
-      <canvas id="trend-chart" role="img" aria-label="Tendencia semanal"></canvas>
-    </div>
-  </div>
-
-  <!-- PAGOS -->
-  <div class="card">
-    <div class="card-title">Pagos: método y cuotas</div>
-    <div class="card-sub">Distribución de pedidos por gateway y cantidad de cuotas</div>
-    <div class="grid-2" style="margin-top:0.5rem;">
-      <div>
-        <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Por método de pago</p>
-        <div id="gateway-list"></div>
-      </div>
-      <div>
-        <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Por cantidad de cuotas</p>
-        <div id="cuotas-list"></div>
+    <div class="card">
+      <div class="card-title">Pagos: método y cuotas</div>
+      <div class="card-sub">Distribución de pedidos por gateway y cantidad de cuotas</div>
+      <div class="grid-2" style="margin-top:0.5rem;">
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Por método de pago</p>
+          <div id="gateway-list"></div>
+        </div>
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Por cantidad de cuotas</p>
+          <div id="cuotas-list"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ENVÍOS -->
-  <div class="card">
-    <div class="card-title">Resumen de envíos</div>
-    <div class="card-sub">Distribución por tipo de envío — gratis vs pago y por operador</div>
-    <div class="grid-2" style="margin-top:0.5rem;">
-      <div>
-        <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Envío gratis vs pago</p>
-        <div id="envio-gratis-list"></div>
+    <div class="card">
+      <div class="card-title">Resumen de envíos</div>
+      <div class="card-sub">Distribución por tipo de envío — gratis vs pago y por operador</div>
+      <div class="grid-2" style="margin-top:0.5rem;">
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Envío gratis vs pago</p>
+          <div id="envio-gratis-list"></div>
+        </div>
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Por operador logístico</p>
+          <div id="envios-list"></div>
+        </div>
       </div>
-      <div>
-        <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Por operador logístico</p>
-        <div id="envios-list"></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Top provincias por facturación</div>
+        <div class="card-sub">Ingresos totales por provincia (ARS)</div>
+        <div id="prov-revenue-list"></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Top provincias por pedidos</div>
+        <div class="card-sub">Cantidad de pedidos por provincia</div>
+        <div id="prov-list"></div>
       </div>
     </div>
-  </div>
 
-  <!-- PROVINCIAS FACTURACIÓN -->
-  <div class="grid-2">
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Top provincias por facturación</div>
-      <div class="card-sub">Ingresos totales por provincia (ARS)</div>
-      <div id="prov-revenue-list"></div>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Top provincias por pedidos</div>
-      <div class="card-sub">Cantidad de pedidos por provincia</div>
-      <div id="prov-list"></div>
-    </div>
-  </div>
-
-  <div style="height:1rem"></div>
-  <div class="footer" id="footer"></div>
+    <div style="height:1rem"></div>
+    <div class="footer" id="footer"></div>
   </div><!-- /panel-metricas -->
 
-
-
+  <!-- PANEL RENTABILIDAD -->
   <div id="panel-rentabilidad" style="display:none;padding-bottom:3rem;">
 
-    <!-- SALDO CON EL PROVEEDOR -->
     <div class="card" id="card-saldo">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
         <div>
@@ -406,7 +325,6 @@
       <div class="metrics-grid" style="margin-top:1.25rem;" id="saldo-metrics"></div>
     </div>
 
-    <!-- REGISTRAR PAGO -->
     <div class="card">
       <div class="card-title">Registrar pago al proveedor</div>
       <div class="card-sub">Cada pago se descuenta del saldo total</div>
@@ -427,7 +345,6 @@
       </div>
     </div>
 
-    <!-- REGISTRAR ORDEN -->
     <div class="card">
       <div class="card-title">Registrar orden dropshipping</div>
       <div class="card-sub">Buscá los libros de la lista Mayo que pidió el cliente y guardá la orden</div>
@@ -447,7 +364,6 @@
         <div id="libro-results" style="margin-top:6px;max-height:200px;overflow-y:auto;border:0.5px solid var(--border);border-radius:var(--radius-sm);display:none;background:var(--surface);"></div>
       </div>
 
-      <!-- Libro manual -->
       <div style="margin-top:0.75rem;">
         <button class="btn-sm" onclick="window.toggleLibroManual()" id="btn-libro-manual" style="font-size:12px;padding:5px 14px;">+ Agregar libro que no está en la lista</button>
         <div id="libro-manual-form" style="display:none;margin-top:10px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:0.5px solid var(--border);">
@@ -464,15 +380,14 @@
           </div>
           <p style="font-size:11px;color:var(--muted);margin-top:8px;">Este libro se agrega solo a esta orden, no a la lista Mayo.</p>
         </div>
-      <div style="display:none"><!-- cierre dummy -->
       </div>
+
       <div id="libros-seleccionados" style="margin-top:1rem;"></div>
       <div id="orden-total" style="margin-top:0.75rem;"></div>
       <button class="btn-sm" onclick="window.guardarOrden()" style="margin-top:1rem;padding:9px 20px;background:var(--accent);color:#fff;border-color:var(--accent);">Guardar orden</button>
       <span id="orden-msg" style="font-size:13px;margin-left:12px;color:#16a34a;"></span>
     </div>
 
-    <!-- HISTORIAL SEMANAL -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
         <div>
@@ -484,7 +399,6 @@
       <div id="historial-semanal"></div>
     </div>
 
-    <!-- HISTORIAL DETALLE -->
     <div class="card">
       <div class="card-title">Historial completo</div>
       <div class="card-sub">Todas las órdenes y pagos registrados</div>
@@ -496,23 +410,34 @@
 </div><!-- dashboard -->
 
 <script>
-let allOrders = [];
-let charts = {};
+// ===================================================
+// ESTADO GLOBAL
+// ===================================================
+var allOrders = [];
+var charts = {};
 
-// Cargar credenciales guardadas al iniciar
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('lpe_creds');
+// Estado cuenta corriente proveedor
+var _ordenes = [];
+var _pagos = [];
+var _deudaInicial = 3289705;
+var _librosCarrito = [];
+
+// ===================================================
+// AUTOLOGIN
+// ===================================================
+window.addEventListener('DOMContentLoaded', function() {
+  var saved = localStorage.getItem('lpe_creds');
   if (saved) {
     try {
-      const { token, storeId, days, autoLogin } = JSON.parse(saved);
+      var parsed = JSON.parse(saved);
+      var token = parsed.token, storeId = parsed.storeId, days = parsed.days, autoLogin = parsed.autoLogin;
       document.getElementById('token-input').value = token || '';
       document.getElementById('storeid-input').value = storeId || '';
       document.getElementById('remember-chk').checked = true;
-      const autoChk = document.getElementById('autologin-chk');
+      var autoChk = document.getElementById('autologin-chk');
       if (autoChk && autoLogin) autoChk.checked = true;
       if (days) document.getElementById('period-select').value = days;
       if (autoLogin && token && storeId) {
-        // Ocultar login y mostrar pantalla de carga directamente
         document.getElementById('setup').style.display = 'none';
         document.getElementById('autologin-screen').style.display = 'flex';
         connectStore();
@@ -521,57 +446,78 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ===================================================
+// UTILIDADES
+// ===================================================
 function showErr(msg) {
-  const el = document.getElementById('err');
+  var el = document.getElementById('err');
   el.textContent = msg;
   el.style.display = 'block';
 }
+
 function showLoad(msg) {
-  const el = document.getElementById('loading');
+  var el = document.getElementById('loading');
   if (el) {
     if (msg) { el.textContent = msg; el.style.display = 'block'; }
     else el.style.display = 'none';
   }
-  // Actualizar pantalla de autologin si está visible
-  const screen = document.getElementById('autologin-screen');
+  var screen = document.getElementById('autologin-screen');
   if (screen && screen.style.display !== 'none') {
-    const msgEl = document.getElementById('autologin-msg');
-    const bar = document.getElementById('autologin-bar');
+    var msgEl = document.getElementById('autologin-msg');
+    var bar = document.getElementById('autologin-bar');
     if (msg && msgEl) msgEl.textContent = msg;
-    // Animar barra según páginas cargadas
     if (msg && bar) {
-      const match = msg.match(/página (\d+)/);
-      if (match) {
-        const pg = parseInt(match[1]);
-        bar.style.width = Math.min(90, pg * 15) + '%';
-      }
+      var match = msg.match(/página (\d+)/);
+      if (match) bar.style.width = Math.min(90, parseInt(match[1]) * 15) + '%';
     }
   }
 }
+
 function destroyChart(id) {
   if (charts[id]) { charts[id].destroy(); delete charts[id]; }
 }
 
+// ===================================================
+// RESET APP — FIX: función que faltaba
+// ===================================================
+function resetApp() {
+  if (!confirm('¿Desconectar y volver al inicio?')) return;
+  localStorage.removeItem('lpe_creds');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('setup').style.display = 'flex';
+  document.getElementById('token-input').value = '';
+  document.getElementById('storeid-input').value = '';
+  document.getElementById('remember-chk').checked = false;
+  document.getElementById('autologin-chk').checked = false;
+  document.getElementById('err').style.display = 'none';
+  document.getElementById('connect-btn').disabled = false;
+  allOrders = [];
+  Object.keys(charts).forEach(function(k) { destroyChart(k); });
+}
+
+// ===================================================
+// FETCH ÓRDENES
+// ===================================================
 async function fetchAllOrders(token, storeId, days) {
-  const since = new Date();
+  var since = new Date();
   since.setDate(since.getDate() - days);
-  const sinceStr = since.toISOString().split('T')[0];
-  let page = 1, orders = [], hasMore = true;
+  var sinceStr = since.toISOString().split('T')[0];
+  var page = 1, orders = [], hasMore = true;
 
   while (hasMore) {
-    showLoad(`Cargando pedidos... (página ${page}, ${orders.length} pedidos)`);
-    const apiUrl = `https://api.tiendanube.com/2025-03/${storeId}/orders?created_at_min=${sinceStr}&per_page=200&page=${page}&fields=id,number,created_at,total,products,shipping_address,status,gateway_name`;
-    const url = `https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=${encodeURIComponent(apiUrl)}`;
-    const res = await fetch(url, {
-      headers: { 'Authentication': `bearer ${token}`, 'User-Agent': 'LPE-Analytics/1.0' }
+    showLoad('Cargando pedidos... (página ' + page + ', ' + orders.length + ' pedidos)');
+    var apiUrl = 'https://api.tiendanube.com/2025-03/' + storeId + '/orders?created_at_min=' + sinceStr + '&per_page=200&page=' + page + '&fields=id,number,created_at,total,products,shipping_address,status,gateway_name';
+    var url = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/?url=' + encodeURIComponent(apiUrl);
+    var res = await fetch(url, {
+      headers: { 'Authentication': 'bearer ' + token, 'User-Agent': 'LPE-Analytics/1.0' }
     });
     if (!res.ok) {
-      const t = await res.text();
-      throw new Error(`Error ${res.status}: ${t.slice(0,200)}`);
+      var t = await res.text();
+      throw new Error('Error ' + res.status + ': ' + t.slice(0,200));
     }
-    const data = await res.json();
+    var data = await res.json();
     orders = orders.concat(data);
-    const link = res.headers.get('Link') || '';
+    var link = res.headers.get('Link') || '';
     hasMore = link.includes('rel="next"') && data.length === 200;
     page++;
     if (page > 50 || data.length < 200) hasMore = false;
@@ -579,27 +525,31 @@ async function fetchAllOrders(token, storeId, days) {
   return orders;
 }
 
+// ===================================================
+// CONNECT STORE
+// ===================================================
 async function connectStore() {
-  const token = document.getElementById('token-input').value.trim();
-  const storeId = document.getElementById('storeid-input').value.trim();
-  const days = parseInt(document.getElementById('period-select').value);
+  var token = document.getElementById('token-input').value.trim();
+  var storeId = document.getElementById('storeid-input').value.trim();
+  var days = parseInt(document.getElementById('period-select').value);
   document.getElementById('err').style.display = 'none';
   if (!token || !storeId) { showErr('Completá el token y el Store ID.'); return; }
   document.getElementById('connect-btn').disabled = true;
-  // Guardar o borrar credenciales según checkbox
-  const rememberChk = document.getElementById('remember-chk');
-  const autoLoginChk = document.getElementById('autologin-chk');
+
+  var rememberChk = document.getElementById('remember-chk');
+  var autoLoginChk = document.getElementById('autologin-chk');
   if (rememberChk && rememberChk.checked) {
     localStorage.setItem('lpe_creds', JSON.stringify({
-      token, storeId, days,
+      token: token, storeId: storeId, days: days,
       autoLogin: autoLoginChk ? autoLoginChk.checked : false
     }));
   } else {
     localStorage.removeItem('lpe_creds');
   }
+
   try {
-    const orders = await fetchAllOrders(token, storeId, days);
-    allOrders = orders.filter(o => o.status !== 'cancelled');
+    var orders = await fetchAllOrders(token, storeId, days);
+    allOrders = orders.filter(function(o) { return o.status !== 'cancelled'; });
     showLoad(null);
     if (allOrders.length === 0) {
       showErr('No se encontraron pedidos. Probá con un período más largo.');
@@ -610,44 +560,43 @@ async function connectStore() {
     document.getElementById('autologin-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
 
-    const periodMap = {30:'Últimos 30 días',60:'Últimos 60 días',90:'Últimos 90 días',180:'Últimos 6 meses',365:'Último año'};
-    document.getElementById('period-label').textContent = periodMap[days] || `Últimos ${days} días`;
-    document.getElementById('store-badge').textContent = `Store ${storeId}`;
+    var periodMap = {30:'Últimos 30 días',60:'Últimos 60 días',90:'Últimos 90 días',180:'Últimos 6 meses',365:'Último año'};
+    document.getElementById('period-label').textContent = periodMap[days] || ('Últimos ' + days + ' días');
+    document.getElementById('store-badge').textContent = 'Store ' + storeId;
     initRentabilidad();
-    document.getElementById('footer').textContent = `${allOrders.length} pedidos analizados (cancelados excluidos)`;
+    document.getElementById('footer').textContent = allOrders.length + ' pedidos analizados (cancelados excluidos)';
 
-    const filtersEl = document.getElementById('filters');
+    var filtersEl = document.getElementById('filters');
 
-    // Hoy y Ayer
-    [['Hoy', () => filterToday(allOrders)], ['Ayer', () => filterYesterday(allOrders)]].forEach(([label, fn]) => {
-      const btn = document.createElement('button');
+    [['Hoy', function() { return filterToday(allOrders); }], ['Ayer', function() { return filterYesterday(allOrders); }]].forEach(function(pair) {
+      var label = pair[0], fn = pair[1];
+      var btn = document.createElement('button');
       btn.className = 'filter-btn';
       btn.textContent = label;
-      btn.onclick = () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.onclick = function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
         renderDashboard(fn());
       };
       filtersEl.appendChild(btn);
     });
 
-    // Separador
-    const sep = document.createElement('span');
+    var sep = document.createElement('span');
     sep.textContent = '|';
     sep.style.cssText = 'color:rgba(0,0,0,0.2);font-size:12px;padding:0 2px;';
     filtersEl.appendChild(sep);
 
-    // Períodos
-    [[7,'7 días'],[30,'30 días'],[90,'90 días'],[days, 'Todo']].forEach(([d, label]) => {
+    [[7,'7 días'],[30,'30 días'],[90,'90 días'],[days,'Todo']].forEach(function(pair) {
+      var d = pair[0], label = pair[1];
       if (d > days) return;
-      const btn = document.createElement('button');
+      var btn = document.createElement('button');
       btn.className = 'filter-btn' + (d === days ? ' active' : '');
       btn.textContent = label;
-      btn.onclick = () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.onclick = (function(dd) { return function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        renderDashboard(filterDays(allOrders, d === days ? days : d));
-      };
+        renderDashboard(filterDays(allOrders, dd === days ? days : dd));
+      }; })(d);
       filtersEl.appendChild(btn);
     });
 
@@ -655,48 +604,52 @@ async function connectStore() {
   } catch(e) {
     showLoad(null);
     document.getElementById('connect-btn').disabled = false;
-    // Si falla autologin, volver al login
     document.getElementById('autologin-screen').style.display = 'none';
     document.getElementById('setup').style.display = 'flex';
     showErr('Error al conectar: ' + e.message);
   }
 }
 
+// ===================================================
+// FILTROS
+// ===================================================
 function filterDays(orders, days) {
-  const since = new Date();
+  var since = new Date();
   since.setDate(since.getDate() - days);
-  return orders.filter(o => new Date(o.created_at) >= since);
+  return orders.filter(function(o) { return new Date(o.created_at) >= since; });
 }
 
 function filterToday(orders) {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const end = new Date(start.getTime() + 86400000);
-  return orders.filter(o => { const d = new Date(o.created_at); return d >= start && d < end; });
+  var now = new Date();
+  var start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var end = new Date(start.getTime() + 86400000);
+  return orders.filter(function(o) { var d = new Date(o.created_at); return d >= start && d < end; });
 }
 
 function filterYesterday(orders) {
-  const now = new Date();
-  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const start = new Date(end.getTime() - 86400000);
-  return orders.filter(o => { const d = new Date(o.created_at); return d >= start && d < end; });
+  var now = new Date();
+  var end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var start = new Date(end.getTime() - 86400000);
+  return orders.filter(function(o) { var d = new Date(o.created_at); return d >= start && d < end; });
 }
 
+// ===================================================
+// RENDER DASHBOARD
+// ===================================================
 function renderDashboard(orders) {
-  const n = orders.length;
-  const total = orders.reduce((s,o) => s + parseFloat(o.total||0), 0);
-  const avg = n > 0 ? total/n : 0;
-  const units = orders.reduce((s,o) => s + (o.products||[]).reduce((a,p)=>a+(p.quantity||1),0), 0);
-  const multiItem = orders.filter(o => (o.products||[]).length > 1).length;
-  const multiPct = n > 0 ? Math.round((multiItem/n)*100) : 0;
+  var n = orders.length;
+  var total = orders.reduce(function(s,o) { return s + parseFloat(o.total||0); }, 0);
+  var avg = n > 0 ? total/n : 0;
+  var units = orders.reduce(function(s,o) { return s + (o.products||[]).reduce(function(a,p) { return a+(p.quantity||1); }, 0); }, 0);
+  var multiItem = orders.filter(function(o) { return (o.products||[]).length > 1; }).length;
+  var multiPct = n > 0 ? Math.round((multiItem/n)*100) : 0;
 
-  document.getElementById('metrics').innerHTML = `
-    <div class="metric"><div class="metric-label">Pedidos</div><div class="metric-value">${n.toLocaleString('es-AR')}</div></div>
-    <div class="metric"><div class="metric-label">Ingresos</div><div class="metric-value" style="font-size:20px">$${Math.round(total).toLocaleString('es-AR')}</div></div>
-    <div class="metric"><div class="metric-label">Ticket promedio</div><div class="metric-value" style="font-size:20px">$${Math.round(avg).toLocaleString('es-AR')}</div></div>
-    <div class="metric"><div class="metric-label">Libros vendidos</div><div class="metric-value">${units.toLocaleString('es-AR')}</div></div>
-    <div class="metric"><div class="metric-label">Pedidos con combo</div><div class="metric-value">${multiPct}%</div><div class="metric-sub">${multiItem} pedidos con 2+ libros</div></div>
-  `;
+  document.getElementById('metrics').innerHTML =
+    '<div class="metric"><div class="metric-label">Pedidos</div><div class="metric-value">' + n.toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Ingresos</div><div class="metric-value" style="font-size:20px">$' + Math.round(total).toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Ticket promedio</div><div class="metric-value" style="font-size:20px">$' + Math.round(avg).toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Libros vendidos</div><div class="metric-value">' + units.toLocaleString('es-AR') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Pedidos con combo</div><div class="metric-value">' + multiPct + '%</div><div class="metric-sub">' + multiItem + ' pedidos con 2+ libros</div></div>';
 
   renderHours(orders);
   renderDays(orders);
@@ -712,38 +665,38 @@ function renderDashboard(orders) {
 }
 
 function renderHours(orders) {
-  const counts = Array(24).fill(0);
-  orders.forEach(o => {
-    const d = new Date(o.created_at);
-    const arg = new Date(d.getTime() - 3*3600*1000);
+  var counts = Array(24).fill(0);
+  orders.forEach(function(o) {
+    var d = new Date(o.created_at);
+    var arg = new Date(d.getTime() - 3*3600*1000);
     counts[arg.getUTCHours()]++;
   });
-  const max = Math.max(...counts);
-  const colors = counts.map(v => {
-    const r = max > 0 ? v/max : 0;
+  var max = Math.max.apply(null, counts);
+  var colors = counts.map(function(v) {
+    var r = max > 0 ? v/max : 0;
     return r > 0.7 ? '#1a1a18' : r > 0.4 ? '#5f5e5a' : r > 0.15 ? '#b4b2a9' : '#e8e6e0';
   });
   destroyChart('hours');
   charts['hours'] = new Chart(document.getElementById('hours-chart'), {
     type: 'bar',
-    data: { labels: Array.from({length:24},(_,i)=>`${String(i).padStart(2,'0')}h`), datasets: [{ data: counts, backgroundColor: colors, borderRadius: 3 }] },
+    data: { labels: Array.from({length:24},function(_,i){ return String(i).padStart(2,'0')+'h'; }), datasets: [{ data: counts, backgroundColor: colors, borderRadius: 3 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw} pedidos` } } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return ' ' + c.raw + ' pedidos'; } } } },
       scales: {
         y: { beginAtZero: true, ticks: { font:{size:11} }, grid: { color: 'rgba(0,0,0,0.05)' } },
-        x: { ticks: { font:{size:10}, maxRotation:0, autoSkip:false, callback:(_,i) => i%3===0?`${String(i).padStart(2,'0')}h`:'' }, grid:{display:false} }
+        x: { ticks: { font:{size:10}, maxRotation:0, autoSkip:false, callback: function(_,i) { return i%3===0 ? String(i).padStart(2,'0')+'h' : ''; } }, grid:{display:false} }
       }
     }
   });
 }
 
 function renderDays(orders) {
-  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  const counts = Array(7).fill(0);
-  orders.forEach(o => counts[new Date(o.created_at).getDay()]++);
-  const max = Math.max(...counts);
-  const colors = counts.map(v => { const r=max>0?v/max:0; return r>0.7?'#1a1a18':r>0.4?'#5f5e5a':'#b4b2a9'; });
+  var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var counts = Array(7).fill(0);
+  orders.forEach(function(o) { counts[new Date(o.created_at).getDay()]++; });
+  var max = Math.max.apply(null, counts);
+  var colors = counts.map(function(v) { var r=max>0?v/max:0; return r>0.7?'#1a1a18':r>0.4?'#5f5e5a':'#b4b2a9'; });
   destroyChart('days');
   charts['days'] = new Chart(document.getElementById('days-chart'), {
     type: 'bar',
@@ -757,19 +710,19 @@ function renderDays(orders) {
 }
 
 function renderAvg(orders) {
-  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  const totals = Array(7).fill(0), counts = Array(7).fill(0);
-  orders.forEach(o => { const d=new Date(o.created_at).getDay(); totals[d]+=parseFloat(o.total||0); counts[d]++; });
-  const avgs = totals.map((t,i) => counts[i]>0 ? Math.round(t/counts[i]) : 0);
+  var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var totals = Array(7).fill(0), counts = Array(7).fill(0);
+  orders.forEach(function(o) { var d=new Date(o.created_at).getDay(); totals[d]+=parseFloat(o.total||0); counts[d]++; });
+  var avgs = totals.map(function(t,i) { return counts[i]>0 ? Math.round(t/counts[i]) : 0; });
   destroyChart('avg');
   charts['avg'] = new Chart(document.getElementById('avg-chart'), {
     type: 'bar',
     data: { labels: dias, datasets: [{ data: avgs, backgroundColor: '#378add', borderRadius: 3 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>` $${c.raw.toLocaleString('es-AR')}`}} },
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:function(c){ return ' $'+c.raw.toLocaleString('es-AR'); }}} },
       scales: {
-        y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>`$${Math.round(v/1000)}k`},grid:{color:'rgba(0,0,0,0.05)'}},
+        y:{beginAtZero:true,ticks:{font:{size:10},callback:function(v){ return '$'+Math.round(v/1000)+'k'; }},grid:{color:'rgba(0,0,0,0.05)'}},
         x:{ticks:{font:{size:12}},grid:{display:false}}
       }
     }
@@ -777,99 +730,81 @@ function renderAvg(orders) {
 }
 
 function renderProvinces(orders) {
-  const counts = {};
-  orders.forEach(o => { const p=o.shipping_address?.province||'Sin datos'; counts[p]=(counts[p]||0)+1; });
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  const max = sorted[0]?.[1]||1;
-  document.getElementById('prov-list').innerHTML = sorted.map(([prov,count]) => {
-    const pct = Math.round((count/orders.length)*100);
-    const w = Math.round((count/max)*100);
-    return `<div class="prov-row">
-      <div class="prov-name">${prov}</div>
-      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%"></div></div>
-      <div class="prov-pct">${count} (${pct}%)</div>
-    </div>`;
+  var counts = {};
+  orders.forEach(function(o) { var p=o.shipping_address&&o.shipping_address.province||'Sin datos'; counts[p]=(counts[p]||0)+1; });
+  var sorted = Object.entries(counts).sort(function(a,b){return b[1]-a[1];}).slice(0,12);
+  var max = sorted[0] ? sorted[0][1] : 1;
+  document.getElementById('prov-list').innerHTML = sorted.map(function(e) {
+    var prov=e[0], count=e[1];
+    var pct = Math.round((count/orders.length)*100);
+    var w = Math.round((count/max)*100);
+    return '<div class="prov-row"><div class="prov-name">'+prov+'</div><div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:'+w+'%"></div></div><div class="prov-pct">'+count+' ('+pct+'%)</div></div>';
   }).join('');
 }
 
 function renderCombos(orders) {
-  const map = {};
-  orders.forEach(o => {
-    const prods = (o.products||[]).map(p=>{ const n=p.name||''; return n.length>35?n.slice(0,33)+'…':n; }).filter(Boolean);
+  var map = {};
+  orders.forEach(function(o) {
+    var prods = (o.products||[]).map(function(p) { var n=p.name||''; return n.length>35?n.slice(0,33)+'…':n; }).filter(Boolean);
     if (prods.length < 2) return;
-    for (let i=0;i<prods.length;i++) for (let j=i+1;j<prods.length;j++) {
-      const k=[prods[i],prods[j]].sort().join(' + ');
+    for (var i=0;i<prods.length;i++) for (var j=i+1;j<prods.length;j++) {
+      var k=[prods[i],prods[j]].sort().join(' + ');
       if (!map[k]) map[k] = { count: 0, orders: [] };
       map[k].count++;
       map[k].orders.push({ number: o.number, date: o.created_at, total: o.total });
     }
   });
-  const sorted = Object.entries(map).sort((a,b)=>b[1].count-a[1].count).slice(0,8);
+  var sorted = Object.entries(map).sort(function(a,b){return b[1].count-a[1].count;}).slice(0,8);
   if (!sorted.length) {
     document.getElementById('combo-list').innerHTML = '<p style="font-size:13px;color:#888;padding:1rem 0">No hay pedidos con más de un libro.</p>';
     return;
   }
-  document.getElementById('combo-list').innerHTML = sorted.map(([combo, {count, orders: ords}], i) => {
-    const id = 'combo-detail-' + i;
-    const orderRows = ords.map(o => {
-      const d = new Date(o.created_at);
-      const fecha = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-      return `<span style="display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--muted);margin:2px;">
-        <span style="font-weight:600;color:var(--text);">#${o.number}</span>
-        <span>${fecha}</span>
-        <span>$${Math.round(parseFloat(o.total||0)).toLocaleString('es-AR')}</span>
-      </span>`;
+  document.getElementById('combo-list').innerHTML = sorted.map(function(entry, i) {
+    var combo=entry[0], data=entry[1], count=data.count, ords=data.orders;
+    var id = 'combo-detail-' + i;
+    var orderRows = ords.map(function(o) {
+      var d = new Date(o.created_at);
+      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+      return '<span style="display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--muted);margin:2px;"><span style="font-weight:600;color:var(--text);">#'+o.number+'</span><span>'+fecha+'</span><span>$'+Math.round(parseFloat(o.total||0)).toLocaleString('es-AR')+'</span></span>';
     }).join('');
-    return `<div class="combo-row" style="flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;" onclick="toggleCombo('${id}')">
-      <div style="display:flex;align-items:center;gap:10px;width:100%;">
-        <div class="combo-rank">#${i+1}</div>
-        <div class="combo-books" style="flex:1">${combo}</div>
-        <div class="combo-count">${count} pedido${count>1?'s':''}</div>
-        <div style="font-size:11px;color:var(--muted);padding-left:4px;" id="${id}-icon">▼</div>
-      </div>
-      <div id="${id}" style="display:none;width:100%;padding-left:28px;flex-wrap:wrap;gap:4px;">
-        ${orderRows}
-      </div>
-    </div>`;
+    return '<div class="combo-row" style="flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;" onclick="toggleCombo(\''+id+'\')">' +
+      '<div style="display:flex;align-items:center;gap:10px;width:100%;"><div class="combo-rank">#'+(i+1)+'</div><div class="combo-books" style="flex:1">'+combo+'</div><div class="combo-count">'+count+' pedido'+(count>1?'s':'')+'</div><div style="font-size:11px;color:var(--muted);padding-left:4px;" id="'+id+'-icon">▼</div></div>' +
+      '<div id="'+id+'" style="display:none;width:100%;padding-left:28px;flex-wrap:wrap;gap:4px;">'+orderRows+'</div>' +
+      '</div>';
   }).join('');
 }
 
 function toggleCombo(id) {
-  const el = document.getElementById(id);
-  const icon = document.getElementById(id + '-icon');
-  if (el.style.display === 'none') {
-    el.style.display = 'flex';
-    if (icon) icon.textContent = '▲';
-  } else {
-    el.style.display = 'none';
-    if (icon) icon.textContent = '▼';
-  }
+  var el = document.getElementById(id);
+  var icon = document.getElementById(id + '-icon');
+  if (el.style.display === 'none') { el.style.display = 'flex'; if (icon) icon.textContent = '▲'; }
+  else { el.style.display = 'none'; if (icon) icon.textContent = '▼'; }
 }
 
 function renderTrend(orders) {
-  const weeks = {};
-  orders.forEach(o => {
-    const d = new Date(o.created_at);
-    const day = d.getDay();
-    const mon = new Date(d);
+  var weeks = {};
+  orders.forEach(function(o) {
+    var d = new Date(o.created_at);
+    var day = d.getDay();
+    var mon = new Date(d);
     mon.setDate(d.getDate()-(day===0?6:day-1));
-    const k = mon.toISOString().split('T')[0];
+    var k = mon.toISOString().split('T')[0];
     if (!weeks[k]) weeks[k]={total:0,count:0};
     weeks[k].total += parseFloat(o.total||0);
     weeks[k].count++;
   });
-  const sorted = Object.entries(weeks).sort((a,b)=>a[0].localeCompare(b[0]));
-  const labels = sorted.map(([k])=>{ const d=new Date(k); return `${d.getDate()}/${d.getMonth()+1}`; });
-  const totals = sorted.map(([,v])=>Math.round(v.total));
+  var sorted = Object.entries(weeks).sort(function(a,b){return a[0].localeCompare(b[0]);});
+  var labels = sorted.map(function(e){ var d=new Date(e[0]); return d.getDate()+'/'+(d.getMonth()+1); });
+  var totals = sorted.map(function(e){ return Math.round(e[1].total); });
   destroyChart('trend');
   charts['trend'] = new Chart(document.getElementById('trend-chart'), {
     type: 'line',
-    data: { labels, datasets: [{ data: totals, borderColor:'#1a1a18', backgroundColor:'rgba(26,26,24,0.05)', fill:true, tension:0.3, pointRadius:3, pointBackgroundColor:'#1a1a18', borderWidth:1.5 }] },
+    data: { labels: labels, datasets: [{ data: totals, borderColor:'#1a1a18', backgroundColor:'rgba(26,26,24,0.05)', fill:true, tension:0.3, pointRadius:3, pointBackgroundColor:'#1a1a18', borderWidth:1.5 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>` $${c.raw.toLocaleString('es-AR')}`}} },
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:function(c){ return ' $'+c.raw.toLocaleString('es-AR'); }}} },
       scales: {
-        y:{beginAtZero:false,ticks:{font:{size:11},callback:v=>`$${Math.round(v/1000)}k`},grid:{color:'rgba(0,0,0,0.05)'}},
+        y:{beginAtZero:false,ticks:{font:{size:11},callback:function(v){ return '$'+Math.round(v/1000)+'k'; }},grid:{color:'rgba(0,0,0,0.05)'}},
         x:{ticks:{font:{size:11},maxRotation:45,autoSkip:true,maxTicksLimit:12},grid:{display:false}}
       }
     }
@@ -877,144 +812,142 @@ function renderTrend(orders) {
 }
 
 function renderGateway(orders) {
-  const map = {};
-  orders.forEach(o => {
-    const gw = o.gateway_name || 'Sin datos';
-    // Limpiar nombre del gateway
-    let label = gw.replace(/_/g,' ').replace(/\w/g, c => c.toUpperCase());
+  var map = {};
+  orders.forEach(function(o) {
+    var gw = o.gateway_name || 'Sin datos';
+    var label = gw.replace(/_/g,' ').replace(/\w/g, function(c){ return c.toUpperCase(); });
     if (label.length > 28) label = label.slice(0,26)+'…';
     if (!map[label]) map[label] = { count: 0, total: 0 };
     map[label].count++;
     map[label].total += parseFloat(o.total || 0);
   });
-  const sorted = Object.entries(map).sort((a,b) => b[1].total - a[1].total).slice(0,8);
-  const maxTotal = sorted[0]?.[1]?.total || 1;
-  const el = document.getElementById('gateway-list');
+  var sorted = Object.entries(map).sort(function(a,b){ return b[1].total-a[1].total; }).slice(0,8);
+  var maxTotal = sorted[0] ? sorted[0][1].total : 1;
+  var el = document.getElementById('gateway-list');
   if (!sorted.length) { el.innerHTML = '<p style="font-size:13px;color:#888;padding:.5rem 0">Sin datos.</p>'; return; }
-  el.innerHTML = sorted.map(([label, { count, total }]) => {
-    const w = Math.round((total / maxTotal) * 100);
-    return `<div class="prov-row">
-      <div class="prov-name" style="width:130px">${label}</div>
-      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%;background:#378add"></div></div>
-      <div class="prov-pct" style="width:60px;font-size:10px">$${Math.round(total/1000)}k</div>
-    </div>`;
+  el.innerHTML = sorted.map(function(e) {
+    var label=e[0], d=e[1];
+    var w = Math.round((d.total / maxTotal) * 100);
+    return '<div class="prov-row"><div class="prov-name" style="width:130px">'+label+'</div><div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:'+w+'%;background:#378add"></div></div><div class="prov-pct" style="width:60px;font-size:10px">$'+Math.round(d.total/1000)+'k</div></div>';
   }).join('');
 }
 
 function renderCuotas(orders) {
-  const map = {};
-  orders.forEach(o => {
-    const name = (o.gateway_name || '').toLowerCase();
-    let cuotas = '1 cuota';
-    const m1 = name.match(/(\d+)\s*cuotas?/);
-    const m2 = name.match(/x\s*(\d+)/);
+  var map = {};
+  orders.forEach(function(o) {
+    var name = (o.gateway_name || '').toLowerCase();
+    var cuotas = '1 cuota';
+    var m1 = name.match(/(\d+)\s*cuotas?/);
+    var m2 = name.match(/x\s*(\d+)/);
     if (m1) cuotas = m1[1] + ' cuotas';
     else if (m2) cuotas = m2[1] + ' cuotas';
     if (!map[cuotas]) map[cuotas] = { count: 0, total: 0 };
     map[cuotas].count++;
     map[cuotas].total += parseFloat(o.total || 0);
   });
-  const sorted = Object.entries(map).sort((a,b) => {
-    const na = parseInt(a[0]); const nb = parseInt(b[0]);
-    return isNaN(na) ? 1 : isNaN(nb) ? -1 : na - nb;
+  var sorted = Object.entries(map).sort(function(a,b) {
+    var na=parseInt(a[0]), nb=parseInt(b[0]);
+    return isNaN(na) ? 1 : isNaN(nb) ? -1 : na-nb;
   });
-  const maxCount = sorted[0]?.[1]?.count || 1;
-  const el = document.getElementById('cuotas-list');
+  var maxCount = sorted.length ? Math.max.apply(null, sorted.map(function(e){ return e[1].count; })) : 1;
+  var el = document.getElementById('cuotas-list');
   if (!sorted.length) { el.innerHTML = '<p style="font-size:13px;color:#888;padding:.5rem 0">Sin datos.</p>'; return; }
-  el.innerHTML = sorted.map(([label, { count, total }]) => {
-    const pct = Math.round((count / orders.length) * 100);
-    const w = Math.round((count / Math.max(...sorted.map(s=>s[1].count))) * 100);
-    return `<div class="prov-row">
-      <div class="prov-name" style="width:90px">${label}</div>
-      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%;background:#5f5e5a"></div></div>
-      <div class="prov-pct">${count} (${pct}%)</div>
-    </div>`;
+  el.innerHTML = sorted.map(function(e) {
+    var label=e[0], d=e[1];
+    var pct = Math.round((d.count / orders.length) * 100);
+    var w = Math.round((d.count / maxCount) * 100);
+    return '<div class="prov-row"><div class="prov-name" style="width:90px">'+label+'</div><div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:'+w+'%;background:#5f5e5a"></div></div><div class="prov-pct">'+d.count+' ('+pct+'%)</div></div>';
   }).join('');
 }
 
 function renderEnvioGratis(orders) {
-  let gratis = { count: 0, total: 0 };
-  let pago = { count: 0, total: 0 };
-  orders.forEach(o => {
-    const addr = o.shipping_address || {};
-    const isFree = addr.shipping_cost_owner === '0' || addr.shipping_cost_owner === 0 || parseFloat(addr.shipping_cost_owner || 0) === 0;
+  var gratis = { count: 0, total: 0 };
+  var pago = { count: 0, total: 0 };
+  orders.forEach(function(o) {
+    var addr = o.shipping_address || {};
+    var isFree = addr.shipping_cost_owner === '0' || addr.shipping_cost_owner === 0 || parseFloat(addr.shipping_cost_owner || 0) === 0;
     if (isFree) { gratis.count++; gratis.total += parseFloat(o.total || 0); }
     else { pago.count++; pago.total += parseFloat(o.total || 0); }
   });
-  const el = document.getElementById('envio-gratis-list');
-  const total = orders.length;
-  const items = [
-    ['Envío gratis', gratis, '#1a1a18'],
-    ['Envío pago', pago, '#b4b2a9'],
-  ];
-  const maxCount = Math.max(gratis.count, pago.count) || 1;
-  el.innerHTML = items.map(([label, d, color]) => {
-    const pct = total > 0 ? Math.round((d.count / total) * 100) : 0;
-    const w = Math.round((d.count / maxCount) * 100);
-    return `<div class="prov-row">
-      <div class="prov-name" style="width:110px">${label}</div>
-      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%;background:${color}"></div></div>
-      <div class="prov-pct">${d.count} (${pct}%)</div>
-    </div>
-    <div style="font-size:11px;color:var(--muted);padding:2px 0 6px 0;">$${Math.round(d.total).toLocaleString('es-AR')}</div>`;
+  var el = document.getElementById('envio-gratis-list');
+  var total = orders.length;
+  var items = [['Envío gratis', gratis, '#1a1a18'], ['Envío pago', pago, '#b4b2a9']];
+  var maxCount = Math.max(gratis.count, pago.count) || 1;
+  el.innerHTML = items.map(function(item) {
+    var label=item[0], d=item[1], color=item[2];
+    var pct = total > 0 ? Math.round((d.count / total) * 100) : 0;
+    var w = Math.round((d.count / maxCount) * 100);
+    return '<div class="prov-row"><div class="prov-name" style="width:110px">'+label+'</div><div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:'+w+'%;background:'+color+'"></div></div><div class="prov-pct">'+d.count+' ('+pct+'%)</div></div><div style="font-size:11px;color:var(--muted);padding:2px 0 6px 0;">$'+Math.round(d.total).toLocaleString('es-AR')+'</div>';
   }).join('');
 }
 
 function renderEnvios(orders) {
-  const map = {};
-  orders.forEach(o => {
-    const addr = o.shipping_address || {};
-    const method = addr.shipping_method || addr.method || 'Sin datos';
-    let label = typeof method === 'string' ? method : 'Sin datos';
+  var map = {};
+  orders.forEach(function(o) {
+    var addr = o.shipping_address || {};
+    var method = addr.shipping_method || addr.method || 'Sin datos';
+    var label = typeof method === 'string' ? method : 'Sin datos';
     if (label.length > 28) label = label.slice(0,26)+'…';
     if (!map[label]) map[label] = { count: 0, total: 0 };
     map[label].count++;
     map[label].total += parseFloat(o.total || 0);
   });
-  const sorted = Object.entries(map).sort((a,b) => b[1].count - a[1].count).slice(0,8);
-  const maxCount = sorted[0]?.[1]?.count || 1;
-  const el = document.getElementById('envios-list');
+  var sorted = Object.entries(map).sort(function(a,b){ return b[1].count-a[1].count; }).slice(0,8);
+  var maxCount = sorted[0] ? sorted[0][1].count : 1;
+  var el = document.getElementById('envios-list');
   if (!sorted.length) { el.innerHTML = '<p style="font-size:13px;color:#888;padding:.5rem 0">Sin datos.</p>'; return; }
-  el.innerHTML = sorted.map(([label, { count, total }]) => {
-    const pct = Math.round((count / orders.length) * 100);
-    const w = Math.round((count / maxCount) * 100);
-    return `<div class="prov-row">
-      <div class="prov-name" style="width:130px">${label}</div>
-      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%"></div></div>
-      <div class="prov-pct">${count} (${pct}%)</div>
-    </div>`;
+  el.innerHTML = sorted.map(function(e) {
+    var label=e[0], d=e[1];
+    var pct = Math.round((d.count / orders.length) * 100);
+    var w = Math.round((d.count / maxCount) * 100);
+    return '<div class="prov-row"><div class="prov-name" style="width:130px">'+label+'</div><div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:'+w+'%"></div></div><div class="prov-pct">'+d.count+' ('+pct+'%)</div></div>';
   }).join('');
 }
 
 function renderProvRevenue(orders) {
-  const map = {};
-  orders.forEach(o => {
-    const p = o.shipping_address?.province || 'Sin datos';
+  var map = {};
+  orders.forEach(function(o) {
+    var p = (o.shipping_address && o.shipping_address.province) || 'Sin datos';
     if (!map[p]) map[p] = { count: 0, total: 0 };
     map[p].count++;
     map[p].total += parseFloat(o.total || 0);
   });
-  const sorted = Object.entries(map).sort((a,b) => b[1].total - a[1].total).slice(0,12);
-  const maxTotal = sorted[0]?.[1]?.total || 1;
-  const el = document.getElementById('prov-revenue-list');
-  el.innerHTML = sorted.map(([prov, { count, total }]) => {
-    const w = Math.round((total / maxTotal) * 100);
-    return `<div class="prov-row">
-      <div class="prov-name">${prov}</div>
-      <div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:${w}%;background:#378add"></div></div>
-      <div class="prov-pct" style="width:60px;font-size:10px">$${Math.round(total/1000)}k</div>
-    </div>`;
+  var sorted = Object.entries(map).sort(function(a,b){ return b[1].total-a[1].total; }).slice(0,12);
+  var maxTotal = sorted[0] ? sorted[0][1].total : 1;
+  var el = document.getElementById('prov-revenue-list');
+  el.innerHTML = sorted.map(function(e) {
+    var prov=e[0], d=e[1];
+    var w = Math.round((d.total / maxTotal) * 100);
+    return '<div class="prov-row"><div class="prov-name">'+prov+'</div><div class="prov-bar-wrap"><div class="prov-bar-fill" style="width:'+w+'%;background:#378add"></div></div><div class="prov-pct" style="width:60px;font-size:10px">$'+Math.round(d.total/1000)+'k</div></div>';
   }).join('');
 }
 
-var MAYO_LIST = [{"nombre": "50 Capsulas de amor propio", "costo": 13000}, {"nombre": "Amor fati", "costo": 8200}, {"nombre": "Ansiosamente Sara Espejo", "costo": 13500}, {"nombre": "Artificial Mariana Sigman", "costo": 9500}, {"nombre": "Basta de amores de mierda 3", "costo": 6000}, {"nombre": "Basta de amores de mierda 4", "costo": 6000}, {"nombre": "Basta de amores de mierda 5", "costo": 6000}, {"nombre": "Basta de amores de mierda 6", "costo": 6000}, {"nombre": "Brida", "costo": 5000}, {"nombre": "Cara a cara Gabriel Rolon", "costo": 9000}, {"nombre": "Centrate Deep work", "costo": 11500}, {"nombre": "Como ganar amigos e influir en las personas", "costo": 9000}, {"nombre": "Como hacer que te pasen cosas buenas", "costo": 13200}, {"nombre": "Como mandar a la mierda de forma educada", "costo": 12000}, {"nombre": "Como ser un estoico Massimo Pigliucci", "costo": 11000}, {"nombre": "Conecta con el dinero Brian Tracy", "costo": 12000}, {"nombre": "De mi para mi", "costo": 12000}, {"nombre": "De mi para mi 2", "costo": 12500}, {"nombre": "Deja de ser tu Joe dispenza", "costo": 13500}, {"nombre": "Desbloquea tu mente millonaria Victoria Mills", "costo": 6600}, {"nombre": "Deshacer la ansiedad", "costo": 12300}, {"nombre": "El abc de la actitud John C Maxwell", "costo": 6500}, {"nombre": "El abc del exito", "costo": 6500}, {"nombre": "El abc del liderazgo John C Maxwell", "costo": 6500}, {"nombre": "El arte de la guerra", "costo": 5500}, {"nombre": "El caballero de la armadura oxidada", "costo": 7000}, {"nombre": "El camino del artista", "costo": 16000}, {"nombre": "El club de las 5 de la manana Robin Sharma", "costo": 12600}, {"nombre": "El cuadrante del flujo del dinero", "costo": 8300}, {"nombre": "El demonio y la senorita prym", "costo": 5500}, {"nombre": "El duelo Gabriel rolon", "costo": 14000}, {"nombre": "El ego es el enemigo Ryan Holiday", "costo": 11500}, {"nombre": "El hombre en busca de sentido", "costo": 7000}, {"nombre": "El hombre mas rico de babilonia George clason", "costo": 7000}, {"nombre": "El kybalion", "costo": 5500}, {"nombre": "El libro de bill", "costo": 11500}, {"nombre": "El metodo Briones Beltran Briones", "costo": 8000}, {"nombre": "El monje que vendio su ferrari Robin Sharma", "costo": 8000}, {"nombre": "El negocio del siglo XXI", "costo": 7000}, {"nombre": "El placebo eres tu", "costo": 13500}, {"nombre": "El plan fenix Brian Tracy", "costo": 11000}, {"nombre": "El poder de la mente subconsciente Joseph Murphy", "costo": 11500}, {"nombre": "El poder de las palabras", "costo": 13000}, {"nombre": "El poder de los habitos", "costo": 12000}, {"nombre": "El poder del ahora", "costo": 10300}, {"nombre": "El poder esta dentro de ti Louise Hay", "costo": 8000}, {"nombre": "El poder frente la fuerza", "costo": 12000}, {"nombre": "El principe Nicolas Maquiavelo", "costo": 6000}, {"nombre": "El principito", "costo": 4500}, {"nombre": "El quinto acuerdo Miguel Ruiz", "costo": 8500}, {"nombre": "El regreso del caballero de la armadura oxidada", "costo": 6000}, {"nombre": "El sutil arte de que casi todo te importe una mierda", "costo": 9500}, {"nombre": "El vendedor mas grande del mundo", "costo": 6000}, {"nombre": "El viento conoce mi nombre Isabel allende", "costo": 12000}, {"nombre": "Empieza con el porque", "costo": 12000}, {"nombre": "Emprende tu propio negocio", "costo": 8000}, {"nombre": "En agosto nos vemos Garcia Marquez", "costo": 9200}, {"nombre": "Encuentra tu persona vitamina", "costo": 12500}, {"nombre": "Encuentros Gabriel rolon bolsillo", "costo": 9500}, {"nombre": "Es facil dejar de fumar Allen Carr", "costo": 9900}, {"nombre": "Escuela de negocios", "costo": 6500}, {"nombre": "Este dolor no es mio", "costo": 12000}, {"nombre": "Fleur Ariana Godoy", "costo": 8500}, {"nombre": "Folleto del millonario", "costo": 6800}, {"nombre": "Fuera del laberinto Spencer Johnson", "costo": 7500}, {"nombre": "Generacion ansiosa", "costo": 13000}, {"nombre": "Go pro Eric Worre", "costo": 6000}, {"nombre": "Habitos atomicos", "costo": 13000}, {"nombre": "Habitos para ser millonario Bryan tracy", "costo": 11000}, {"nombre": "Habla menos actua mas Brian Tracy", "costo": 6500}, {"nombre": "Influencia", "costo": 15000}, {"nombre": "Inquebrantable", "costo": 8500}, {"nombre": "Kaizen Daniel herrero", "costo": 10000}, {"nombre": "La bolsa o la vida", "costo": 13500}, {"nombre": "La disciplina marcara tu destino Ryan Holiday", "costo": 12500}, {"nombre": "La espia", "costo": 5000}, {"nombre": "La felicidad mas alla de la Gabriel rolon", "costo": 13400}, {"nombre": "La inteligencia emocional daniel goleman", "costo": 10500}, {"nombre": "La llamada del coraje", "costo": 12500}, {"nombre": "La naranja mecanica", "costo": 6000}, {"nombre": "La novia de sandro Camila villada", "costo": 6000}, {"nombre": "La psicologia del dinero", "costo": 12500}, {"nombre": "La quinta montana", "costo": 5500}, {"nombre": "La riqueza que el dinero no puede comprar", "costo": 12000}, {"nombre": "La soledad Gabriel Rolon", "costo": 12400}, {"nombre": "La teoria Let Them", "costo": 13000}, {"nombre": "La vaca purpura", "costo": 6500}, {"nombre": "Las 48 leyes del poder abreviado Robert Greene", "costo": 9500}, {"nombre": "Las Malas", "costo": 10000}, {"nombre": "Las siete leyes espirituales del exito Deepak chopra", "costo": 6500}, {"nombre": "Loca Lorena pronsky", "costo": 10200}, {"nombre": "Los 7 habitos de la gente altamente efectiva", "costo": 16500}, {"nombre": "Los cuatro acuerdos", "costo": 8000}, {"nombre": "Los ingenieros del caos Giuliano da Empoli", "costo": 9400}, {"nombre": "Los lideres comen al final Simon Sinek", "costo": 12500}, {"nombre": "Los peligros de fumar en la cama", "costo": 9700}, {"nombre": "Los secretos de la mente millonaria", "costo": 11500}, {"nombre": "Manual de vida Epicteto", "costo": 5500}, {"nombre": "Martin fierro", "costo": 5500}, {"nombre": "Mas vivo que el diablo", "costo": 11500}, {"nombre": "Meditaciones Marco aurelio", "costo": 5500}, {"nombre": "Memento mori recuerda tu muerte", "costo": 11500}, {"nombre": "Metas", "costo": 12500}, {"nombre": "Mi nombre es Emilia del valle", "costo": 14000}, {"nombre": "Mi psicologa me dijo", "costo": 9000}, {"nombre": "Muchas vidas muchos maestros Brian weiss", "costo": 8500}, {"nombre": "Muchos cuerpos una misma alma", "costo": 9000}, {"nombre": "No me puedes lastimar", "costo": 12500}, {"nombre": "No te creas todo lo que piensas", "costo": 9000}, {"nombre": "Ofertas de 100M bolsillo", "costo": 8000}, {"nombre": "Orgullo y prejuicio Jane Austen", "costo": 6500}, {"nombre": "Padre rico padre pobre Robert kiyosaki", "costo": 12900}, {"nombre": "Pasa a la accion", "costo": 11000}, {"nombre": "Piense y hagase rico", "costo": 8500}, {"nombre": "Poder sin limites", "costo": 13000}, {"nombre": "Psicologia oscura", "costo": 9000}, {"nombre": "Quien se ha llevado mi queso", "costo": 6000}, {"nombre": "Random estanislao nachrach", "costo": 6500}, {"nombre": "Recupera tu mente reconquista tu vida Marian Estape", "costo": 13000}, {"nombre": "Relato de un naufrago Gabriel Garcia Marquez", "costo": 5500}, {"nombre": "Rompe la barrera del no", "costo": 12900}, {"nombre": "Romper el circulo", "costo": 12000}, {"nombre": "Rota se camina igual", "costo": 11000}, {"nombre": "Si lo crees lo creas", "costo": 9000}, {"nombre": "Sobre la brevedad de la vida Seneca", "costo": 5500}, {"nombre": "Sobrenatural", "costo": 13500}, {"nombre": "Terapia para llevar", "costo": 12000}, {"nombre": "Tesis sobre una domesticacion Camila villada", "costo": 10000}, {"nombre": "Tiende tu cama", "costo": 9000}, {"nombre": "Titanes Tim Ferris", "costo": 22000}, {"nombre": "Trading en la zona", "costo": 12000}, {"nombre": "Traguese ese sapo Brian Tracy", "costo": 7500}, {"nombre": "Tus zonas erroneas", "costo": 9000}, {"nombre": "Un lugar soleado para gente sombria", "costo": 9900}, {"nombre": "Una nueva tierra", "costo": 10000}, {"nombre": "Usted puede sanar su vida", "costo": 8000}, {"nombre": "Vendele a la mente no a la gente", "costo": 10000}, {"nombre": "Vendes o vendes", "costo": 8900}, {"nombre": "Zensorialmente", "costo": 12400}];
+// ===================================================
+// TABS
+// ===================================================
+function switchTab(tab) {
+  var pm = document.getElementById('panel-metricas');
+  var pr = document.getElementById('panel-rentabilidad');
+  var tm = document.getElementById('tab-metricas');
+  var tr2 = document.getElementById('tab-rentabilidad');
+  if (!pm || !pr) return;
+  pm.style.display = tab === 'metricas' ? 'block' : 'none';
+  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
+  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
+  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
+  tr2.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
+  tr2.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
+  if (tab === 'rentabilidad') initRentabilidad();
+}
 
-// ===== CUENTA CORRIENTE CON PROVEEDOR =====
-var _ordenes = [];   // [{id, numero, fecha, libros:[{nombre,costo,qty}], total}]
-var _pagos = [];     // [{id, fecha, monto, nota}]
-var _deudaInicial = 3000000;
-var _librosCarrito = []; // libros seleccionados para la orden en curso
+// ===================================================
+// LISTA MAYO
+// ===================================================
+var MAYO_LIST = [{"nombre":"50 Capsulas de amor propio","costo":13000},{"nombre":"Amor fati","costo":8200},{"nombre":"Ansiosamente Sara Espejo","costo":13500},{"nombre":"Artificial Mariana Sigman","costo":9500},{"nombre":"Basta de amores de mierda 3","costo":6000},{"nombre":"Basta de amores de mierda 4","costo":6000},{"nombre":"Basta de amores de mierda 5","costo":6000},{"nombre":"Basta de amores de mierda 6","costo":6000},{"nombre":"Brida","costo":5000},{"nombre":"Cara a cara Gabriel Rolon","costo":9000},{"nombre":"Centrate Deep work","costo":11500},{"nombre":"Como ganar amigos e influir en las personas","costo":9000},{"nombre":"Como hacer que te pasen cosas buenas","costo":13200},{"nombre":"Como mandar a la mierda de forma educada","costo":12000},{"nombre":"Como ser un estoico Massimo Pigliucci","costo":11000},{"nombre":"Conecta con el dinero Brian Tracy","costo":12000},{"nombre":"De mi para mi","costo":12000},{"nombre":"De mi para mi 2","costo":12500},{"nombre":"Deja de ser tu Joe dispenza","costo":13500},{"nombre":"Desbloquea tu mente millonaria Victoria Mills","costo":6600},{"nombre":"Deshacer la ansiedad","costo":12300},{"nombre":"El abc de la actitud John C Maxwell","costo":6500},{"nombre":"El abc del exito","costo":6500},{"nombre":"El abc del liderazgo John C Maxwell","costo":6500},{"nombre":"El arte de la guerra","costo":5500},{"nombre":"El caballero de la armadura oxidada","costo":7000},{"nombre":"El camino del artista","costo":16000},{"nombre":"El club de las 5 de la manana Robin Sharma","costo":12600},{"nombre":"El cuadrante del flujo del dinero","costo":8300},{"nombre":"El demonio y la senorita prym","costo":5500},{"nombre":"El duelo Gabriel rolon","costo":14000},{"nombre":"El ego es el enemigo Ryan Holiday","costo":11500},{"nombre":"El hombre en busca de sentido","costo":7000},{"nombre":"El hombre mas rico de babilonia George clason","costo":7000},{"nombre":"El kybalion","costo":5500},{"nombre":"El libro de bill","costo":11500},{"nombre":"El metodo Briones Beltran Briones","costo":8000},{"nombre":"El monje que vendio su ferrari Robin Sharma","costo":8000},{"nombre":"El negocio del siglo XXI","costo":7000},{"nombre":"El placebo eres tu","costo":13500},{"nombre":"El plan fenix Brian Tracy","costo":11000},{"nombre":"El poder de la mente subconsciente Joseph Murphy","costo":11500},{"nombre":"El poder de las palabras","costo":13000},{"nombre":"El poder de los habitos","costo":12000},{"nombre":"El poder del ahora","costo":10300},{"nombre":"El poder esta dentro de ti Louise Hay","costo":8000},{"nombre":"El poder frente la fuerza","costo":12000},{"nombre":"El principe Nicolas Maquiavelo","costo":6000},{"nombre":"El principito","costo":4500},{"nombre":"El quinto acuerdo Miguel Ruiz","costo":8500},{"nombre":"El regreso del caballero de la armadura oxidada","costo":6000},{"nombre":"El sutil arte de que casi todo te importe una mierda","costo":9500},{"nombre":"El vendedor mas grande del mundo","costo":6000},{"nombre":"El viento conoce mi nombre Isabel allende","costo":12000},{"nombre":"Empieza con el porque","costo":12000},{"nombre":"Emprende tu propio negocio","costo":8000},{"nombre":"En agosto nos vemos Garcia Marquez","costo":9200},{"nombre":"Encuentra tu persona vitamina","costo":12500},{"nombre":"Encuentros Gabriel rolon bolsillo","costo":9500},{"nombre":"Es facil dejar de fumar Allen Carr","costo":9900},{"nombre":"Escuela de negocios","costo":6500},{"nombre":"Este dolor no es mio","costo":12000},{"nombre":"Fleur Ariana Godoy","costo":8500},{"nombre":"Folleto del millonario","costo":6800},{"nombre":"Fuera del laberinto Spencer Johnson","costo":7500},{"nombre":"Generacion ansiosa","costo":13000},{"nombre":"Go pro Eric Worre","costo":6000},{"nombre":"Habitos atomicos","costo":13000},{"nombre":"Habitos para ser millonario Bryan tracy","costo":11000},{"nombre":"Habla menos actua mas Brian Tracy","costo":6500},{"nombre":"Influencia","costo":15000},{"nombre":"Inquebrantable","costo":8500},{"nombre":"Kaizen Daniel herrero","costo":10000},{"nombre":"La bolsa o la vida","costo":13500},{"nombre":"La disciplina marcara tu destino Ryan Holiday","costo":12500},{"nombre":"La espia","costo":5000},{"nombre":"La felicidad mas alla de la Gabriel rolon","costo":13400},{"nombre":"La inteligencia emocional daniel goleman","costo":10500},{"nombre":"La llamada del coraje","costo":12500},{"nombre":"La naranja mecanica","costo":6000},{"nombre":"La novia de sandro Camila villada","costo":6000},{"nombre":"La psicologia del dinero","costo":12500},{"nombre":"La quinta montana","costo":5500},{"nombre":"La riqueza que el dinero no puede comprar","costo":12000},{"nombre":"La soledad Gabriel Rolon","costo":12400},{"nombre":"La teoria Let Them","costo":13000},{"nombre":"La vaca purpura","costo":6500},{"nombre":"Las 48 leyes del poder abreviado Robert Greene","costo":9500},{"nombre":"Las Malas","costo":10000},{"nombre":"Las siete leyes espirituales del exito Deepak chopra","costo":6500},{"nombre":"Loca Lorena pronsky","costo":10200},{"nombre":"Los 7 habitos de la gente altamente efectiva","costo":16500},{"nombre":"Los cuatro acuerdos","costo":8000},{"nombre":"Los ingenieros del caos Giuliano da Empoli","costo":9400},{"nombre":"Los lideres comen al final Simon Sinek","costo":12500},{"nombre":"Los peligros de fumar en la cama","costo":9700},{"nombre":"Los secretos de la mente millonaria","costo":11500},{"nombre":"Manual de vida Epicteto","costo":5500},{"nombre":"Martin fierro","costo":5500},{"nombre":"Mas vivo que el diablo","costo":11500},{"nombre":"Meditaciones Marco aurelio","costo":5500},{"nombre":"Memento mori recuerda tu muerte","costo":11500},{"nombre":"Metas","costo":12500},{"nombre":"Mi nombre es Emilia del valle","costo":14000},{"nombre":"Mi psicologa me dijo","costo":9000},{"nombre":"Muchas vidas muchos maestros Brian weiss","costo":8500},{"nombre":"Muchos cuerpos una misma alma","costo":9000},{"nombre":"No me puedes lastimar","costo":12500},{"nombre":"No te creas todo lo que piensas","costo":9000},{"nombre":"Ofertas de 100M bolsillo","costo":8000},{"nombre":"Orgullo y prejuicio Jane Austen","costo":6500},{"nombre":"Padre rico padre pobre Robert kiyosaki","costo":12900},{"nombre":"Pasa a la accion","costo":11000},{"nombre":"Piense y hagase rico","costo":8500},{"nombre":"Poder sin limites","costo":13000},{"nombre":"Psicologia oscura","costo":9000},{"nombre":"Quien se ha llevado mi queso","costo":6000},{"nombre":"Random estanislao nachrach","costo":6500},{"nombre":"Recupera tu mente reconquista tu vida Marian Estape","costo":13000},{"nombre":"Relato de un naufrago Gabriel Garcia Marquez","costo":5500},{"nombre":"Rompe la barrera del no","costo":12900},{"nombre":"Romper el circulo","costo":12000},{"nombre":"Rota se camina igual","costo":11000},{"nombre":"Si lo crees lo creas","costo":9000},{"nombre":"Sobre la brevedad de la vida Seneca","costo":5500},{"nombre":"Sobrenatural","costo":13500},{"nombre":"Terapia para llevar","costo":12000},{"nombre":"Tesis sobre una domesticacion Camila villada","costo":10000},{"nombre":"Tiende tu cama","costo":9000},{"nombre":"Titanes Tim Ferris","costo":22000},{"nombre":"Trading en la zona","costo":12000},{"nombre":"Traguese ese sapo Brian Tracy","costo":7500},{"nombre":"Tus zonas erroneas","costo":9000},{"nombre":"Un lugar soleado para gente sombria","costo":9900},{"nombre":"Una nueva tierra","costo":10000},{"nombre":"Usted puede sanar su vida","costo":8000},{"nombre":"Vendele a la mente no a la gente","costo":10000},{"nombre":"Vendes o vendes","costo":8900},{"nombre":"Zensorialmente","costo":12400}];
 
+// ===================================================
+// CUENTA CORRIENTE PROVEEDOR
+// ===================================================
 function loadProveedorData() {
   try {
     var o = localStorage.getItem('lpe_ordenes');
@@ -1034,7 +967,6 @@ function saveProveedorData() {
 
 function initRentabilidad() {
   loadProveedorData();
-  // Setear fecha de hoy en los inputs
   var hoy = new Date().toISOString().split('T')[0];
   var of = document.getElementById('orden-fecha');
   var pf = document.getElementById('pago-fecha');
@@ -1063,12 +995,11 @@ function renderSaldo() {
   var totalOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
   var totalPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
   var saldo = _deudaInicial + totalOrdenes - totalPagos;
-
   document.getElementById('saldo-metrics').innerHTML =
-    '<div class="metric"><div class="metric-label">Deuda inicial</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(_deudaInicial).toLocaleString("es-AR") + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Órdenes acumuladas</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(totalOrdenes).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _ordenes.length + ' órdenes</div></div>' +
-    '<div class="metric"><div class="metric-label">Pagos realizados</div><div class="metric-value" style="font-size:18px;color:#16a34a;">$' + Math.round(totalPagos).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _pagos.length + ' pagos</div></div>' +
-    '<div class="metric" style="border-color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + '"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + ';">$' + Math.round(saldo).toLocaleString("es-AR") + '</div><div class="metric-sub">' + (saldo > 0 ? 'Debés al proveedor' : 'A favor tuyo') + '</div></div>';
+    '<div class="metric"><div class="metric-label">Deuda inicial</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$'+Math.round(_deudaInicial).toLocaleString('es-AR')+'</div></div>' +
+    '<div class="metric"><div class="metric-label">Órdenes acumuladas</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$'+Math.round(totalOrdenes).toLocaleString('es-AR')+'</div><div class="metric-sub">'+_ordenes.length+' órdenes</div></div>' +
+    '<div class="metric"><div class="metric-label">Pagos realizados</div><div class="metric-value" style="font-size:18px;color:#16a34a;">$'+Math.round(totalPagos).toLocaleString('es-AR')+'</div><div class="metric-sub">'+_pagos.length+' pagos</div></div>' +
+    '<div class="metric" style="border-color:'+(saldo>0?'#e24b4a':'#16a34a')+'"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:'+(saldo>0?'#e24b4a':'#16a34a')+';">$'+Math.round(saldo).toLocaleString('es-AR')+'</div><div class="metric-sub">'+(saldo>0?'Debés al proveedor':'A favor tuyo')+'</div></div>';
 }
 
 function registrarPago() {
@@ -1085,12 +1016,11 @@ function registrarPago() {
 }
 
 function filtrarLibros() {
-  var q = (document.getElementById('libro-search').value || '').toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g,'');
+  var q = (document.getElementById('libro-search').value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   var res = document.getElementById('libro-results');
   if (q.length < 1) { res.style.display = 'none'; return; }
   window._lastMatches = MAYO_LIST.filter(function(l) {
-    return l.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q);
+    return l.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q);
   }).slice(0, 10);
   if (!window._lastMatches.length) { res.style.display = 'none'; return; }
   res.style.display = 'block';
@@ -1100,23 +1030,18 @@ function filtrarLibros() {
     div.style.cssText = 'padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;';
     div.addEventListener('mouseover', function(){ this.style.background='var(--bg)'; });
     div.addEventListener('mouseout', function(){ this.style.background=''; });
-    div.addEventListener('click', function() { window.agregarLibro(window._lastMatches[i]); });
+    div.addEventListener('click', (function(idx){ return function(){ window.agregarLibro(window._lastMatches[idx]); }; })(i));
     var sp1 = document.createElement('span'); sp1.textContent = l.nombre;
-    var sp2 = document.createElement('span');
-    sp2.style.cssText = 'color:var(--muted);font-weight:500;';
-    sp2.textContent = '$' + l.costo.toLocaleString("es-AR");
+    var sp2 = document.createElement('span'); sp2.style.cssText = 'color:var(--muted);font-weight:500;'; sp2.textContent = '$'+l.costo.toLocaleString('es-AR');
     div.appendChild(sp1); div.appendChild(sp2);
     res.appendChild(div);
   });
 }
+
 function agregarLibro(libro) {
-  // Ver si ya está en el carrito
   var existing = _librosCarrito.find(function(l){ return l.nombre === libro.nombre; });
-  if (existing) {
-    existing.qty++;
-  } else {
-    _librosCarrito.push({ nombre: libro.nombre, costo: libro.costo, qty: 1 });
-  }
+  if (existing) { existing.qty++; }
+  else { _librosCarrito.push({ nombre: libro.nombre, costo: libro.costo, qty: 1 }); }
   document.getElementById('libro-search').value = '';
   document.getElementById('libro-results').style.display = 'none';
   renderCarrito();
@@ -1134,64 +1059,81 @@ function cambiarQty(nombre, delta) {
   renderCarrito();
 }
 
+// ===================================================
+// RENDER CARRITO — FIX: llave faltante corregida + bug unidades
+// ===================================================
 function renderCarrito() {
   var el = document.getElementById('libros-seleccionados');
   var totalEl = document.getElementById('orden-total');
   if (!_librosCarrito.length) {
     el.innerHTML = '<p style="font-size:13px;color:var(--muted);">Ningún libro seleccionado aún.</p>';
-    totalEl.textContent = '';
+    totalEl.innerHTML = '';
     return;
   }
+
   var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
+  var unidades = _librosCarrito.reduce(function(s,l){ return s + l.qty; }, 0);
+
   el.innerHTML = '';
   var wrapper = document.createElement('div');
   wrapper.style.cssText = 'border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;';
+
   _librosCarrito.forEach(function(l) {
     var row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:13px;';
+
     var nombre = document.createElement('span');
     nombre.style.flex = '1'; nombre.textContent = l.nombre;
+
     var controls = document.createElement('div');
     controls.style.cssText = 'display:flex;align-items:center;gap:6px;';
+
     var btnM = document.createElement('button');
     btnM.textContent = '−'; btnM.style.cssText = 'width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;';
     btnM.onclick = (function(n){ return function(){ window.cambiarQty(n,-1); }; })(l.nombre);
+
     var qtyEl = document.createElement('span');
     qtyEl.style.cssText = 'min-width:20px;text-align:center;'; qtyEl.textContent = l.qty;
+
     var btnP = document.createElement('button');
     btnP.textContent = '+'; btnP.style.cssText = 'width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;';
     btnP.onclick = (function(n){ return function(){ window.cambiarQty(n,1); }; })(l.nombre);
+
     controls.appendChild(btnM); controls.appendChild(qtyEl); controls.appendChild(btnP);
+
     var precio = document.createElement('span');
     precio.style.cssText = 'color:#e24b4a;font-weight:500;min-width:80px;text-align:right;';
-    precio.textContent = '$' + (l.costo * l.qty).toLocaleString("es-AR");
+    precio.textContent = '$' + (l.costo * l.qty).toLocaleString('es-AR');
+
     var btnDel = document.createElement('button');
     btnDel.textContent = '×'; btnDel.style.cssText = 'color:var(--muted);background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;';
     btnDel.onclick = (function(n){ return function(){ window.quitarLibro(n); }; })(l.nombre);
+
     row.appendChild(nombre); row.appendChild(controls); row.appendChild(precio); row.appendChild(btnDel);
     wrapper.appendChild(row);
   });
-  el.appendChild(wrapper);
-  var unidades = _librosCarrito.reduce(function(s,l){ return s + l.qty; }, 0);
-  var uLabel = unidades + (unidades !== 1 ? ' unidades' : ' unidad') + ' en el pedido';
-  var uDiv = document.createElement('p');
-  uDiv.style.fontSize = '13px';
-  uDiv.style.color = 'var(--muted)';
-  uDiv.style.margin = '4px 0 2px';
-  uDiv.textContent = uLabel;
-  var tDiv = document.createElement('p');
-  tDiv.style.cssText = 'font-size:15px;font-weight:700;display:flex;justify-content:space-between;margin:2px 0;';
-  var tLabel = document.createElement('span');
-  tLabel.textContent = 'Total costo proveedor:';
-  var tAmount = document.createElement('span');
-  tAmount.style.color = '#e24b4a';
-  tAmount.textContent = '$' + total.toLocaleString("es-AR");
-  tDiv.appendChild(tLabel);
-  tDiv.appendChild(tAmount);
-  totalEl.innerHTML = '';
-  totalEl.appendChild(uDiv);
-  totalEl.appendChild(tDiv);
 
+  el.appendChild(wrapper);
+
+  // FIX: renderizar unidades y total en totalEl correctamente
+  totalEl.innerHTML = '';
+
+  var uDiv = document.createElement('p');
+  uDiv.style.cssText = 'font-size:13px;color:var(--muted);margin:6px 0 4px;';
+  uDiv.textContent = unidades + (unidades !== 1 ? ' unidades' : ' unidad') + ' en el pedido';
+  totalEl.appendChild(uDiv);
+
+  var tDiv = document.createElement('div');
+  tDiv.style.cssText = 'display:flex;justify-content:space-between;padding:4px 0;font-size:15px;font-weight:700;';
+  var tLabel = document.createElement('span'); tLabel.textContent = 'Total costo proveedor:';
+  var tAmount = document.createElement('span'); tAmount.style.color = '#e24b4a'; tAmount.textContent = '$' + total.toLocaleString('es-AR');
+  tDiv.appendChild(tLabel); tDiv.appendChild(tAmount);
+  totalEl.appendChild(tDiv);
+} // ← llave de cierre de renderCarrito correctamente ubicada
+
+// ===================================================
+// GUARDAR ORDEN
+// ===================================================
 function guardarOrden() {
   var numero = document.getElementById('orden-numero').value.trim();
   var fecha = document.getElementById('orden-fecha').value;
@@ -1199,29 +1141,25 @@ function guardarOrden() {
   if (!fecha) { alert('Seleccioná la fecha.'); return; }
   if (!_librosCarrito.length) { alert('Agregá al menos un libro.'); return; }
   var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
-  _ordenes.push({
-    id: Date.now(),
-    numero: numero,
-    fecha: fecha,
-    libros: JSON.parse(JSON.stringify(_librosCarrito)),
-    total: total
-  });
+  _ordenes.push({ id: Date.now(), numero: numero, fecha: fecha, libros: JSON.parse(JSON.stringify(_librosCarrito)), total: total });
   saveProveedorData();
   _librosCarrito = [];
   document.getElementById('orden-numero').value = '';
   document.getElementById('libros-seleccionados').innerHTML = '';
   document.getElementById('orden-total').innerHTML = '';
   var msg = document.getElementById('orden-msg');
-  msg.textContent = 'Orden #' + numero + ' guardada ($' + total.toLocaleString("es-AR") + ')';
+  msg.textContent = 'Orden #' + numero + ' guardada ($' + total.toLocaleString('es-AR') + ')';
   setTimeout(function(){ msg.textContent = ''; }, 3000);
   renderSaldo();
   renderHistorial();
 }
 
+// ===================================================
+// HISTORIAL
+// ===================================================
 function getWeekKey(fecha) {
   var d = new Date(fecha + 'T12:00:00');
   var day = d.getDay();
-  // Semana que cierra el viernes: buscar el viernes de esa semana
   var diffToFri = (5 - day + 7) % 7;
   var fri = new Date(d);
   fri.setDate(d.getDate() + diffToFri);
@@ -1236,7 +1174,6 @@ function getWeekLabel(friDate) {
 }
 
 function renderHistorial() {
-  // Agrupar por semana
   var semanas = {};
   _ordenes.forEach(function(o) {
     var k = getWeekKey(o.fecha);
@@ -1253,7 +1190,6 @@ function renderHistorial() {
 
   var sorted = Object.entries(semanas).sort(function(a,b){ return b[0].localeCompare(a[0]); });
 
-  // Resumen semanal
   var semHtml = '';
   if (!sorted.length) {
     semHtml = '<p style="font-size:13px;color:var(--muted);">No hay órdenes ni pagos registrados aún.</p>';
@@ -1271,24 +1207,22 @@ function renderHistorial() {
           var balance = s.totalPagos - s.totalOrdenes;
           var bc = balance >= 0 ? '#16a34a' : '#e24b4a';
           return '<tr style="border-bottom:0.5px solid var(--border);">'
-            + '<td style="padding:8px 6px;font-weight:500;">' + getWeekLabel(k) + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;">' + s.ordenes.length + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;color:#e24b4a;">$' + Math.round(s.totalOrdenes).toLocaleString("es-AR") + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;color:#16a34a;">$' + Math.round(s.totalPagos).toLocaleString("es-AR") + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;color:'+bc+';font-weight:500;">$' + Math.round(Math.abs(balance)).toLocaleString("es-AR") + ' ' + (balance >= 0 ? '✓' : '↑debe') + '</td>'
+            + '<td style="padding:8px 6px;font-weight:500;">'+getWeekLabel(k)+'</td>'
+            + '<td style="padding:8px 6px;text-align:right;">'+s.ordenes.length+'</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:#e24b4a;">$'+Math.round(s.totalOrdenes).toLocaleString('es-AR')+'</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:#16a34a;">$'+Math.round(s.totalPagos).toLocaleString('es-AR')+'</td>'
+            + '<td style="padding:8px 6px;text-align:right;color:'+bc+';font-weight:500;">$'+Math.round(Math.abs(balance)).toLocaleString('es-AR')+' '+(balance>=0?'✓':'↑debe')+'</td>'
             + '</tr>';
         }).join('')
       + '</tbody></table>';
   }
   document.getElementById('historial-semanal').innerHTML = semHtml;
 
-  // Historial detalle
   var all = [];
   _ordenes.forEach(function(o){ all.push({tipo:'orden', fecha:o.fecha, data:o}); });
   _pagos.forEach(function(p){ all.push({tipo:'pago', fecha:p.fecha, data:p}); });
   all.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
 
-  // Total general de todas las ordenes
   var totalGenOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
   var totalGenUnidades = _ordenes.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
   var totalGenPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
@@ -1303,43 +1237,32 @@ function renderHistorial() {
       return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
         + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
         + '<div style="flex:1;">'
-        + '<div style="font-size:13px;font-weight:500;">#' + o.numero + ' — ' + fecha + '</div>'
-        + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + librosStr + '</div>'
-        + '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + unidades + ' unidad' + (unidades!==1?'es':'') + '</div>'
+        + '<div style="font-size:13px;font-weight:500;">#'+o.numero+' — '+fecha+'</div>'
+        + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+librosStr+'</div>'
+        + '<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+unidades+' unidad'+(unidades!==1?'es':'')+'</div>'
         + '</div>'
         + '<div style="text-align:right;">'
-        + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$' + Math.round(o.total).toLocaleString("es-AR") + '</div>'
-        + '<button onclick="window.eliminarOrden(' + o.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
-        + '</div>'
-        + '</div>';
+        + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$'+Math.round(o.total).toLocaleString('es-AR')+'</div>'
+        + '<button onclick="window.eliminarOrden('+o.id+')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+        + '</div></div>';
     } else {
       var p = item.data;
       var d = new Date(p.fecha+'T12:00:00');
       var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
       return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
         + '<span style="font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Pago</span>'
-        + '<div style="flex:1;">'
-        + '<div style="font-size:13px;font-weight:500;">' + p.nota + ' — ' + fecha + '</div>'
-        + '</div>'
+        + '<div style="flex:1;"><div style="font-size:13px;font-weight:500;">'+p.nota+' — '+fecha+'</div></div>'
         + '<div style="text-align:right;">'
-        + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$' + Math.round(p.monto).toLocaleString("es-AR") + '</div>'
-        + '<button onclick="window.eliminarPago(' + p.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
-        + '</div>'
-        + '</div>';
+        + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$'+Math.round(p.monto).toLocaleString('es-AR')+'</div>'
+        + '<button onclick="window.eliminarPago('+p.id+')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+        + '</div></div>';
     }
   }).join('') : '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
 
-  // Fila de totales generales
   if (all.length) {
     detHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:4px;border-top:2px solid var(--border);font-size:13px;">'
-      + '<div>'
-      + '<div style="font-weight:700;">TOTAL GENERAL</div>'
-      + '<div style="color:var(--muted);font-size:12px;margin-top:2px;">' + _ordenes.length + ' órdenes · ' + totalGenUnidades + ' unidades</div>'
-      + '</div>'
-      + '<div style="text-align:right;">'
-      + '<div style="color:#e24b4a;font-weight:700;font-size:15px;">$' + Math.round(totalGenOrdenes).toLocaleString("es-AR") + ' en órdenes</div>'
-      + '<div style="color:#16a34a;font-weight:600;font-size:13px;margin-top:2px;">−$' + Math.round(totalGenPagos).toLocaleString("es-AR") + ' pagado</div>'
-      + '</div>'
+      + '<div><div style="font-weight:700;">TOTAL GENERAL</div><div style="color:var(--muted);font-size:12px;margin-top:2px;">'+_ordenes.length+' órdenes · '+totalGenUnidades+' unidades</div></div>'
+      + '<div style="text-align:right;"><div style="color:#e24b4a;font-weight:700;font-size:15px;">$'+Math.round(totalGenOrdenes).toLocaleString('es-AR')+' en órdenes</div><div style="color:#16a34a;font-weight:600;font-size:13px;margin-top:2px;">−$'+Math.round(totalGenPagos).toLocaleString('es-AR')+' pagado</div></div>'
       + '</div>';
   }
 
@@ -1349,17 +1272,13 @@ function renderHistorial() {
 function eliminarOrden(id) {
   if (!confirm('¿Eliminar esta orden?')) return;
   _ordenes = _ordenes.filter(function(o){ return o.id !== id; });
-  saveProveedorData();
-  renderSaldo();
-  renderHistorial();
+  saveProveedorData(); renderSaldo(); renderHistorial();
 }
 
 function eliminarPago(id) {
   if (!confirm('¿Eliminar este pago?')) return;
   _pagos = _pagos.filter(function(p){ return p.id !== id; });
-  saveProveedorData();
-  renderSaldo();
-  renderHistorial();
+  saveProveedorData(); renderSaldo(); renderHistorial();
 }
 
 function exportarResumen() {
@@ -1374,584 +1293,12 @@ function exportarResumen() {
   var csv = rows.map(function(r){ return r.join(','); }).join('\n');
   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lpe-proveedor.csv'; a.click();
-}
-
-
-function switchTab(tab) {
-  var pm = document.getElementById('panel-metricas');
-  var pr = document.getElementById('panel-rentabilidad');
-  var tm = document.getElementById('tab-metricas');
-  var tr2 = document.getElementById('tab-rentabilidad');
-  if (!pm || !pr) return;
-  pm.style.display = tab === 'metricas' ? 'block' : 'none';
-  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
-  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
-  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
-  tr2.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
-  tr2.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
-  if (tab === 'rentabilidad') initRentabilidad();
-}
-
-
-// ===== CUENTA CORRIENTE CON PROVEEDOR =====
-var _ordenes = [];   // [{id, numero, fecha, libros:[{nombre,costo,qty}], total}]
-var _pagos = [];     // [{id, fecha, monto, nota}]
-var _deudaInicial = 3000000;
-var _librosCarrito = []; // libros seleccionados para la orden en curso
-
-function loadProveedorData() {
-  try {
-    var o = localStorage.getItem('lpe_ordenes');
-    var p = localStorage.getItem('lpe_pagos');
-    var d = localStorage.getItem('lpe_deuda_inicial');
-    if (o) _ordenes = JSON.parse(o);
-    if (p) _pagos = JSON.parse(p);
-    if (d) _deudaInicial = parseFloat(d);
-  } catch(e) {}
-}
-
-function saveProveedorData() {
-  localStorage.setItem('lpe_ordenes', JSON.stringify(_ordenes));
-  localStorage.setItem('lpe_pagos', JSON.stringify(_pagos));
-  localStorage.setItem('lpe_deuda_inicial', String(_deudaInicial));
-}
-
-function initRentabilidad() {
-  loadProveedorData();
-  // Setear fecha de hoy en los inputs
-  var hoy = new Date().toISOString().split('T')[0];
-  var of = document.getElementById('orden-fecha');
-  var pf = document.getElementById('pago-fecha');
-  var di = document.getElementById('deuda-inicial');
-  if (of) of.value = hoy;
-  if (pf) pf.value = hoy;
-  if (di) di.value = _deudaInicial;
-  renderSaldo();
-  renderHistorial();
-}
-
-function toggleSaldoConfig() {
-  var el = document.getElementById('saldo-config');
-  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-function saveDeudaInicial() {
-  var val = parseFloat(document.getElementById('deuda-inicial').value) || 0;
-  _deudaInicial = val;
-  saveProveedorData();
-  renderSaldo();
-  document.getElementById('saldo-config').style.display = 'none';
-}
-
-function renderSaldo() {
-  var totalOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
-  var totalPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
-  var saldo = _deudaInicial + totalOrdenes - totalPagos;
-
-  document.getElementById('saldo-metrics').innerHTML =
-    '<div class="metric"><div class="metric-label">Deuda inicial</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(_deudaInicial).toLocaleString("es-AR") + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Órdenes acumuladas</div><div class="metric-value" style="font-size:18px;color:#e24b4a;">$' + Math.round(totalOrdenes).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _ordenes.length + ' órdenes</div></div>' +
-    '<div class="metric"><div class="metric-label">Pagos realizados</div><div class="metric-value" style="font-size:18px;color:#16a34a;">$' + Math.round(totalPagos).toLocaleString("es-AR") + '</div><div class="metric-sub">' + _pagos.length + ' pagos</div></div>' +
-    '<div class="metric" style="border-color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + '"><div class="metric-label">Saldo actual</div><div class="metric-value" style="font-size:20px;color:' + (saldo > 0 ? '#e24b4a' : '#16a34a') + ';">$' + Math.round(saldo).toLocaleString("es-AR") + '</div><div class="metric-sub">' + (saldo > 0 ? 'Debés al proveedor' : 'A favor tuyo') + '</div></div>';
-}
-
-function registrarPago() {
-  var monto = parseFloat(document.getElementById('pago-monto').value) || 0;
-  var fecha = document.getElementById('pago-fecha').value;
-  var nota = document.getElementById('pago-nota').value.trim();
-  if (!monto || !fecha) { alert('Completá el monto y la fecha.'); return; }
-  _pagos.push({ id: Date.now(), fecha: fecha, monto: monto, nota: nota || 'Pago al proveedor' });
-  saveProveedorData();
-  document.getElementById('pago-monto').value = '';
-  document.getElementById('pago-nota').value = '';
-  renderSaldo();
-  renderHistorial();
-}
-
-function filtrarLibros() {
-  var q = (document.getElementById('libro-search').value || '').toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g,'');
-  var res = document.getElementById('libro-results');
-  if (q.length < 1) { res.style.display = 'none'; return; }
-  window._lastMatches = MAYO_LIST.filter(function(l) {
-    return l.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q);
-  }).slice(0, 10);
-  if (!window._lastMatches.length) { res.style.display = 'none'; return; }
-  res.style.display = 'block';
-  res.innerHTML = '';
-  window._lastMatches.forEach(function(l, i) {
-    var div = document.createElement('div');
-    div.style.cssText = 'padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;';
-    div.addEventListener('mouseover', function(){ this.style.background='var(--bg)'; });
-    div.addEventListener('mouseout', function(){ this.style.background=''; });
-    div.addEventListener('click', function() { window.agregarLibro(window._lastMatches[i]); });
-    var sp1 = document.createElement('span'); sp1.textContent = l.nombre;
-    var sp2 = document.createElement('span');
-    sp2.style.cssText = 'color:var(--muted);font-weight:500;';
-    sp2.textContent = '$' + l.costo.toLocaleString("es-AR");
-    div.appendChild(sp1); div.appendChild(sp2);
-    res.appendChild(div);
-  });
-}
-function agregarLibro(libro) {
-  // Ver si ya está en el carrito
-  var existing = _librosCarrito.find(function(l){ return l.nombre === libro.nombre; });
-  if (existing) {
-    existing.qty++;
-  } else {
-    _librosCarrito.push({ nombre: libro.nombre, costo: libro.costo, qty: 1 });
-  }
-  document.getElementById('libro-search').value = '';
-  document.getElementById('libro-results').style.display = 'none';
-  renderCarrito();
-}
-
-function quitarLibro(nombre) {
-  _librosCarrito = _librosCarrito.filter(function(l){ return l.nombre !== nombre; });
-  renderCarrito();
-}
-
-function cambiarQty(nombre, delta) {
-  var l = _librosCarrito.find(function(l){ return l.nombre === nombre; });
-  if (!l) return;
-  l.qty = Math.max(1, l.qty + delta);
-  renderCarrito();
-}
-
-function renderCarrito() {
-  var el = document.getElementById('libros-seleccionados');
-  var totalEl = document.getElementById('orden-total');
-  if (!_librosCarrito.length) {
-    el.innerHTML = '<p style="font-size:13px;color:var(--muted);">Ningún libro seleccionado aún.</p>';
-    totalEl.textContent = '';
-    return;
-  }
-  var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
-  el.innerHTML = '';
-  var wrapper = document.createElement('div');
-  wrapper.style.cssText = 'border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;';
-  _librosCarrito.forEach(function(l) {
-    var row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:13px;';
-    var nombre = document.createElement('span');
-    nombre.style.flex = '1'; nombre.textContent = l.nombre;
-    var controls = document.createElement('div');
-    controls.style.cssText = 'display:flex;align-items:center;gap:6px;';
-    var btnM = document.createElement('button');
-    btnM.textContent = '−'; btnM.style.cssText = 'width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;';
-    btnM.onclick = (function(n){ return function(){ window.cambiarQty(n,-1); }; })(l.nombre);
-    var qtyEl = document.createElement('span');
-    qtyEl.style.cssText = 'min-width:20px;text-align:center;'; qtyEl.textContent = l.qty;
-    var btnP = document.createElement('button');
-    btnP.textContent = '+'; btnP.style.cssText = 'width:24px;height:24px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;font-size:14px;';
-    btnP.onclick = (function(n){ return function(){ window.cambiarQty(n,1); }; })(l.nombre);
-    controls.appendChild(btnM); controls.appendChild(qtyEl); controls.appendChild(btnP);
-    var precio = document.createElement('span');
-    precio.style.cssText = 'color:#e24b4a;font-weight:500;min-width:80px;text-align:right;';
-    precio.textContent = '$' + (l.costo * l.qty).toLocaleString("es-AR");
-    var btnDel = document.createElement('button');
-    btnDel.textContent = '×'; btnDel.style.cssText = 'color:var(--muted);background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;';
-    btnDel.onclick = (function(n){ return function(){ window.quitarLibro(n); }; })(l.nombre);
-    row.appendChild(nombre); row.appendChild(controls); row.appendChild(precio); row.appendChild(btnDel);
-    wrapper.appendChild(row);
-  });
-  el.appendChild(wrapper);
-  totalEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600;">'
-    + '<span>Total costo proveedor:</span>'
-    + '<span style="color:#e24b4a;">$' + total.toLocaleString("es-AR") + '</span></div>';
-}
-function guardarOrden() {
-  var numero = document.getElementById('orden-numero').value.trim();
-  var fecha = document.getElementById('orden-fecha').value;
-  if (!numero) { alert('Ingresá el número de orden.'); return; }
-  if (!fecha) { alert('Seleccioná la fecha.'); return; }
-  if (!_librosCarrito.length) { alert('Agregá al menos un libro.'); return; }
-  var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
-  _ordenes.push({
-    id: Date.now(),
-    numero: numero,
-    fecha: fecha,
-    libros: JSON.parse(JSON.stringify(_librosCarrito)),
-    total: total
-  });
-  saveProveedorData();
-  _librosCarrito = [];
-  document.getElementById('orden-numero').value = '';
-  document.getElementById('libros-seleccionados').innerHTML = '';
-  document.getElementById('orden-total').innerHTML = '';
-  var msg = document.getElementById('orden-msg');
-  msg.textContent = 'Orden #' + numero + ' guardada ($' + total.toLocaleString("es-AR") + ')';
-  setTimeout(function(){ msg.textContent = ''; }, 3000);
-  renderSaldo();
-  renderHistorial();
-}
-
-function getWeekKey(fecha) {
-  var d = new Date(fecha + 'T12:00:00');
-  var day = d.getDay();
-  // Semana que cierra el viernes: buscar el viernes de esa semana
-  var diffToFri = (5 - day + 7) % 7;
-  var fri = new Date(d);
-  fri.setDate(d.getDate() + diffToFri);
-  return fri.toISOString().split('T')[0];
-}
-
-function getWeekLabel(friDate) {
-  var d = new Date(friDate + 'T12:00:00');
-  var lun = new Date(d);
-  lun.setDate(d.getDate() - 4);
-  return 'Semana ' + lun.getDate() + '/' + (lun.getMonth()+1) + ' — ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
-}
-
-function renderHistorial() {
-  // Agrupar por semana
-  var semanas = {};
-  _ordenes.forEach(function(o) {
-    var k = getWeekKey(o.fecha);
-    if (!semanas[k]) semanas[k] = { ordenes: [], pagos: [], totalOrdenes: 0, totalPagos: 0 };
-    semanas[k].ordenes.push(o);
-    semanas[k].totalOrdenes += o.total;
-  });
-  _pagos.forEach(function(p) {
-    var k = getWeekKey(p.fecha);
-    if (!semanas[k]) semanas[k] = { ordenes: [], pagos: [], totalOrdenes: 0, totalPagos: 0 };
-    semanas[k].pagos.push(p);
-    semanas[k].totalPagos += p.monto;
-  });
-
-  var sorted = Object.entries(semanas).sort(function(a,b){ return b[0].localeCompare(a[0]); });
-
-  // Resumen semanal
-  var semHtml = '';
-  if (!sorted.length) {
-    semHtml = '<p style="font-size:13px;color:var(--muted);">No hay órdenes ni pagos registrados aún.</p>';
-  } else {
-    semHtml = '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-      + '<thead><tr style="border-bottom:1px solid var(--border);">'
-      + '<th style="padding:8px 6px;text-align:left;color:var(--muted);font-weight:500;">Semana</th>'
-      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Órdenes</th>'
-      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Costo total</th>'
-      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Pagos</th>'
-      + '<th style="padding:8px 6px;text-align:right;color:var(--muted);font-weight:500;">Balance semana</th>'
-      + '</tr></thead><tbody>'
-      + sorted.map(function(e) {
-          var k=e[0], s=e[1];
-          var balance = s.totalPagos - s.totalOrdenes;
-          var bc = balance >= 0 ? '#16a34a' : '#e24b4a';
-          return '<tr style="border-bottom:0.5px solid var(--border);">'
-            + '<td style="padding:8px 6px;font-weight:500;">' + getWeekLabel(k) + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;">' + s.ordenes.length + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;color:#e24b4a;">$' + Math.round(s.totalOrdenes).toLocaleString("es-AR") + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;color:#16a34a;">$' + Math.round(s.totalPagos).toLocaleString("es-AR") + '</td>'
-            + '<td style="padding:8px 6px;text-align:right;color:'+bc+';font-weight:500;">$' + Math.round(Math.abs(balance)).toLocaleString("es-AR") + ' ' + (balance >= 0 ? '✓' : '↑debe') + '</td>'
-            + '</tr>';
-        }).join('')
-      + '</tbody></table>';
-  }
-  document.getElementById('historial-semanal').innerHTML = semHtml;
-
-  // Historial detalle
-  var all = [];
-  _ordenes.forEach(function(o){ all.push({tipo:'orden', fecha:o.fecha, data:o}); });
-  _pagos.forEach(function(p){ all.push({tipo:'pago', fecha:p.fecha, data:p}); });
-  all.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
-
-  var detHtml = all.length ? all.map(function(item) {
-    if (item.tipo === 'orden') {
-      var o = item.data;
-      var d = new Date(o.fecha+'T12:00:00');
-      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-      var librosStr = o.libros.map(function(l){ return l.nombre+(l.qty>1?' x'+l.qty:''); }).join(', ');
-      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
-        + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
-        + '<div style="flex:1;">'
-        + '<div style="font-size:13px;font-weight:500;">#' + o.numero + ' — ' + fecha + '</div>'
-        + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + librosStr + '</div>'
-        + '</div>'
-        + '<div style="text-align:right;">'
-        + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$' + Math.round(o.total).toLocaleString("es-AR") + '</div>'
-        + '<button onclick="window.eliminarOrden(' + o.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
-        + '</div>'
-        + '</div>';
-    } else {
-      var p = item.data;
-      var d = new Date(p.fecha+'T12:00:00');
-      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
-        + '<span style="font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Pago</span>'
-        + '<div style="flex:1;">'
-        + '<div style="font-size:13px;font-weight:500;">' + p.nota + ' — ' + fecha + '</div>'
-        + '</div>'
-        + '<div style="text-align:right;">'
-        + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$' + Math.round(p.monto).toLocaleString("es-AR") + '</div>'
-        + '<button onclick="window.eliminarPago(' + p.id + ')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
-        + '</div>'
-        + '</div>';
-    }
-  }).join('') : '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
-
-  document.getElementById('historial-detalle').innerHTML = detHtml;
-}
-
-function eliminarOrden(id) {
-  if (!confirm('¿Eliminar esta orden?')) return;
-  _ordenes = _ordenes.filter(function(o){ return o.id !== id; });
-  saveProveedorData();
-  renderSaldo();
-  renderHistorial();
-}
-
-function eliminarPago(id) {
-  if (!confirm('¿Eliminar este pago?')) return;
-  _pagos = _pagos.filter(function(p){ return p.id !== id; });
-  saveProveedorData();
-  renderSaldo();
-  renderHistorial();
-}
-
-function exportarResumen() {
-  var rows = [['Tipo','Fecha','Numero/Nota','Libros','Total']];
-  _ordenes.forEach(function(o) {
-    rows.push(['Orden', o.fecha, '#'+o.numero, o.libros.map(function(l){return l.nombre+(l.qty>1?' x'+l.qty:'');}).join(' | '), o.total]);
-  });
-  _pagos.forEach(function(p) {
-    rows.push(['Pago', p.fecha, p.nota, '', -p.monto]);
-  });
-  rows.sort(function(a,b){ return a[1].localeCompare(b[1]); });
-  var csv = rows.map(function(r){ return r.join(','); }).join('\n');
-  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lpe-proveedor.csv'; a.click();
-}
-
-
-function switchTab(tab) {
-  var pm = document.getElementById('panel-metricas');
-  var pr = document.getElementById('panel-rentabilidad');
-  var tm = document.getElementById('tab-metricas');
-  var tr2 = document.getElementById('tab-rentabilidad');
-  if (!pm || !pr) return;
-  pm.style.display = tab === 'metricas' ? 'block' : 'none';
-  pr.style.display = tab === 'rentabilidad' ? 'block' : 'none';
-  tm.style.borderBottomColor = tab === 'metricas' ? '#1a1a18' : 'transparent';
-  tm.style.color = tab === 'metricas' ? '#1a1a18' : '#888780';
-  tr2.style.borderBottomColor = tab === 'rentabilidad' ? '#1a1a18' : 'transparent';
-  tr2.style.color = tab === 'rentabilidad' ? '#1a1a18' : '#888780';
-  if (tab === 'rentabilidad') initRentabilidad();
-}
-
-
-// ===== CARGA DE ORDEN DESDE IMAGEN =====
-var _imagenOrdenData = null; // base64 de la imagen
-var _librosDetectados = [];  // [{nombre, qty, costo, encontrado}]
-var _ordenesDetectadas = []; // [{id, libros:[...]}]
-
-async function procesarImagenOrden(input) {
-  var file = input.files[0];
-  if (!file) return;
-
-  // Mostrar preview
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _imagenOrdenData = e.target.result; // data URL
-    var img = document.getElementById('img-preview');
-    img.src = _imagenOrdenData;
-    document.getElementById('img-preview-wrap').style.display = 'block';
-    document.getElementById('img-resultado').style.display = 'none';
-    document.getElementById('img-resultado').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-
-  document.getElementById('img-status').textContent = 'Analizando imagen con IA...';
-
-  // Convertir a base64 puro para la API
-  var b64reader = new FileReader();
-  b64reader.onload = async function(e) {
-    var dataUrl = e.target.result;
-    var base64 = dataUrl.split(',')[1];
-    var mediaType = file.type || 'image/jpeg';
-
-    try {
-      var proxyUrl = 'https://lpe-proxy.ezequielalvez-mkt.workers.dev/gemini';
-
-      var response = await fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              {
-                inline_data: { mime_type: mediaType, data: base64 }
-              },
-              {
-                text: 'Analizá esta imagen que puede contener UNA o VARIAS órdenes de envío de libros (mensajes de WhatsApp o PDFs). Cada orden es un bloque separado que tiene un número de PDF o un separador visual. Para cada orden detectada, extraé los libros con su cantidad. Respondé ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto: {"ordenes": [{"libros": [{"nombre": "Titulo del libro", "qty": 1}]}, ...]}. Si hay un número antes del nombre del libro (ej: "1. Habitos Atomicos") ignorá ese número, es la cantidad. Si dice "1. Titulo - 1. Otro titulo" son dos libros distintos cada uno con qty 1. Si una orden tiene "20 libros en total" incluí todos esos libros. Solo incluí títulos de libros reales, ignorá direcciones, fechas, números de envío y otros datos.'
-              }
-            ]
-          }],
-          generationConfig: { temperature: 0 }
-        })
-      });
-
-      var data = await response.json();
-      var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text || '{}';
-      text = text.replace(/```json|```/g, '').trim();
-      var parsed = JSON.parse(text);
-
-      // Soporte para múltiples órdenes o una sola
-      var ordenes = parsed.ordenes || (parsed.libros ? [{ libros: parsed.libros }] : []);
-      if (!ordenes.length) { document.getElementById('img-status').textContent = 'No se detectaron órdenes.'; return; }
-
-      function matchLibro(nombre) {
-        var normL = nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
-        var mejor = null, mejorScore = 0;
-        MAYO_LIST.forEach(function(m) {
-          var normM = m.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
-          var wordsL = new Set(normL.split(' ').filter(function(w){return w.length>2;}));
-          var wordsM = normM.split(' ').filter(function(w){return w.length>2;});
-          var matches = wordsM.filter(function(w){return wordsL.has(w);}).length;
-          var union = new Set([...normL.split(' '),...normM.split(' ')].filter(function(w){return w.length>2;})).size;
-          var score = union > 0 ? matches/union : 0;
-          if (score > mejorScore) { mejorScore = score; mejor = m; }
-        });
-        return { match: mejorScore > 0.3 ? mejor : null, score: mejorScore };
-      }
-
-      // Procesar todas las órdenes detectadas
-      _ordenesDetectadas = ordenes.map(function(o, idx) {
-        var libros = (o.libros || []).map(function(l) {
-          var m = matchLibro(l.nombre);
-          return { nombreDetectado: l.nombre, qty: l.qty || 1, match: m.match, score: m.score };
-        });
-        return { id: idx, libros: libros };
-      });
-
-      var totalLibros = _ordenesDetectadas.reduce(function(s,o){ return s + o.libros.length; }, 0);
-      document.getElementById('img-status').textContent = _ordenesDetectadas.length + ' orden(es) detectada(s) con ' + totalLibros + ' libros en total';
-      var hoy = new Date().toISOString().split('T')[0];
-      document.getElementById('img-orden-fecha').value = hoy;
-      renderOrdenesDetectadas();
-      document.getElementById('img-resultado').style.display = 'block';
-
-    } catch(err) {
-      document.getElementById('img-status').textContent = 'Error al analizar: ' + err.message;
-    }
-  };
-  b64reader.readAsDataURL(file);
-}
-
-function renderOrdenesDetectadas() {
-  var el = document.getElementById('img-libros-list');
-  el.innerHTML = '';
-
-  _ordenesDetectadas.forEach(function(orden, oi) {
-    var ordenWrap = document.createElement('div');
-    ordenWrap.style.cssText = 'border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:1rem;';
-
-    // Header de la orden
-    var header = document.createElement('div');
-    header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-bottom:0.5px solid var(--border);font-size:12px;font-weight:600;color:var(--muted);';
-    var totalOrden = orden.libros.reduce(function(s,l){ return s + (l.match ? l.match.costo * l.qty : 0); }, 0);
-    header.innerHTML = '<span>ORDEN ' + (oi+1) + ' — ' + orden.libros.length + ' libro(s)</span>'
-      + '<span style="color:#e24b4a;">$' + totalOrden.toLocaleString("es-AR") + '</span>';
-    ordenWrap.appendChild(header);
-
-    orden.libros.forEach(function(l, li) {
-      var row = document.createElement('div');
-      row.style.cssText = 'padding:9px 12px;border-bottom:0.5px solid var(--border);font-size:13px;';
-
-      var top = document.createElement('div');
-      top.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:6px;';
-      var icon = document.createElement('span');
-      icon.textContent = l.match ? (l.score > 0.6 ? '✅' : '⚠️') : '❓';
-      var det = document.createElement('span');
-      det.style.cssText = 'color:var(--muted);font-size:11px;flex:1;';
-      det.textContent = l.nombreDetectado;
-      var qtyWrap = document.createElement('div');
-      qtyWrap.style.cssText = 'display:flex;align-items:center;gap:4px;';
-      var bm = document.createElement('button');
-      bm.textContent='−'; bm.style.cssText='width:22px;height:22px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;';
-      bm.onclick=(function(a,b){return function(){_ordenesDetectadas[a].libros[b].qty=Math.max(1,_ordenesDetectadas[a].libros[b].qty-1);renderOrdenesDetectadas();};})(oi,li);
-      var qe=document.createElement('span');qe.style.cssText='min-width:18px;text-align:center;font-weight:600;';qe.textContent=l.qty;
-      var bp=document.createElement('button');
-      bp.textContent='+';bp.style.cssText='width:22px;height:22px;border:0.5px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;';
-      bp.onclick=(function(a,b){return function(){_ordenesDetectadas[a].libros[b].qty++;renderOrdenesDetectadas();};})(oi,li);
-      qtyWrap.appendChild(bm);qtyWrap.appendChild(qe);qtyWrap.appendChild(bp);
-      top.appendChild(icon);top.appendChild(det);top.appendChild(qtyWrap);
-
-      var bot = document.createElement('div');
-      bot.style.cssText='display:flex;align-items:center;gap:8px;';
-      var sel=document.createElement('select');
-      sel.style.cssText='flex:1;padding:5px 8px;font-size:12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;';
-      var optN=document.createElement('option');optN.value='';optN.textContent='— Sin match —';sel.appendChild(optN);
-      MAYO_LIST.forEach(function(m){
-        var opt=document.createElement('option');opt.value=m.nombre;
-        opt.textContent=m.nombre+' ($'+m.costo.toLocaleString("es-AR")+')';
-        if(l.match&&m.nombre===l.match.nombre)opt.selected=true;
-        sel.appendChild(opt);
-      });
-      sel.onchange=(function(a,b){return function(e){
-        var m=MAYO_LIST.find(function(x){return x.nombre===e.target.value;});
-        _ordenesDetectadas[a].libros[b].match=m||null;
-        renderOrdenesDetectadas();
-      };})(oi,li);
-      var precio=document.createElement('span');
-      precio.style.cssText='color:#e24b4a;font-weight:500;min-width:90px;text-align:right;font-size:13px;';
-      precio.textContent=l.match?'$'+(l.match.costo*l.qty).toLocaleString("es-AR"):'—';
-      bot.appendChild(sel);bot.appendChild(precio);
-      row.appendChild(top);row.appendChild(bot);
-      ordenWrap.appendChild(row);
-    });
-
-    el.appendChild(ordenWrap);
-  });
-}
-
-function renderLibrosDetectados() { renderOrdenesDetectadas(); }
-
-
-function confirmarOrdenImagen() {
-  var fecha = document.getElementById('img-orden-fecha').value;
-  if (!fecha) { alert('Seleccioná la fecha.'); return; }
-  if (!_ordenesDetectadas.length) { alert('No hay órdenes para guardar.'); return; }
-
-  var ordenesGuardadas = 0;
-  var totalGeneral = 0;
-
-  _ordenesDetectadas.forEach(function(orden) {
-    var libros = orden.libros.filter(function(l){ return l.match; }).map(function(l){
-      return { nombre: l.match.nombre, costo: l.match.costo, qty: l.qty };
-    });
-    if (!libros.length) return;
-    var total = libros.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
-    var numero = 'IMG-' + Date.now().toString().slice(-6) + '-' + (ordenesGuardadas+1);
-    _ordenes.push({ id: Date.now() + ordenesGuardadas, numero: numero, fecha: fecha, libros: libros, total: total });
-    ordenesGuardadas++;
-    totalGeneral += total;
-  });
-
-  if (!ordenesGuardadas) { alert('Ninguna orden tiene libros con match. Asociá al menos uno.'); return; }
-
-  saveProveedorData();
-  _ordenesDetectadas = [];
-  _imagenOrdenData = null;
-  document.getElementById('img-resultado').style.display = 'none';
-  document.getElementById('img-preview-wrap').style.display = 'none';
-  document.getElementById('img-orden-input').value = '';
-  document.getElementById('img-status').textContent = '';
-
-  var msg = document.getElementById('img-confirm-msg');
-  msg.textContent = ordenesGuardadas + ' orden(es) guardada(s) — total $' + totalGeneral.toLocaleString("es-AR");
-  setTimeout(function(){ msg.textContent = ''; }, 5000);
-
-  renderSaldo();
-  renderHistorial();
 }
 
 function toggleLibroManual() {
   var form = document.getElementById('libro-manual-form');
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  if (form.style.display === 'block') {
-    document.getElementById('manual-libro-nombre').focus();
-  }
+  if (form.style.display === 'block') document.getElementById('manual-libro-nombre').focus();
 }
 
 function agregarLibroManual() {
@@ -1965,10 +1312,12 @@ function agregarLibroManual() {
   document.getElementById('libro-manual-form').style.display = 'none';
 }
 
-// Exponer funciones al scope global
-window.switchTab = switchTab;
+// ===================================================
+// EXPONER AL SCOPE GLOBAL
+// ===================================================
 window.connectStore = connectStore;
 window.resetApp = resetApp;
+window.switchTab = switchTab;
 window.toggleSaldoConfig = toggleSaldoConfig;
 window.saveDeudaInicial = saveDeudaInicial;
 window.registrarPago = registrarPago;
@@ -1982,7 +1331,7 @@ window.eliminarPago = eliminarPago;
 window.exportarResumen = exportarResumen;
 window.toggleLibroManual = toggleLibroManual;
 window.agregarLibroManual = agregarLibroManual;
-window.resetApp = resetApp;
+window.toggleCombo = toggleCombo;
 </script>
 </body>
 </html>
