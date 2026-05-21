@@ -971,7 +971,8 @@ function saveProveedorData() {
 
 function initRentabilidad() {
   loadProveedorData();
-  var hoy = new Date().toISOString().split('T')[0];
+  var _hoyD = new Date();
+  var hoy = _hoyD.getFullYear()+'-'+String(_hoyD.getMonth()+1).padStart(2,'0')+'-'+String(_hoyD.getDate()).padStart(2,'0');
   var of = document.getElementById('orden-fecha');
   var pf = document.getElementById('pago-fecha');
   var di = document.getElementById('deuda-inicial');
@@ -1196,7 +1197,8 @@ function getWeekLabel(friDate) {
 }
 
 function cerrarDia() {
-  var hoy = new Date().toISOString().split('T')[0];
+  var _hoyD = new Date();
+  var hoy = _hoyD.getFullYear()+'-'+String(_hoyD.getMonth()+1).padStart(2,'0')+'-'+String(_hoyD.getDate()).padStart(2,'0');
   var ordenesHoy = _ordenes.filter(function(o){ return o.fecha === hoy; });
   if (!ordenesHoy.length) { alert('No hay órdenes registradas hoy para cerrar.'); return; }
   var unidades = ordenesHoy.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
@@ -1270,7 +1272,8 @@ function renderHistorial() {
 
   var fechas = Object.keys(porFecha).sort(function(a,b){ return b.localeCompare(a); });
 
-  var hoy = new Date().toISOString().split('T')[0];
+  var _hoyD = new Date();
+  var hoy = _hoyD.getFullYear()+'-'+String(_hoyD.getMonth()+1).padStart(2,'0')+'-'+String(_hoyD.getDate()).padStart(2,'0');
   var hayOrdenesHoyAbiertas = (porFecha[hoy] && porFecha[hoy].ordenes.length > 0 && !_diasCerrados[hoy]);
 
   var totalGenOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
