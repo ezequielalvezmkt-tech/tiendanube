@@ -421,6 +421,7 @@ var _ordenes = [];
 var _pagos = [];
 var _deudaInicial = 3289705;
 var _librosCarrito = [];
+var _diasCerrados = {};
 
 // ===================================================
 // AUTOLOGIN
@@ -956,6 +957,8 @@ function loadProveedorData() {
     if (o) _ordenes = JSON.parse(o);
     if (p) _pagos = JSON.parse(p);
     if (d) _deudaInicial = parseFloat(d);
+    var dc = localStorage.getItem('lpe_dias_cerrados');
+    if (dc) _diasCerrados = JSON.parse(dc);
   } catch(e) {}
 }
 
@@ -963,6 +966,7 @@ function saveProveedorData() {
   localStorage.setItem('lpe_ordenes', JSON.stringify(_ordenes));
   localStorage.setItem('lpe_pagos', JSON.stringify(_pagos));
   localStorage.setItem('lpe_deuda_inicial', String(_deudaInicial));
+  localStorage.setItem('lpe_dias_cerrados', JSON.stringify(_diasCerrados));
 }
 
 function initRentabilidad() {
@@ -1191,6 +1195,23 @@ function getWeekLabel(friDate) {
   return 'Semana ' + lun.getDate() + '/' + (lun.getMonth()+1) + ' — ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
 }
 
+function cerrarDia() {
+  var hoy = new Date().toISOString().split('T')[0];
+  var ordenesHoy = _ordenes.filter(function(o){ return o.fecha === hoy; });
+  if (!ordenesHoy.length) { alert('No hay órdenes registradas hoy para cerrar.'); return; }
+  var unidades = ordenesHoy.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
+  var total = ordenesHoy.reduce(function(s,o){ return s + o.total; }, 0);
+  _diasCerrados[hoy] = { unidades: unidades, total: total, ordenes: ordenesHoy.length };
+  saveProveedorData();
+  renderHistorial();
+}
+
+function reabrirDia(fecha) {
+  delete _diasCerrados[fecha];
+  saveProveedorData();
+  renderHistorial();
+}
+
 function renderHistorial() {
   var semanas = {};
   _ordenes.forEach(function(o) {
@@ -1236,48 +1257,98 @@ function renderHistorial() {
   }
   document.getElementById('historial-semanal').innerHTML = semHtml;
 
-  var all = [];
-  _ordenes.forEach(function(o){ all.push({tipo:'orden', fecha:o.fecha, data:o}); });
-  _pagos.forEach(function(p){ all.push({tipo:'pago', fecha:p.fecha, data:p}); });
-  all.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
+  // Agrupar items por fecha
+  var porFecha = {};
+  _ordenes.forEach(function(o) {
+    if (!porFecha[o.fecha]) porFecha[o.fecha] = { ordenes: [], pagos: [] };
+    porFecha[o.fecha].ordenes.push(o);
+  });
+  _pagos.forEach(function(p) {
+    if (!porFecha[p.fecha]) porFecha[p.fecha] = { ordenes: [], pagos: [] };
+    porFecha[p.fecha].pagos.push(p);
+  });
+
+  var fechas = Object.keys(porFecha).sort(function(a,b){ return b.localeCompare(a); });
+
+  var hoy = new Date().toISOString().split('T')[0];
+  var hayOrdenesHoyAbiertas = (porFecha[hoy] && porFecha[hoy].ordenes.length > 0 && !_diasCerrados[hoy]);
 
   var totalGenOrdenes = _ordenes.reduce(function(s,o){ return s + o.total; }, 0);
   var totalGenUnidades = _ordenes.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
   var totalGenPagos = _pagos.reduce(function(s,p){ return s + p.monto; }, 0);
 
-  var detHtml = all.length ? all.map(function(item) {
-    if (item.tipo === 'orden') {
-      var o = item.data;
-      var d = new Date(o.fecha+'T12:00:00');
-      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-      var unidades = o.libros.reduce(function(s,l){ return s + l.qty; }, 0);
-      var librosStr = o.libros.map(function(l){ return l.nombre+(l.qty>1?' x'+l.qty:''); }).join(', ');
-      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
-        + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
-        + '<div style="flex:1;">'
-        + '<div style="font-size:13px;font-weight:500;">#'+o.numero+' — '+fecha+'</div>'
-        + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+librosStr+'</div>'
-        + '<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+unidades+' unidad'+(unidades!==1?'es':'')+'</div>'
-        + '</div>'
-        + '<div style="text-align:right;">'
-        + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$'+Math.round(o.total).toLocaleString('es-AR')+'</div>'
-        + '<button onclick="window.eliminarOrden('+o.id+')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
-        + '</div></div>';
-    } else {
-      var p = item.data;
-      var d = new Date(p.fecha+'T12:00:00');
-      var fecha = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
-        + '<span style="font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Pago</span>'
-        + '<div style="flex:1;"><div style="font-size:13px;font-weight:500;">'+p.nota+' — '+fecha+'</div></div>'
-        + '<div style="text-align:right;">'
-        + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$'+Math.round(p.monto).toLocaleString('es-AR')+'</div>'
-        + '<button onclick="window.eliminarPago('+p.id+')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
-        + '</div></div>';
-    }
-  }).join('') : '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
+  var detHtml = '';
 
-  if (all.length) {
+  // Botón "Cerrar día" visible solo si hay órdenes de hoy sin cerrar
+  if (hayOrdenesHoyAbiertas) {
+    var unidadesHoy = porFecha[hoy].ordenes.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
+    var totalHoy = porFecha[hoy].ordenes.reduce(function(s,o){ return s + o.total; }, 0);
+    detHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:12px;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:var(--radius-sm);">'
+      + '<div style="font-size:13px;color:#16a34a;font-weight:500;">📦 Hoy: '+porFecha[hoy].ordenes.length+' orden'+(porFecha[hoy].ordenes.length!==1?'es':'')+' · '+unidadesHoy+' unidades · $'+Math.round(totalHoy).toLocaleString('es-AR')+'</div>'
+      + '<button onclick="window.cerrarDia()" style="padding:6px 16px;background:#16a34a;color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Guardar pedidos del día</button>'
+      + '</div>';
+  }
+
+  if (!fechas.length) {
+    detHtml += '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
+  } else {
+    fechas.forEach(function(fecha) {
+      var grupo = porFecha[fecha];
+      var d = new Date(fecha + 'T12:00:00');
+      var fechaLabel = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+      var esDiaCerrado = !!_diasCerrados[fecha];
+
+      // Header del día
+      var unidadesDia = grupo.ordenes.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
+      var totalDia = grupo.ordenes.reduce(function(s,o){ return s + o.total; }, 0);
+      var ordenesCount = grupo.ordenes.length;
+
+      if (esDiaCerrado) {
+        // Día cerrado: fila colapsada con resumen
+        detHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:0.5px solid var(--border);background:var(--bg);border-radius:4px;margin-bottom:2px;">'
+          + '<div style="display:flex;align-items:center;gap:10px;">'
+          + '<span style="font-size:11px;background:#e8e6e0;color:var(--muted);padding:2px 8px;border-radius:20px;">'+fechaLabel+'</span>'
+          + '<span style="font-size:13px;color:var(--muted);">'+ordenesCount+' orden'+(ordenesCount!==1?'es':'')+' · '+unidadesDia+' unidades</span>'
+          + '</div>'
+          + '<div style="display:flex;align-items:center;gap:12px;">'
+          + '<span style="font-size:13px;font-weight:600;color:#e24b4a;">$'+Math.round(totalDia).toLocaleString('es-AR')+'</span>'
+          + '<button onclick="window.reabrirDia(\''+fecha+'\')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;">ver detalle</button>'
+          + '</div>'
+          + '</div>';
+      } else {
+        // Día abierto: mostrar header de fecha + todas las órdenes y pagos
+        detHtml += '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:10px 0 4px;">' + fechaLabel + '</div>';
+
+        grupo.ordenes.forEach(function(o) {
+          var unidades = o.libros.reduce(function(s,l){ return s + l.qty; }, 0);
+          var librosStr = o.libros.map(function(l){ return l.nombre+(l.qty>1?' x'+l.qty:''); }).join(', ');
+          detHtml += '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
+            + '<span style="font-size:11px;background:#fff3f3;color:#e24b4a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Orden</span>'
+            + '<div style="flex:1;">'
+            + '<div style="font-size:13px;font-weight:500;">#'+o.numero+'</div>'
+            + '<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+librosStr+'</div>'
+            + '<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+unidades+' unidad'+(unidades!==1?'es':'')+'</div>'
+            + '</div>'
+            + '<div style="text-align:right;">'
+            + '<div style="font-size:14px;font-weight:600;color:#e24b4a;">$'+Math.round(o.total).toLocaleString('es-AR')+'</div>'
+            + '<button onclick="window.eliminarOrden('+o.id+')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+            + '</div></div>';
+        });
+
+        grupo.pagos.forEach(function(p) {
+          detHtml += '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">'
+            + '<span style="font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;">Pago</span>'
+            + '<div style="flex:1;"><div style="font-size:13px;font-weight:500;">'+p.nota+'</div></div>'
+            + '<div style="text-align:right;">'
+            + '<div style="font-size:14px;font-weight:600;color:#16a34a;">−$'+Math.round(p.monto).toLocaleString('es-AR')+'</div>'
+            + '<button onclick="window.eliminarPago('+p.id+')" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:2px;">eliminar</button>'
+            + '</div></div>';
+        });
+      }
+    });
+  }
+
+  if (fechas.length) {
     detHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:4px;border-top:2px solid var(--border);font-size:13px;">'
       + '<div><div style="font-weight:700;">TOTAL GENERAL</div><div style="color:var(--muted);font-size:12px;margin-top:2px;">'+_ordenes.length+' órdenes · '+totalGenUnidades+' unidades</div></div>'
       + '<div style="text-align:right;"><div style="color:#e24b4a;font-weight:700;font-size:15px;">$'+Math.round(totalGenOrdenes).toLocaleString('es-AR')+' en órdenes</div><div style="color:#16a34a;font-weight:600;font-size:13px;margin-top:2px;">−$'+Math.round(totalGenPagos).toLocaleString('es-AR')+' pagado</div></div>'
@@ -1350,6 +1421,8 @@ window.exportarResumen = exportarResumen;
 window.toggleLibroManual = toggleLibroManual;
 window.agregarLibroManual = agregarLibroManual;
 window.toggleCombo = toggleCombo;
+window.cerrarDia = cerrarDia;
+window.reabrirDia = reabrirDia;
 </script>
 </body>
 </html>
