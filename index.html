@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LPE Analytics</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1196,18 +1196,16 @@ function getWeekLabel(friDate) {
   return 'Semana ' + lun.getDate() + '/' + (lun.getMonth()+1) + ' — ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
 }
 
-function cerrarDia() {
-  var _hoyD = new Date();
-  var hoy = _hoyD.getFullYear()+'-'+String(_hoyD.getMonth()+1).padStart(2,'0')+'-'+String(_hoyD.getDate()).padStart(2,'0');
-  var ordenesHoy = _ordenes.filter(function(o){ return o.fecha === hoy; });
-  if (!ordenesHoy.length) { alert('No hay órdenes registradas hoy para cerrar.'); return; }
-  var unidades = ordenesHoy.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
-  var total = ordenesHoy.reduce(function(s,o){ return s + o.total; }, 0);
-  _diasCerrados[hoy] = { unidades: unidades, total: total, ordenes: ordenesHoy.length };
+function cerrarDia(fecha) {
+  var ordenesDia = _ordenes.filter(function(o){ return o.fecha === fecha; });
+  if (!ordenesDia.length) { alert('No hay órdenes para cerrar en ese día.'); return; }
+  var unidades = ordenesDia.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
+  var totalDia = ordenesDia.reduce(function(s,o){ return s + o.total; }, 0);
+  _diasCerrados[fecha] = { unidades: unidades, total: totalDia, ordenes: ordenesDia.length };
   saveProveedorData();
+  renderSaldo();
   renderHistorial();
 }
-
 function reabrirDia(fecha) {
   delete _diasCerrados[fecha];
   saveProveedorData();
@@ -1282,15 +1280,7 @@ function renderHistorial() {
 
   var detHtml = '';
 
-  // Botón "Cerrar día" visible solo si hay órdenes de hoy sin cerrar
-  if (hayOrdenesHoyAbiertas) {
-    var unidadesHoy = porFecha[hoy].ordenes.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
-    var totalHoy = porFecha[hoy].ordenes.reduce(function(s,o){ return s + o.total; }, 0);
-    detHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:12px;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:var(--radius-sm);">'
-      + '<div style="font-size:13px;color:#16a34a;font-weight:500;">📦 Hoy: '+porFecha[hoy].ordenes.length+' orden'+(porFecha[hoy].ordenes.length!==1?'es':'')+' · '+unidadesHoy+' unidades · $'+Math.round(totalHoy).toLocaleString('es-AR')+'</div>'
-      + '<button onclick="window.cerrarDia()" style="padding:6px 16px;background:#16a34a;color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Guardar pedidos del día</button>'
-      + '</div>';
-  }
+  // Botón "Cerrar día" — aparece para CADA día abierto que tenga órdenes
 
   if (!fechas.length) {
     detHtml += '<p style="font-size:13px;color:var(--muted);">Sin registros aún.</p>';
@@ -1319,8 +1309,11 @@ function renderHistorial() {
           + '</div>'
           + '</div>';
       } else {
-        // Día abierto: mostrar header de fecha + todas las órdenes y pagos
-        detHtml += '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:10px 0 4px;">' + fechaLabel + '</div>';
+        // Día abierto: mostrar header de fecha + botón cerrar + todas las órdenes y pagos
+        detHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;">'
+          + '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">' + fechaLabel + '</div>'
+          + '<button onclick="window.cerrarDia(\'' + fecha + '\')" style="padding:4px 14px;background:#16a34a;color:#fff;border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Guardar pedidos del día</button>'
+          + '</div>';
 
         grupo.ordenes.forEach(function(o) {
           var unidades = o.libros.reduce(function(s,l){ return s + l.qty; }, 0);
