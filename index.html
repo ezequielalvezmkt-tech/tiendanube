@@ -307,6 +307,7 @@
         <div>
           <div class="card-title">Cuenta corriente con el proveedor</div>
           <div class="card-sub">Deuda acumulada + órdenes pendientes − pagos realizados</div>
+          <div id="sync-status" style="font-size:11px;color:var(--muted);margin-top:4px;"></div>
         </div>
         <button class="btn-sm" onclick="window.toggleSaldoConfig()" style="padding:6px 14px;">⚙ Configurar</button>
       </div>
@@ -320,6 +321,15 @@
           <button class="btn-sm" onclick="window.saveDeudaInicial()" style="padding:8px 18px;">Guardar</button>
         </div>
         <p style="font-size:11px;color:var(--muted);margin-top:8px;">Esta deuda es el saldo que ya tenés antes de las órdenes registradas acá.</p>
+
+        <div style="margin-top:1.25rem;padding-top:1rem;border-top:0.5px solid var(--border);">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">URL de sincronización (Google Apps Script)</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+            <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec" style="flex:1;min-width:260px;padding:8px 12px;font-size:13px;border:0.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:inherit;" />
+            <button class="btn-sm" onclick="window.saveSheetsConfig()" style="padding:8px 18px;">Conectar</button>
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px;">Pegá acá la URL que te da Apps Script al implementar el backend. Una vez conectado, los datos se sincronizan entre todos tus dispositivos.</p>
+        </div>
       </div>
 
       <div class="metrics-grid" style="margin-top:1.25rem;" id="saldo-metrics"></div>
@@ -949,36 +959,111 @@ var MAYO_LIST = [{"nombre":"50 Capsulas de amor propio","costo":13000},{"nombre"
 // ===================================================
 // CUENTA CORRIENTE PROVEEDOR
 // ===================================================
-function loadProveedorData() {
-  try {
-    var o = localStorage.getItem('lpe_ordenes');
-    var p = localStorage.getItem('lpe_pagos');
-    var d = localStorage.getItem('lpe_deuda_inicial');
-    if (o) _ordenes = JSON.parse(o);
-    if (p) _pagos = JSON.parse(p);
-    if (d) _deudaInicial = parseFloat(d);
-    var dc = localStorage.getItem('lpe_dias_cerrados');
-    if (dc) _diasCerrados = JSON.parse(dc);
-  } catch(e) {}
+// ===================================================
+// SINCRONIZACIÓN CON GOOGLE SHEETS
+// ===================================================
+function getSheetsUrl() { return localStorage.getItem('lpe_sheets_url') || ''; }
+function hasSheets() { return !!getSheetsUrl(); }
+
+function setSyncStatus(txt, color) {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = txt;
+  el.style.color = color || 'var(--muted)';
 }
 
-function saveProveedorData() {
+async function apiGet(action) {
+  var res = await fetch(getSheetsUrl() + '?action=' + action);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  var data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function apiPost(action, payload) {
+  var res = await fetch(getSheetsUrl(), {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: action, payload: payload })
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  var data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function loadProveedorData() {
+  if (hasSheets()) {
+    setSyncStatus('⏳ Sincronizando con Google Sheets...', '#378add');
+    try {
+      var data = await apiGet('getAll');
+      _ordenes = data.ordenes || [];
+      _pagos = data.pagos || [];
+      _deudaInicial = data.deudaInicial || 0;
+      _diasCerrados = data.diasCerrados || {};
+      // Cache local de respaldo por si se cae la conexión
+      localStorage.setItem('lpe_ordenes_cache', JSON.stringify(_ordenes));
+      localStorage.setItem('lpe_pagos_cache', JSON.stringify(_pagos));
+      localStorage.setItem('lpe_deuda_inicial_cache', String(_deudaInicial));
+      localStorage.setItem('lpe_dias_cerrados_cache', JSON.stringify(_diasCerrados));
+      setSyncStatus('✓ Sincronizado con Google Sheets', '#16a34a');
+    } catch (e) {
+      // Sin conexión: usar el último respaldo local conocido
+      try {
+        var oc = localStorage.getItem('lpe_ordenes_cache');
+        var pc = localStorage.getItem('lpe_pagos_cache');
+        var dc = localStorage.getItem('lpe_deuda_inicial_cache');
+        var dcc = localStorage.getItem('lpe_dias_cerrados_cache');
+        if (oc) _ordenes = JSON.parse(oc);
+        if (pc) _pagos = JSON.parse(pc);
+        if (dc) _deudaInicial = parseFloat(dc);
+        if (dcc) _diasCerrados = JSON.parse(dcc);
+      } catch(e2) {}
+      setSyncStatus('⚠ Sin conexión — mostrando último dato guardado (' + e.message + ')', '#e24b4a');
+    }
+  } else {
+    // Modo local (sin Sheets configurado todavía)
+    try {
+      var o = localStorage.getItem('lpe_ordenes');
+      var p = localStorage.getItem('lpe_pagos');
+      var d = localStorage.getItem('lpe_deuda_inicial');
+      var dc2 = localStorage.getItem('lpe_dias_cerrados');
+      if (o) _ordenes = JSON.parse(o);
+      if (p) _pagos = JSON.parse(p);
+      if (d) _deudaInicial = parseFloat(d);
+      if (dc2) _diasCerrados = JSON.parse(dc2);
+    } catch(e) {}
+    setSyncStatus('○ Solo local — configurá la sincronización para usar varios dispositivos', 'var(--muted)');
+  }
+}
+
+function saveProveedorDataLocal() {
+  // Solo se usa cuando NO hay Sheets configurado
   localStorage.setItem('lpe_ordenes', JSON.stringify(_ordenes));
   localStorage.setItem('lpe_pagos', JSON.stringify(_pagos));
   localStorage.setItem('lpe_deuda_inicial', String(_deudaInicial));
   localStorage.setItem('lpe_dias_cerrados', JSON.stringify(_diasCerrados));
 }
 
-function initRentabilidad() {
-  loadProveedorData();
+function saveSheetsConfig() {
+  var val = (document.getElementById('sheets-url').value || '').trim();
+  localStorage.setItem('lpe_sheets_url', val);
+  document.getElementById('saldo-config').style.display = 'none';
+  initRentabilidad();
+}
+
+async function initRentabilidad() {
+  await loadProveedorData();
   var _hoyD = new Date();
   var hoy = _hoyD.getFullYear()+'-'+String(_hoyD.getMonth()+1).padStart(2,'0')+'-'+String(_hoyD.getDate()).padStart(2,'0');
   var of = document.getElementById('orden-fecha');
   var pf = document.getElementById('pago-fecha');
   var di = document.getElementById('deuda-inicial');
+  var su = document.getElementById('sheets-url');
   if (of) of.value = hoy;
   if (pf) pf.value = hoy;
   if (di) di.value = _deudaInicial;
+  if (su) su.value = getSheetsUrl();
   renderSaldo();
   renderHistorial();
 }
@@ -988,10 +1073,16 @@ function toggleSaldoConfig() {
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-function saveDeudaInicial() {
+async function saveDeudaInicial() {
   var val = parseFloat(document.getElementById('deuda-inicial').value) || 0;
+  var anterior = _deudaInicial;
   _deudaInicial = val;
-  saveProveedorData();
+  if (hasSheets()) {
+    try { await apiPost('setDeudaInicial', { value: val }); }
+    catch(e) { _deudaInicial = anterior; alert('No se pudo guardar en Sheets: ' + e.message); return; }
+  } else {
+    saveProveedorDataLocal();
+  }
   renderSaldo();
   document.getElementById('saldo-config').style.display = 'none';
 }
@@ -1025,15 +1116,23 @@ function renderSaldo() {
     '<div class="metric" style="border-color:var(--blue)"><div class="metric-label">Semana actual</div><div class="metric-value" style="font-size:20px;color:#378add;">'+unidadesSemana+'</div><div class="metric-sub">unid. · '+ordenesSemana+' orden'+(ordenesSemana!==1?'es':'')+'</div></div>';
 }
 
-function registrarPago() {
+async function registrarPago() {
   var monto = parseFloat(document.getElementById('pago-monto').value) || 0;
   var fecha = document.getElementById('pago-fecha').value;
   var nota = document.getElementById('pago-nota').value.trim();
   if (!monto || !fecha) { alert('Completá el monto y la fecha.'); return; }
-  _pagos.push({ id: Date.now(), fecha: fecha, monto: monto, nota: nota || 'Pago al proveedor' });
-  saveProveedorData();
+  var pago = { id: Date.now(), fecha: fecha, monto: monto, nota: nota || 'Pago al proveedor' };
+  var btn = event ? event.target : null;
+  if (btn) btn.disabled = true;
+  if (hasSheets()) {
+    try { await apiPost('addPago', pago); }
+    catch(e) { alert('No se pudo guardar en Sheets: ' + e.message); if (btn) btn.disabled = false; return; }
+  }
+  _pagos.push(pago);
+  if (!hasSheets()) saveProveedorDataLocal();
   document.getElementById('pago-monto').value = '';
   document.getElementById('pago-nota').value = '';
+  if (btn) btn.disabled = false;
   renderSaldo();
   renderHistorial();
 }
@@ -1157,15 +1256,22 @@ function renderCarrito() {
 // ===================================================
 // GUARDAR ORDEN
 // ===================================================
-function guardarOrden() {
+async function guardarOrden() {
   var numero = document.getElementById('orden-numero').value.trim();
   var fecha = document.getElementById('orden-fecha').value;
   if (!numero) { alert('Ingresá el número de orden.'); return; }
   if (!fecha) { alert('Seleccioná la fecha.'); return; }
   if (!_librosCarrito.length) { alert('Agregá al menos un libro.'); return; }
   var total = _librosCarrito.reduce(function(s,l){ return s + l.costo * l.qty; }, 0);
-  _ordenes.push({ id: Date.now(), numero: numero, fecha: fecha, libros: JSON.parse(JSON.stringify(_librosCarrito)), total: total });
-  saveProveedorData();
+  var orden = { id: Date.now(), numero: numero, fecha: fecha, libros: JSON.parse(JSON.stringify(_librosCarrito)), total: total };
+  var btn = event ? event.target : null;
+  if (btn) btn.disabled = true;
+  if (hasSheets()) {
+    try { await apiPost('addOrden', orden); }
+    catch(e) { alert('No se pudo guardar en Sheets: ' + e.message); if (btn) btn.disabled = false; return; }
+  }
+  _ordenes.push(orden);
+  if (!hasSheets()) saveProveedorDataLocal();
   _librosCarrito = [];
   document.getElementById('orden-numero').value = '';
   document.getElementById('libros-seleccionados').innerHTML = '';
@@ -1173,6 +1279,7 @@ function guardarOrden() {
   var msg = document.getElementById('orden-msg');
   msg.textContent = 'Orden #' + numero + ' guardada ($' + total.toLocaleString('es-AR') + ')';
   setTimeout(function(){ msg.textContent = ''; }, 3000);
+  if (btn) btn.disabled = false;
   renderSaldo();
   renderHistorial();
 }
@@ -1196,19 +1303,28 @@ function getWeekLabel(friDate) {
   return 'Semana ' + lun.getDate() + '/' + (lun.getMonth()+1) + ' — ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
 }
 
-function cerrarDia(fecha) {
+async function cerrarDia(fecha) {
   var ordenesDia = _ordenes.filter(function(o){ return o.fecha === fecha; });
   if (!ordenesDia.length) { alert('No hay órdenes para cerrar en ese día.'); return; }
   var unidades = ordenesDia.reduce(function(s,o){ return s + o.libros.reduce(function(a,l){ return a+l.qty; },0); }, 0);
   var totalDia = ordenesDia.reduce(function(s,o){ return s + o.total; }, 0);
+  var registro = { fecha: fecha, unidades: unidades, total: totalDia, ordenes: ordenesDia.length };
+  if (hasSheets()) {
+    try { await apiPost('cerrarDia', registro); }
+    catch(e) { alert('No se pudo guardar en Sheets: ' + e.message); return; }
+  }
   _diasCerrados[fecha] = { unidades: unidades, total: totalDia, ordenes: ordenesDia.length };
-  saveProveedorData();
+  if (!hasSheets()) saveProveedorDataLocal();
   renderSaldo();
   renderHistorial();
 }
-function reabrirDia(fecha) {
+async function reabrirDia(fecha) {
+  if (hasSheets()) {
+    try { await apiPost('reabrirDia', { fecha: fecha }); }
+    catch(e) { alert('No se pudo guardar en Sheets: ' + e.message); return; }
+  }
   delete _diasCerrados[fecha];
-  saveProveedorData();
+  if (!hasSheets()) saveProveedorDataLocal();
   renderHistorial();
 }
 
@@ -1354,16 +1470,26 @@ function renderHistorial() {
   document.getElementById('historial-detalle').innerHTML = detHtml;
 }
 
-function eliminarOrden(id) {
+async function eliminarOrden(id) {
   if (!confirm('¿Eliminar esta orden?')) return;
+  if (hasSheets()) {
+    try { await apiPost('deleteOrden', { id: id }); }
+    catch(e) { alert('No se pudo eliminar en Sheets: ' + e.message); return; }
+  }
   _ordenes = _ordenes.filter(function(o){ return o.id !== id; });
-  saveProveedorData(); renderSaldo(); renderHistorial();
+  if (!hasSheets()) saveProveedorDataLocal();
+  renderSaldo(); renderHistorial();
 }
 
-function eliminarPago(id) {
+async function eliminarPago(id) {
   if (!confirm('¿Eliminar este pago?')) return;
+  if (hasSheets()) {
+    try { await apiPost('deletePago', { id: id }); }
+    catch(e) { alert('No se pudo eliminar en Sheets: ' + e.message); return; }
+  }
   _pagos = _pagos.filter(function(p){ return p.id !== id; });
-  saveProveedorData(); renderSaldo(); renderHistorial();
+  if (!hasSheets()) saveProveedorDataLocal();
+  renderSaldo(); renderHistorial();
 }
 
 function exportarResumen() {
@@ -1405,6 +1531,7 @@ window.resetApp = resetApp;
 window.switchTab = switchTab;
 window.toggleSaldoConfig = toggleSaldoConfig;
 window.saveDeudaInicial = saveDeudaInicial;
+window.saveSheetsConfig = saveSheetsConfig;
 window.registrarPago = registrarPago;
 window.filtrarLibros = filtrarLibros;
 window.agregarLibro = agregarLibro;
